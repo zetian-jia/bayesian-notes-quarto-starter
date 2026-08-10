@@ -164,7 +164,7 @@ window.Quarto = {
     <div class="sidebar-title mb-0 py-0">
       <a href="../">贝叶斯数据分析笔记</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/你的用户名/bayesian-notes" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-git"></i></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
@@ -267,9 +267,13 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#q1q5-速查" id="toc-q1q5-速查" class="nav-link active" data-scroll-target="#q1q5-速查"><span class="header-section-number">2.1</span> Q1–Q5 速查</a></li>
+  <li><a href="#概率的规则及贝叶斯定理" id="toc-概率的规则及贝叶斯定理" class="nav-link active" data-scroll-target="#概率的规则及贝叶斯定理"><span class="header-section-number">2.1</span> 概率的规则及贝叶斯定理</a>
+  <ul class="collapse">
+  <li><a href="#概率的规则" id="toc-概率的规则" class="nav-link" data-scroll-target="#概率的规则"><span class="header-section-number">2.1.1</span> 概率的规则</a></li>
+  </ul></li>
+  <li><a href="#q1q5-速查" id="toc-q1q5-速查" class="nav-link" data-scroll-target="#q1q5-速查"><span class="header-section-number">2.2</span> Q1–Q5 速查</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/你的用户名/bayesian-notes/edit/main/chapters/02-basic-concepts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/你的用户名/bayesian-notes/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/02-basic-concepts.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -293,8 +297,47 @@ window.Quarto = {
 </header>
 
 
-<section id="q1q5-速查" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="q1q5-速查"><span class="header-section-number">2.1</span> Q1–Q5 速查</h2>
+<section id="概率的规则及贝叶斯定理" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="概率的规则及贝叶斯定理"><span class="header-section-number">2.1</span> 概率的规则及贝叶斯定理</h2>
+<section id="概率的规则" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="概率的规则"><span class="header-section-number">2.1.1</span> 概率的规则</h3>
+<p>概率的频率派定义：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。</p>
+<p>以掷骰子为例，“掷出偶数”这个事件的概率可以写成：</p>
+<p><span class="math display">\[
+p(\text{掷出偶数}) = \frac{\text{掷出偶数的次数}}{\text{总试验次数}}
+\]</span></p>
+<p>频率派的概率定义，对某些问题完全不起作用，比如：</p>
+<ul>
+<li>刘阿姨的女儿今年考上大学的概率是多少？</li>
+<li>中国足球队下一次进入世界杯决赛的概率是多少？</li>
+<li>下一次重大国际危机发生在亚洲的概率是多少？</li>
+</ul>
+<p>这类问题无法通过大量重复试验获得频率，人们只能用自己的<strong>相信程度</strong>（degree of belief）来描述——这种概率称为<strong>主观概率</strong>（subjective probability）。</p>
+<p>频率派无法处理主观概率，贝叶斯统计对两种概率都能自然处理。</p>
+<p>贝叶斯统计用概率度量”你对一个不确定事件为真的相信程度”，这个度量基于你已有的知识。</p>
+<ul>
+<li>设 <span class="math inline">\(H\)</span> 是一个事件（或假设），<span class="math inline">\(K\)</span> 是试验前你已有的知识，则 <span class="math inline">\(p(H \mid K)\)</span> 表示：给定 <span class="math inline">\(K\)</span>，你对 <span class="math inline">\(H\)</span> 的相信程度</li>
+<li>试验后得到数据 <span class="math inline">\(D\)</span>，你需要把概率修订为 <span class="math inline">\(p(H \mid D \cap K)\)</span></li>
+<li>这次修订取决于：在 <span class="math inline">\(H\)</span> 为真、以及 <span class="math inline">\(H\)</span> 为假两种情况下，<span class="math inline">\(D\)</span> 出现的可能性分别有多大</li>
+</ul>
+<blockquote class="blockquote">
+<p>对纯粹的贝叶斯派来说，<strong>所有概率都是条件概率</strong>——所以不必每次都特意写出”条件”二字。</p>
+</blockquote>
+<p>例子：<span class="math inline">\(p(H \mid D \cap K)\)</span> 怎么用</p>
+<ul>
+<li><span class="math inline">\(H\)</span>：这枚硬币是均匀的</li>
+<li><span class="math inline">\(D\)</span>：抛 10 次，7 次正面</li>
+<li><span class="math inline">\(K\)</span>：这枚硬币是朋友随手给我的，没有作弊动机</li>
+</ul>
+<p><span class="math display">\[
+p(H \mid D \cap K)
+\]</span></p>
+<p>含义：<strong>结合”抛10次7次正面”这个新数据，以及”这是朋友随手给的硬币”这个背景知识，硬币均匀的概率是多少。</strong></p>
+<p>如果把 <span class="math inline">\(K\)</span> 换成”这枚硬币是魔术师给我的”，同样的数据 <span class="math inline">\(D\)</span>，算出来的 <span class="math inline">\(p(H \mid D \cap K)\)</span> 会不一样——这说明 <span class="math inline">\(K\)</span> 不是摆设，它真实参与了运算。</p>
+</section>
+</section>
+<section id="q1q5-速查" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="q1q5-速查"><span class="header-section-number">2.2</span> Q1–Q5 速查</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -972,17 +1015,62 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 基本概念</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q5 速查</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 概率的规则及贝叶斯定理</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>| | 书中概念 | 我的框架对应 |</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>| Q1 | 参数 $\theta$ | 潜变量 |</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>| Q2 | 似然函数 $L(\theta)=p(Y\mid\theta)$ | 观测模型（把 $Y$ 固定看 $\theta$） |</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>| Q3 | 先验分布 $p(\theta)$、共轭先验族 | 先验结构 |</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>| Q4 | 后验分布 $p(\theta\mid Y)$ | 计算目标 |</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>| Q5 | （书中较少展开） | 独立轴，需要自己补充阅读 |</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待补充：共轭先验族那一节的具体推导笔记。</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### 概率的规则</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>概率的频率派定义：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>以掷骰子为例，"掷出偶数"这个事件的概率可以写成：</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>p(\text{掷出偶数}) = \frac{\text{掷出偶数的次数}}{\text{总试验次数}}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>频率派的概率定义，对某些问题完全不起作用，比如：</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>刘阿姨的女儿今年考上大学的概率是多少？</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>中国足球队下一次进入世界杯决赛的概率是多少？</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>下一次重大国际危机发生在亚洲的概率是多少？</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>这类问题无法通过大量重复试验获得频率，人们只能用自己的**相信程度**（degree of belief）来描述——这种概率称为**主观概率**（subjective probability）。</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>频率派无法处理主观概率，贝叶斯统计对两种概率都能自然处理。</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>贝叶斯统计用概率度量"你对一个不确定事件为真的相信程度"，这个度量基于你已有的知识。</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>设 $H$ 是一个事件（或假设），$K$ 是试验前你已有的知识，则 $p(H \mid K)$ 表示：给定 $K$，你对 $H$ 的相信程度</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>试验后得到数据 $D$，你需要把概率修订为 $p(H \mid D \cap K)$</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>这次修订取决于：在 $H$ 为真、以及 $H$ 为假两种情况下，$D$ 出现的可能性分别有多大</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 对纯粹的贝叶斯派来说，**所有概率都是条件概率**——所以不必每次都特意写出"条件"二字。</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>例子：$p(H \mid D \cap K)$ 怎么用</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H$：这枚硬币是均匀的</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$D$：抛 10 次，7 次正面</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$K$：这枚硬币是朋友随手给我的，没有作弊动机</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>p(H \mid D \cap K)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>含义：**结合"抛10次7次正面"这个新数据，以及"这是朋友随手给的硬币"这个背景知识，硬币均匀的概率是多少。**</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>如果把 $K$ 换成"这枚硬币是魔术师给我的"，同样的数据 $D$，算出来的 $p(H \mid D \cap K)$ 会不一样——这说明 $K$ 不是摆设，它真实参与了运算。</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q5 速查</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>| | 书中概念 | 我的框架对应 |</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>| Q1 | 参数 $\theta$ | 潜变量 |</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>| Q2 | 似然函数 $L(\theta)=p(Y\mid\theta)$ | 观测模型（把 $Y$ 固定看 $\theta$） |</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>| Q3 | 先验分布 $p(\theta)$、共轭先验族 | 先验结构 |</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>| Q4 | 后验分布 $p(\theta\mid Y)$ | 计算目标 |</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>| Q5 | （书中较少展开） | 独立轴，需要自己补充阅读 |</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待补充：共轭先验族那一节的具体推导笔记。</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -992,7 +1080,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/你的用户名/bayesian-notes/edit/main/chapters/02-basic-concepts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/你的用户名/bayesian-notes/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/02-basic-concepts.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>本站由 Quarto 构建</p>
 </div>

@@ -44,29 +44,51 @@
     "href": "chapters/01-intro.html",
     "title": "1  引言",
     "section": "",
-    "text": "1.1 本章讲什么\n书里第 1 章对比了频率学派和贝叶斯学派的基本立场。用我自己的框架重新表述一遍：",
+    "text": "1.1 为什么用贝叶斯",
     "crumbs": [
       "第一部分：基础篇",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
     ]
   },
   {
-    "objectID": "chapters/01-intro.html#本章讲什么",
-    "href": "chapters/01-intro.html#本章讲什么",
+    "objectID": "chapters/01-intro.html#为什么用贝叶斯",
+    "href": "chapters/01-intro.html#为什么用贝叶斯",
     "title": "1  引言",
     "section": "",
-    "text": "频率学派：\\(\\theta\\) 固定未知常数，Q3（先验）不存在，Q5（长期频率覆盖率）是立身之本\n贝叶斯学派：\\(\\theta\\) 本身是随机变量，Q3 显式建模为 \\(p(\\theta\\mid\\phi)\\)",
+    "text": "1.1.1 传统数理统计的先天缺陷\n\n数理统计基本上关注的是假定总体分布的某些参数——特别是均值——的大小\n显著性检验得不到任何有意义的决策",
     "crumbs": [
       "第一部分：基础篇",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
     ]
   },
   {
-    "objectID": "chapters/01-intro.html#一个直观例子",
-    "href": "chapters/01-intro.html#一个直观例子",
+    "objectID": "chapters/01-intro.html#本书所强调的贝叶斯编程计算的意义",
+    "href": "chapters/01-intro.html#本书所强调的贝叶斯编程计算的意义",
     "title": "1  引言",
-    "section": "1.2 一个直观例子",
-    "text": "1.2 一个直观例子\n抛硬币估计正面概率 \\(\\theta\\)：\n频率学派只给你一个点（MLE = 0.7），贝叶斯学派给你一整条后验分布——这条分布的形状本身就编码了”你对 \\(\\theta\\) 有多不确定”。",
+    "section": "1.2 本书所强调的贝叶斯编程计算的意义",
+    "text": "1.2 本书所强调的贝叶斯编程计算的意义\n实际上，贝叶斯统计的理论相对比较简单，而最困难的是在寻求后验分布过程中所遇到的积分困难。",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-intro.html#本书的构成和内容安排",
+    "href": "chapters/01-intro.html#本书的构成和内容安排",
+    "title": "1  引言",
+    "section": "1.3 本书的构成和内容安排",
+    "text": "1.3 本书的构成和内容安排",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-intro.html#习题",
+    "href": "chapters/01-intro.html#习题",
+    "title": "1  引言",
+    "section": "1.4 习题",
+    "text": "1.4 习题\n\n\n\n\n\n\n思考题：如果没有均值/矩，数理统计还剩下什么？\n\n\n\n\n\n回顾数理统计教材的全部内容，如果没有诸如样本均值、样本矩或者它们的函数作为统计量，数理统计教材还剩下什么内容？\n\n\n\n\n\n\n\n\n\n我的回答\n\n\n\n\n\n字面意义上其实剩得不少：\n\n顺序统计量/秩统计量：中位数、分位数、Wilcoxon 符号秩检验、Mann–Whitney \\(U\\) 检验、Kruskal–Wallis \\(H\\) 检验——不靠均值/方差，靠排序\n似然框架：MLE 不总是矩估计，比如 \\(U(0,\\theta)\\) 的 MLE 是样本最大值，不是任何矩的函数\n经验分布函数：Kolmogorov–Smirnov 检验，直接比较经验 CDF 和理论 CDF\n稳健统计：M-估计量、截尾均值、MAD——专门为了绕开均值/方差对异常值敏感而存在\n\n但这些”幸存者”依然共享同一套底层逻辑：先构造统计量，再问它在重复抽样下的分布长什么样，然后拿这个抽样分布做检验或算区间——依然逃不出 Q5（频率学派的长期频率性质） 这个框架。\n这句反问真正的杀伤力不在于”找不到替代统计量”，而在于：只要还留在频率学派的哲学框架里，就永远逃不开”构造统计量 → 推导抽样分布 → 用抽样分布校准结论”这套动作。它是在为贝叶斯方法登场做铺垫——不是换一个统计量，而是换一套哲学：不问”这个统计量在无穷次重复抽样下怎么表现”，而是直接问”给定这份数据，\\(\\theta\\) 的后验分布是什么”。",
     "crumbs": [
       "第一部分：基础篇",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
@@ -77,7 +99,18 @@
     "href": "chapters/02-basic-concepts.html",
     "title": "2  基本概念",
     "section": "",
-    "text": "2.1 Q1–Q5 速查",
+    "text": "2.1 概率的规则及贝叶斯定理",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>基本概念</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-basic-concepts.html#概率的规则及贝叶斯定理",
+    "href": "chapters/02-basic-concepts.html#概率的规则及贝叶斯定理",
+    "title": "2  基本概念",
+    "section": "",
+    "text": "2.1.1 概率的规则\n概率的频率派定义：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。\n以掷骰子为例，“掷出偶数”这个事件的概率可以写成：\n\\[\np(\\text{掷出偶数}) = \\frac{\\text{掷出偶数的次数}}{\\text{总试验次数}}\n\\]\n频率派的概率定义，对某些问题完全不起作用，比如：\n\n刘阿姨的女儿今年考上大学的概率是多少？\n中国足球队下一次进入世界杯决赛的概率是多少？\n下一次重大国际危机发生在亚洲的概率是多少？\n\n这类问题无法通过大量重复试验获得频率，人们只能用自己的相信程度（degree of belief）来描述——这种概率称为主观概率（subjective probability）。\n频率派无法处理主观概率，贝叶斯统计对两种概率都能自然处理。\n贝叶斯统计用概率度量”你对一个不确定事件为真的相信程度”，这个度量基于你已有的知识。\n\n设 \\(H\\) 是一个事件（或假设），\\(K\\) 是试验前你已有的知识，则 \\(p(H \\mid K)\\) 表示：给定 \\(K\\)，你对 \\(H\\) 的相信程度\n试验后得到数据 \\(D\\)，你需要把概率修订为 \\(p(H \\mid D \\cap K)\\)\n这次修订取决于：在 \\(H\\) 为真、以及 \\(H\\) 为假两种情况下，\\(D\\) 出现的可能性分别有多大\n\n\n对纯粹的贝叶斯派来说，所有概率都是条件概率——所以不必每次都特意写出”条件”二字。\n\n例子：\\(p(H \\mid D \\cap K)\\) 怎么用\n\n\\(H\\)：这枚硬币是均匀的\n\\(D\\)：抛 10 次，7 次正面\n\\(K\\)：这枚硬币是朋友随手给我的，没有作弊动机\n\n\\[\np(H \\mid D \\cap K)\n\\]\n含义：结合”抛10次7次正面”这个新数据，以及”这是朋友随手给的硬币”这个背景知识，硬币均匀的概率是多少。\n如果把 \\(K\\) 换成”这枚硬币是魔术师给我的”，同样的数据 \\(D\\)，算出来的 \\(p(H \\mid D \\cap K)\\) 会不一样——这说明 \\(K\\) 不是摆设，它真实参与了运算。",
     "crumbs": [
       "第一部分：基础篇",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>基本概念</span>"
@@ -87,8 +120,8 @@
     "objectID": "chapters/02-basic-concepts.html#q1q5-速查",
     "href": "chapters/02-basic-concepts.html#q1q5-速查",
     "title": "2  基本概念",
-    "section": "",
-    "text": "书中概念\n我的框架对应\n\n\n\n\nQ1\n参数 \\(\\theta\\)\n潜变量\n\n\nQ2\n似然函数 \\(L(\\theta)=p(Y\\mid\\theta)\\)\n观测模型（把 \\(Y\\) 固定看 \\(\\theta\\)）\n\n\nQ3\n先验分布 \\(p(\\theta)\\)、共轭先验族\n先验结构\n\n\nQ4\n后验分布 \\(p(\\theta\\mid Y)\\)\n计算目标\n\n\nQ5\n（书中较少展开）\n独立轴，需要自己补充阅读\n\n\n\n\n待补充：共轭先验族那一节的具体推导笔记。",
+    "section": "2.2 Q1–Q5 速查",
+    "text": "2.2 Q1–Q5 速查\n\n\n\n\n\n\n\n\n\n书中概念\n我的框架对应\n\n\n\n\nQ1\n参数 \\(\\theta\\)\n潜变量\n\n\nQ2\n似然函数 \\(L(\\theta)=p(Y\\mid\\theta)\\)\n观测模型（把 \\(Y\\) 固定看 \\(\\theta\\)）\n\n\nQ3\n先验分布 \\(p(\\theta)\\)、共轭先验族\n先验结构\n\n\nQ4\n后验分布 \\(p(\\theta\\mid Y)\\)\n计算目标\n\n\nQ5\n（书中较少展开）\n独立轴，需要自己补充阅读\n\n\n\n\n待补充：共轭先验族那一节的具体推导笔记。",
     "crumbs": [
       "第一部分：基础篇",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>基本概念</span>"

@@ -5,9 +5,9 @@ project:
 book:
   title: "贝叶斯数据分析笔记"
   subtitle: "跟着 Q1–Q5 框架读《贝叶斯数据分析——基于R与Python的实现》"
-  author: "你的名字"
+  author: "贾泽天"
   date: today
-  repo-url: https://github.com/你的用户名/bayesian-notes
+  repo-url: https://zetian-jia.github.io/bayesian-notes-quarto-starter/
   repo-actions: [edit, issue]
   page-footer:
     left: "笔记基于吴喜之《贝叶斯数据分析》整理"

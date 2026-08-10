@@ -32,6 +32,14 @@ bayesian-notes/
 push 到 `main` 分支会自动触发 GitHub Actions，渲染后发布到 `gh-pages` 分支。
 第一次使用前，去仓库 **Settings → Pages**，把 Source 设为 `gh-pages` 分支。
 
+不要使用默认的方法部署
+```bash
+touch docs/.nojekyll
+git add docs/.nojekyll
+git commit -m "build: add .nojekyll to fix pages rendering"
+git push
+```
+
 ## 新增一章
 
 1. 在 `chapters/` 下新建 `.qmd` 文件
