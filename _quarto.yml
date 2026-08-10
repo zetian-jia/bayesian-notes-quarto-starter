@@ -1,0 +1,50 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "贝叶斯数据分析笔记"
+  subtitle: "跟着 Q1–Q5 框架读《贝叶斯数据分析——基于R与Python的实现》"
+  author: "你的名字"
+  date: today
+  repo-url: https://github.com/你的用户名/bayesian-notes
+  repo-actions: [edit, issue]
+  page-footer:
+    left: "笔记基于吴喜之《贝叶斯数据分析》整理"
+    right: "本站由 Quarto 构建"
+  chapters:
+    - index.qmd
+    - part: "第一部分：基础篇"
+      chapters:
+        - chapters/01-intro.qmd
+        - chapters/02-basic-concepts.qmd
+    - part: "第二部分：初等贝叶斯模型"
+      chapters:
+        - chapters/03-bernoulli.qmd
+        - chapters/04-poisson.qmd
+        - chapters/05-normal.qmd
+    - part: "第三部分：算法与概率编程"
+      chapters:
+        - chapters/06-mcmc-algorithms.qmd
+        - chapters/07-stan-pymc.qmd
+  page-navigation: true
+  search: true
+  sidebar:
+    style: "docked"
+    background: light
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    highlight-style: github
+
+execute:
+  freeze: auto  # 没改动的章节不重新跑代码，加速渲染

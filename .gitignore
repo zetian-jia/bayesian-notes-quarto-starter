@@ -1,0 +1,9 @@
+/.quarto/
+/_book/
+/_freeze/
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+run-render.sh

@@ -1,0 +1,80 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# 比例的推断：Bernoulli 试验\n",
+        "\n",
+        "## Q1--Q4 拆解\n",
+        "\n",
+        "- **Q1**：$\\theta$ = 某个事件发生的真实概率\n",
+        "- **Q2**：$k \\sim \\text{Binomial}(n, \\theta)$\n",
+        "- **Q3**：共轭先验 $\\theta \\sim \\text{Beta}(a, b)$\n",
+        "- **Q4**：闭式解 —— 后验仍是 Beta 分布\n",
+        "\n",
+        "$$\n",
+        "\\theta \\mid k \\;\\sim\\; \\text{Beta}(a+k,\\; b+n-k)\n",
+        "$$\n",
+        "\n",
+        "这是整本书里最干净的一个\"闭式解\"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。\n",
+        "\n",
+        "## 代码：先验敏感性\n"
+      ],
+      "id": "e81f9851"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: fig-prior-sensitivity\n",
+        "#| fig-cap: 不同先验设定下,同一份数据得到的后验分布\n",
+        "\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "from scipy.stats import beta\n",
+        "\n",
+        "n, k = 20, 15\n",
+        "theta_grid = np.linspace(0, 1, 300)\n",
+        "\n",
+        "priors = {\n",
+        "    \"无信息先验 Beta(1,1)\": (1, 1),\n",
+        "    \"弱信息先验 Beta(2,2)\": (2, 2),\n",
+        "    \"强先验(偏向低θ) Beta(2,8)\": (2, 8),\n",
+        "}\n",
+        "\n",
+        "fig, ax = plt.subplots(figsize=(6, 4))\n",
+        "colors = [\"#1D3557\", \"#6C757D\", \"#B5432B\"]\n",
+        "for (label, (a, b)), color in zip(priors.items(), colors):\n",
+        "    posterior = beta.pdf(theta_grid, a + k, b + n - k)\n",
+        "    ax.plot(theta_grid, posterior, color=color, label=label)\n",
+        "\n",
+        "ax.set_xlabel(r\"$\\theta$\")\n",
+        "ax.set_ylabel(\"后验密度\")\n",
+        "ax.legend(fontsize=8)\n",
+        "plt.tight_layout()\n",
+        "plt.show()"
+      ],
+      "id": "fig-prior-sensitivity",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**观察**：当数据量 $n=20$ 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：**数据量足够大时，先验的影响会被似然\"淹没\"**。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。"
+      ],
+      "id": "ae572e9e"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

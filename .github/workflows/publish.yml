@@ -1,0 +1,41 @@
+name: Render and Publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    # 只有 commit message 里包含 "build" 才真正执行构建；
+    # workflow_dispatch(手动触发)不受此限制
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, 'build')
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.6.42
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install jupyter numpy scipy matplotlib pandas
+
+      - name: Render and publish to gh-pages
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
