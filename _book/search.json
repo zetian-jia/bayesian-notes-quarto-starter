@@ -1,0 +1,174 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "贝叶斯数据分析笔记",
+    "section": "",
+    "text": "前言\n这是我阅读吴喜之《贝叶斯数据分析——基于R与Python的实现》（中国人民大学出版社，2020）时整理的笔记。",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#阅读方法",
+    "href": "index.html#阅读方法",
+    "title": "贝叶斯数据分析笔记",
+    "section": "阅读方法",
+    "text": "阅读方法\n每一章都按照统一的 Q1–Q5 框架来拆解书里的模型，而不是照抄书的顺序讲一遍：\n\n\n\n问题\n含义\n\n\n\n\nQ1\n潜变量 \\(\\theta\\) 是什么\n\n\nQ2\n观测模型 \\(p(Y\\mid\\theta)\\)（似然）是什么\n\n\nQ3\n先验结构 \\(p(\\theta\\mid\\phi)\\) 是什么\n\n\nQ4\n后验怎么算（闭式 / MCMC / 变分…）\n\n\nQ5\n这个推断结论能不能信（与 Q1–Q4 正交的独立轴）",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#代码",
+    "href": "index.html#代码",
+    "title": "贝叶斯数据分析笔记",
+    "section": "代码",
+    "text": "代码\n书中原书用 R + Stan、Python + PyMC3。本笔记站点里的可运行代码块以 Python 为主，方便直接在浏览器里对照阅读；部分章节会补充 R 版本作为对比。",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "index.html#源码",
+    "href": "index.html#源码",
+    "title": "贝叶斯数据分析笔记",
+    "section": "源码",
+    "text": "源码\n本站源码托管在 GitHub，.qmd 源文件可以直接在仓库里查看。",
+    "crumbs": [
+      "前言"
+    ]
+  },
+  {
+    "objectID": "chapters/01-intro.html",
+    "href": "chapters/01-intro.html",
+    "title": "1  引言",
+    "section": "",
+    "text": "1.1 本章讲什么\n书里第 1 章对比了频率学派和贝叶斯学派的基本立场。用我自己的框架重新表述一遍：",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-intro.html#本章讲什么",
+    "href": "chapters/01-intro.html#本章讲什么",
+    "title": "1  引言",
+    "section": "",
+    "text": "频率学派：\\(\\theta\\) 固定未知常数，Q3（先验）不存在，Q5（长期频率覆盖率）是立身之本\n贝叶斯学派：\\(\\theta\\) 本身是随机变量，Q3 显式建模为 \\(p(\\theta\\mid\\phi)\\)",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-intro.html#一个直观例子",
+    "href": "chapters/01-intro.html#一个直观例子",
+    "title": "1  引言",
+    "section": "1.2 一个直观例子",
+    "text": "1.2 一个直观例子\n抛硬币估计正面概率 \\(\\theta\\)：\n频率学派只给你一个点（MLE = 0.7），贝叶斯学派给你一整条后验分布——这条分布的形状本身就编码了”你对 \\(\\theta\\) 有多不确定”。",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>引言</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-basic-concepts.html",
+    "href": "chapters/02-basic-concepts.html",
+    "title": "2  基本概念",
+    "section": "",
+    "text": "2.1 Q1–Q5 速查",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>基本概念</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-basic-concepts.html#q1q5-速查",
+    "href": "chapters/02-basic-concepts.html#q1q5-速查",
+    "title": "2  基本概念",
+    "section": "",
+    "text": "书中概念\n我的框架对应\n\n\n\n\nQ1\n参数 \\(\\theta\\)\n潜变量\n\n\nQ2\n似然函数 \\(L(\\theta)=p(Y\\mid\\theta)\\)\n观测模型（把 \\(Y\\) 固定看 \\(\\theta\\)）\n\n\nQ3\n先验分布 \\(p(\\theta)\\)、共轭先验族\n先验结构\n\n\nQ4\n后验分布 \\(p(\\theta\\mid Y)\\)\n计算目标\n\n\nQ5\n（书中较少展开）\n独立轴，需要自己补充阅读\n\n\n\n\n待补充：共轭先验族那一节的具体推导笔记。",
+    "crumbs": [
+      "第一部分：基础篇",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>基本概念</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-bernoulli.html",
+    "href": "chapters/03-bernoulli.html",
+    "title": "3  比例的推断：Bernoulli 试验",
+    "section": "",
+    "text": "3.1 Q1–Q4 拆解\n\\[\n\\theta \\mid k \\;\\sim\\; \\text{Beta}(a+k,\\; b+n-k)\n\\]\n这是整本书里最干净的一个”闭式解”案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。",
+    "crumbs": [
+      "第二部分：初等贝叶斯模型",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>比例的推断：Bernoulli 试验</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-bernoulli.html#q1q4-拆解",
+    "href": "chapters/03-bernoulli.html#q1q4-拆解",
+    "title": "3  比例的推断：Bernoulli 试验",
+    "section": "",
+    "text": "Q1：\\(\\theta\\) = 某个事件发生的真实概率\nQ2：\\(k \\sim \\text{Binomial}(n, \\theta)\\)\nQ3：共轭先验 \\(\\theta \\sim \\text{Beta}(a, b)\\)\nQ4：闭式解 —— 后验仍是 Beta 分布",
+    "crumbs": [
+      "第二部分：初等贝叶斯模型",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>比例的推断：Bernoulli 试验</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-bernoulli.html#代码先验敏感性",
+    "href": "chapters/03-bernoulli.html#代码先验敏感性",
+    "title": "3  比例的推断：Bernoulli 试验",
+    "section": "3.2 代码：先验敏感性",
+    "text": "3.2 代码：先验敏感性\n观察：当数据量 \\(n=20\\) 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：数据量足够大时，先验的影响会被似然”淹没”。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。",
+    "crumbs": [
+      "第二部分：初等贝叶斯模型",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>比例的推断：Bernoulli 试验</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-poisson.html",
+    "href": "chapters/04-poisson.html",
+    "title": "4  发生率的推断：Poisson 模型",
+    "section": "",
+    "text": "待整理：Q1 = 发生率 λ，Q2 = k ~ Poisson(λ)，Q3 = Gamma 共轭先验，Q4 = 闭式解（Gamma 后验）。",
+    "crumbs": [
+      "第二部分：初等贝叶斯模型",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>发生率的推断：Poisson 模型</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-normal.html",
+    "href": "chapters/05-normal.html",
+    "title": "5  正态总体的情况",
+    "section": "",
+    "text": "待整理：均值/方差已知与未知两种情形下的共轭先验组合（正态-逆Gamma）。",
+    "crumbs": [
+      "第二部分：初等贝叶斯模型",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>正态总体的情况</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-mcmc-algorithms.html",
+    "href": "chapters/06-mcmc-algorithms.html",
+    "title": "6  贝叶斯推断中的一些算法",
+    "section": "",
+    "text": "待整理：Metropolis / Metropolis-Hastings / Gibbs / Hamiltonian Monte Carlo —— 都是 Q4 的不同实现，不改变 Q1-Q3。",
+    "crumbs": [
+      "第三部分：算法与概率编程",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>贝叶斯推断中的一些算法</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-stan-pymc.html",
+    "href": "chapters/07-stan-pymc.html",
+    "title": "7  概率编程：R/Stan 与 Python/PyMC",
+    "section": "",
+    "text": "待整理：把前面几章的解析解模型，改用 Stan / PyMC 重新拟合一遍，验证结果一致。",
+    "crumbs": [
+      "第三部分：算法与概率编程",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>概率编程：R/Stan 与 Python/PyMC</span>"
+    ]
+  }
+]

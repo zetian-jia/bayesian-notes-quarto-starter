@@ -1,0 +1,27 @@
+/* 瑞士风格：克制配色，直角优先 */
+:root {
+  --swiss-blue: #1D3557;
+  --swiss-gray: #6C757D;
+  --swiss-red: #B5432B;
+}
+
+.sidebar-title {
+  color: var(--swiss-blue);
+  font-weight: 700;
+}
+
+h1, h2, h3 {
+  color: var(--swiss-blue);
+}
+
+a {
+  color: var(--swiss-blue);
+}
+
+.callout {
+  border-radius: 0 !important; /* 去圆角 */
+}
+
+pre.sourceCode {
+  border-left: 3px solid var(--swiss-blue);
+}
