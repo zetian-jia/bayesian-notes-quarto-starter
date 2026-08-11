@@ -1,0 +1,60 @@
+# 比例的推断：Bernoulli 试验
+
+考虑只有"成功"和"失败"的独立试验，如果每次成功概率为 $\theta$，则称这些试验为有参数 $\theta$ 的 Bernoulli 试验，而试验结果是"成功"还是"失败"的分布为 $\text{Bernoulli}(\theta)$ 分布。如果在 $n$ 次 Bernoulli 试验中，有 $s$ 次成功（那么一定有 $f=n-s$ 次失败），则成功的次数称为服从有参数 $(n,\theta)$ 的二项分布。Bernoulli 分布是二项分布在 $n=1$ 时的特例。人们一般希望用试验中成功个数或者比例来对参数 $\theta$ 做推断。形式上，记观测值 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为参数 $\theta$ 的 Bernoulli 试验的结果，对应于"成功"或"失败"，每个 $x_i$ 取值为 1 或 0。
+
+## 4.1 采用简单共轭先验分布
+
+取 $\theta$ 的先验分布 $p(\theta)$ 为共轭先验分布 $\text{Beta}(\alpha,\beta)$，则 $s=x_1+x_2+\cdots+x_n$ 为一个充分统计量。后验分布
+
+$$
+p(\theta\mid \boldsymbol{x}) \propto \ell(\theta\mid\boldsymbol{x}) = \theta^s(1-\theta)^{n-s}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}
+
+\\
+\propto \theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}, \quad 0\leq\theta\leq 1
+$$
+
+::: {.callout-tip title="逐项拆解:Beta-Binomial 后验推导"}
+
+- **$p(\theta\mid\boldsymbol{x})$**：后验分布——看到数据 $\boldsymbol{x}$ 之后，$\theta$ 的分布
+- **$\propto$**：正比于——右边扔掉了一个不含 $\theta$ 的常数（这里是分母 $p(\boldsymbol{x})$），只保留跟 $\theta$ 有关的部分
+- **$\ell(\theta\mid\boldsymbol{x})$**：先验 × 似然——这是"后验正比于先验乘似然"这条核心公式的具体展开
+- **$\theta^s(1-\theta)^{n-s}$**：**似然部分**——$n$ 次 Bernoulli 试验里 $s$ 次成功、$n-s$ 次失败的概率（二项分布概率质量函数去掉了组合数 $\binom{n}{s}$，因为它不含 $\theta$，本来就该被 $\propto$ 吸收掉）
+- **$\dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}$**：**先验部分**——$\text{Beta}(\alpha,\beta)$ 的概率密度函数，前面那一大截 Gamma 函数分式是归一化常数，同样不含 $\theta$
+- **第二行 $\theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}$**：把第一行两个"$\theta$ 的幂"和两个"$(1-\theta)$ 的幂"分别合并——$\theta^s \times \theta^{\alpha-1} = \theta^{s+\alpha-1}$，$(1-\theta)^{n-s}\times(1-\theta)^{\beta-1}=(1-\theta)^{n-s+\beta-1}$；同时把所有不含 $\theta$ 的常数（包括 Gamma 函数那一串）全部并入 $\propto$ 省略掉
+- **为什么能一眼看出这是 Beta 分布**：$\theta^{a-1}(1-\theta)^{b-1}$ 正是 Beta 分布密度函数的核心形式（对比你之前学的 $f(x\mid\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$）——所以只要把指数对上号，就能直接读出后验是 $\text{Beta}(s+\alpha,\ n-s+\beta)$，不需要真的去算那个复杂的归一化常数
+
+:::
+
+
+而后验分布为 $\text{Beta}(s+\alpha,\ n-s+\beta)$。如果用二次损失函数来估计 $\theta$，则
+
+$$
+\hat\theta(\boldsymbol{x}) = E(\theta\mid\boldsymbol{x}) = \frac{s+\alpha}{n+\alpha+\beta}
+$$
+
+常用的"无信息先验分布"为 $\alpha=\beta=1$，则 $\text{Beta}(1,1)$ 为在 $[0,1]$ 区间上的均匀分布 $U(0,1)$，这时，
+
+$$
+\hat\theta(\boldsymbol{x}) = \frac{s+1}{n+2}
+$$
+
+上面的模型形式上可以用下面的公式和图描述。
+
+## Q1--Q4 拆解
+
+- **Q1**：$\theta$ = 某个事件发生的真实概率
+- **Q2**：$k \sim \text{Binomial}(n, \theta)$
+- **Q3**：共轭先验 $\theta \sim \text{Beta}(a, b)$
+- **Q4**：闭式解 —— 后验仍是 Beta 分布
+
+$$
+\theta \mid k \;\sim\; \text{Beta}(a+k,\; b+n-k)
+$$
+
+这是整本书里最干净的一个"闭式解"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。
+
+## 代码：先验敏感性
+
+
+
+**观察**：当数据量 $n=20$ 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：**数据量足够大时，先验的影响会被似然"淹没"**。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。

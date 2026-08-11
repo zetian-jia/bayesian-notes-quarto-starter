@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/03-bernoulli.html">第二部分：初等贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/03-bernoulli.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-bernoulli.html">第二部分：初等贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/04-bernoulli.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -216,7 +216,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/03-bernoulli.html" class="sidebar-item-text sidebar-link active">
+  <a href="../chapters/04-bernoulli.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></span></a>
   </div>
 </li>
@@ -267,15 +267,16 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#q1q4-拆解" id="toc-q1q4-拆解" class="nav-link active" data-scroll-target="#q1q4-拆解"><span class="header-section-number">3.1</span> Q1–Q4 拆解</a></li>
-  <li><a href="#代码先验敏感性" id="toc-代码先验敏感性" class="nav-link" data-scroll-target="#代码先验敏感性"><span class="header-section-number">3.2</span> 代码：先验敏感性</a></li>
+  <li><a href="#采用简单共轭先验分布" id="toc-采用简单共轭先验分布" class="nav-link active" data-scroll-target="#采用简单共轭先验分布"><span class="header-section-number">3.1</span> 4.1 采用简单共轭先验分布</a></li>
+  <li><a href="#q1q4-拆解" id="toc-q1q4-拆解" class="nav-link" data-scroll-target="#q1q4-拆解"><span class="header-section-number">3.2</span> Q1–Q4 拆解</a></li>
+  <li><a href="#代码先验敏感性" id="toc-代码先验敏感性" class="nav-link" data-scroll-target="#代码先验敏感性"><span class="header-section-number">3.3</span> 代码：先验敏感性</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/03-bernoulli.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/04-bernoulli.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/03-bernoulli.html">第二部分：初等贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/03-bernoulli.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-bernoulli.html">第二部分：初等贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/04-bernoulli.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></a></li></ol></nav>
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
@@ -294,8 +295,45 @@ window.Quarto = {
 </header>
 
 
-<section id="q1q4-拆解" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="q1q4-拆解"><span class="header-section-number">3.1</span> Q1–Q4 拆解</h2>
+<p>考虑只有”成功”和”失败”的独立试验，如果每次成功概率为 <span class="math inline">\(\theta\)</span>，则称这些试验为有参数 <span class="math inline">\(\theta\)</span> 的 Bernoulli 试验，而试验结果是”成功”还是”失败”的分布为 <span class="math inline">\(\text{Bernoulli}(\theta)\)</span> 分布。如果在 <span class="math inline">\(n\)</span> 次 Bernoulli 试验中，有 <span class="math inline">\(s\)</span> 次成功（那么一定有 <span class="math inline">\(f=n-s\)</span> 次失败），则成功的次数称为服从有参数 <span class="math inline">\((n,\theta)\)</span> 的二项分布。Bernoulli 分布是二项分布在 <span class="math inline">\(n=1\)</span> 时的特例。人们一般希望用试验中成功个数或者比例来对参数 <span class="math inline">\(\theta\)</span> 做推断。形式上，记观测值 <span class="math inline">\(\boldsymbol{x}=(x_1,x_2,\ldots,x_n)\)</span> 为参数 <span class="math inline">\(\theta\)</span> 的 Bernoulli 试验的结果，对应于”成功”或”失败”，每个 <span class="math inline">\(x_i\)</span> 取值为 1 或 0。</p>
+<section id="采用简单共轭先验分布" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="采用简单共轭先验分布"><span class="header-section-number">3.1</span> 4.1 采用简单共轭先验分布</h2>
+<p>取 <span class="math inline">\(\theta\)</span> 的先验分布 <span class="math inline">\(p(\theta)\)</span> 为共轭先验分布 <span class="math inline">\(\text{Beta}(\alpha,\beta)\)</span>，则 <span class="math inline">\(s=x_1+x_2+\cdots+x_n\)</span> 为一个充分统计量。后验分布</p>
+<p>$$ p() () = <sup>s(1-)</sup>{n-s}<sup>{}(1-)</sup>{}</p>
+<p>\ <sup>{s+}(1-)</sup>{n-s+}, $$</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="逐项拆解:Beta-Binomial 后验推导">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+逐项拆解:Beta-Binomial 后验推导
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong><span class="math inline">\(p(\theta\mid\boldsymbol{x})\)</span></strong>：后验分布——看到数据 <span class="math inline">\(\boldsymbol{x}\)</span> 之后，<span class="math inline">\(\theta\)</span> 的分布</li>
+<li><strong><span class="math inline">\(\propto\)</span></strong>：正比于——右边扔掉了一个不含 <span class="math inline">\(\theta\)</span> 的常数（这里是分母 <span class="math inline">\(p(\boldsymbol{x})\)</span>），只保留跟 <span class="math inline">\(\theta\)</span> 有关的部分</li>
+<li><strong><span class="math inline">\(\ell(\theta\mid\boldsymbol{x})\)</span></strong>：先验 × 似然——这是”后验正比于先验乘似然”这条核心公式的具体展开</li>
+<li><strong><span class="math inline">\(\theta^s(1-\theta)^{n-s}\)</span></strong>：<strong>似然部分</strong>——<span class="math inline">\(n\)</span> 次 Bernoulli 试验里 <span class="math inline">\(s\)</span> 次成功、<span class="math inline">\(n-s\)</span> 次失败的概率（二项分布概率质量函数去掉了组合数 <span class="math inline">\(\binom{n}{s}\)</span>，因为它不含 <span class="math inline">\(\theta\)</span>，本来就该被 <span class="math inline">\(\propto\)</span> 吸收掉）</li>
+<li><strong><span class="math inline">\(\dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}\)</span></strong>：<strong>先验部分</strong>——<span class="math inline">\(\text{Beta}(\alpha,\beta)\)</span> 的概率密度函数，前面那一大截 Gamma 函数分式是归一化常数，同样不含 <span class="math inline">\(\theta\)</span></li>
+<li><strong>第二行 <span class="math inline">\(\theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}\)</span></strong>：把第一行两个”<span class="math inline">\(\theta\)</span> 的幂”和两个”<span class="math inline">\((1-\theta)\)</span> 的幂”分别合并——<span class="math inline">\(\theta^s \times \theta^{\alpha-1} = \theta^{s+\alpha-1}\)</span>，<span class="math inline">\((1-\theta)^{n-s}\times(1-\theta)^{\beta-1}=(1-\theta)^{n-s+\beta-1}\)</span>；同时把所有不含 <span class="math inline">\(\theta\)</span> 的常数（包括 Gamma 函数那一串）全部并入 <span class="math inline">\(\propto\)</span> 省略掉</li>
+<li><strong>为什么能一眼看出这是 Beta 分布</strong>：<span class="math inline">\(\theta^{a-1}(1-\theta)^{b-1}\)</span> 正是 Beta 分布密度函数的核心形式（对比你之前学的 <span class="math inline">\(f(x\mid\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}\)</span>）——所以只要把指数对上号，就能直接读出后验是 <span class="math inline">\(\text{Beta}(s+\alpha,\ n-s+\beta)\)</span>，不需要真的去算那个复杂的归一化常数</li>
+</ul>
+</div>
+</div>
+<p>而后验分布为 <span class="math inline">\(\text{Beta}(s+\alpha,\ n-s+\beta)\)</span>。如果用二次损失函数来估计 <span class="math inline">\(\theta\)</span>，则</p>
+<p><span class="math display">\[
+\hat\theta(\boldsymbol{x}) = E(\theta\mid\boldsymbol{x}) = \frac{s+\alpha}{n+\alpha+\beta}
+\]</span></p>
+<p>常用的”无信息先验分布”为 <span class="math inline">\(\alpha=\beta=1\)</span>，则 <span class="math inline">\(\text{Beta}(1,1)\)</span> 为在 <span class="math inline">\([0,1]\)</span> 区间上的均匀分布 <span class="math inline">\(U(0,1)\)</span>，这时，</p>
+<p><span class="math display">\[
+\hat\theta(\boldsymbol{x}) = \frac{s+1}{n+2}
+\]</span></p>
+<p>上面的模型形式上可以用下面的公式和图描述。</p>
+</section>
+<section id="q1q4-拆解" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="q1q4-拆解"><span class="header-section-number">3.2</span> Q1–Q4 拆解</h2>
 <ul>
 <li><strong>Q1</strong>：<span class="math inline">\(\theta\)</span> = 某个事件发生的真实概率</li>
 <li><strong>Q2</strong>：<span class="math inline">\(k \sim \text{Binomial}(n, \theta)\)</span></li>
@@ -307,8 +345,8 @@ window.Quarto = {
 \]</span></p>
 <p>这是整本书里最干净的一个”闭式解”案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。</p>
 </section>
-<section id="代码先验敏感性" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="代码先验敏感性"><span class="header-section-number">3.2</span> 代码：先验敏感性</h2>
+<section id="代码先验敏感性" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="代码先验敏感性"><span class="header-section-number">3.3</span> 代码：先验敏感性</h2>
 <p><strong>观察</strong>：当数据量 <span class="math inline">\(n=20\)</span> 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：<strong>数据量足够大时，先验的影响会被似然”淹没”</strong>。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。</p>
 
 
@@ -943,24 +981,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 比例的推断：Bernoulli 试验</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q4 拆解</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>考虑只有"成功"和"失败"的独立试验，如果每次成功概率为 $\theta$，则称这些试验为有参数 $\theta$ 的 Bernoulli 试验，而试验结果是"成功"还是"失败"的分布为 $\text{Bernoulli}(\theta)$ 分布。如果在 $n$ 次 Bernoulli 试验中，有 $s$ 次成功（那么一定有 $f=n-s$ 次失败），则成功的次数称为服从有参数 $(n,\theta)$ 的二项分布。Bernoulli 分布是二项分布在 $n=1$ 时的特例。人们一般希望用试验中成功个数或者比例来对参数 $\theta$ 做推断。形式上，记观测值 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为参数 $\theta$ 的 Bernoulli 试验的结果，对应于"成功"或"失败"，每个 $x_i$ 取值为 1 或 0。</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q1**：$\theta$ = 某个事件发生的真实概率</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q2**：$k \sim \text{Binomial}(n, \theta)$</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q3**：共轭先验 $\theta \sim \text{Beta}(a, b)$</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q4**：闭式解 —— 后验仍是 Beta 分布</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>\theta \mid k \;\sim\; \text{Beta}(a+k,\; b+n-k)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>这是整本书里最干净的一个"闭式解"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 采用简单共轭先验分布</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>取 $\theta$ 的先验分布 $p(\theta)$ 为共轭先验分布 $\text{Beta}(\alpha,\beta)$，则 $s=x_1+x_2+\cdots+x_n$ 为一个充分统计量。后验分布</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>p(\theta\mid \boldsymbol{x}) \propto \ell(\theta\mid\boldsymbol{x}) = \theta^s(1-\theta)^{n-s}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="sc">\\</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>\propto \theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}, \quad 0\leq\theta\leq 1</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## 代码：先验敏感性</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="逐项拆解:Beta-Binomial 后验推导"}</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>**观察**：当数据量 $n=20$ 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：**数据量足够大时，先验的影响会被似然"淹没"**。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$p(\theta\mid\boldsymbol{x})$**：后验分布——看到数据 $\boldsymbol{x}$ 之后，$\theta$ 的分布</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\propto$**：正比于——右边扔掉了一个不含 $\theta$ 的常数（这里是分母 $p(\boldsymbol{x})$），只保留跟 $\theta$ 有关的部分</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\ell(\theta\mid\boldsymbol{x})$**：先验 × 似然——这是"后验正比于先验乘似然"这条核心公式的具体展开</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\theta^s(1-\theta)^{n-s}$**：**似然部分**——$n$ 次 Bernoulli 试验里 $s$ 次成功、$n-s$ 次失败的概率（二项分布概率质量函数去掉了组合数 $\binom{n}{s}$，因为它不含 $\theta$，本来就该被 $\propto$ 吸收掉）</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}$**：**先验部分**——$\text{Beta}(\alpha,\beta)$ 的概率密度函数，前面那一大截 Gamma 函数分式是归一化常数，同样不含 $\theta$</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**第二行 $\theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}$**：把第一行两个"$\theta$ 的幂"和两个"$(1-\theta)$ 的幂"分别合并——$\theta^s \times \theta^{\alpha-1} = \theta^{s+\alpha-1}$，$(1-\theta)^{n-s}\times(1-\theta)^{\beta-1}=(1-\theta)^{n-s+\beta-1}$；同时把所有不含 $\theta$ 的常数（包括 Gamma 函数那一串）全部并入 $\propto$ 省略掉</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**为什么能一眼看出这是 Beta 分布**：$\theta^{a-1}(1-\theta)^{b-1}$ 正是 Beta 分布密度函数的核心形式（对比你之前学的 $f(x\mid\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$）——所以只要把指数对上号，就能直接读出后验是 $\text{Beta}(s+\alpha,\ n-s+\beta)$，不需要真的去算那个复杂的归一化常数</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>而后验分布为 $\text{Beta}(s+\alpha,\ n-s+\beta)$。如果用二次损失函数来估计 $\theta$，则</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>\hat\theta(\boldsymbol{x}) = E(\theta\mid\boldsymbol{x}) = \frac{s+\alpha}{n+\alpha+\beta}</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>常用的"无信息先验分布"为 $\alpha=\beta=1$，则 $\text{Beta}(1,1)$ 为在 $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$ 区间上的均匀分布 $U(0,1)$，这时，</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>\hat\theta(\boldsymbol{x}) = \frac{s+1}{n+2}</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>上面的模型形式上可以用下面的公式和图描述。</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q4 拆解</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q1**：$\theta$ = 某个事件发生的真实概率</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q2**：$k \sim \text{Binomial}(n, \theta)$</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q3**：共轭先验 $\theta \sim \text{Beta}(a, b)$</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q4**：闭式解 —— 后验仍是 Beta 分布</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>\theta \mid k \;\sim\; \text{Beta}(a+k,\; b+n-k)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>这是整本书里最干净的一个"闭式解"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## 代码：先验敏感性</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>**观察**：当数据量 $n=20$ 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：**数据量足够大时，先验的影响会被似然"淹没"**。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -970,7 +1048,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/03-bernoulli.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/04-bernoulli.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>本站由 Quarto 构建</p>
 </div>

@@ -474,6 +474,646 @@ p4 <- make_negbinom_plot(10, 0.3, "r=10, p=0.3") +
 
 > 但要注意 R 官方文档对 prob 参数的定义，和你截图这本书对 p 的定义，成功/失败的角色可能是反的
 
+#### (4) Poisson 分布（Poisson distribution）
+
+假定事件以已知的恒定速率发生并且独立于自上次事件以来的时间，Poisson 分布表示给定数量的事件发生在固定的时间间隔或空间中的概率，其均值和方差相等（记为 $\Lambda$），记为 $P(\Lambda)$。其概率质量函数为
+
+$$
+p(k\mid\Lambda) = e^{-\Lambda}\frac{\Lambda^k}{k!}, \quad k=0,1,2,\ldots
+$$
+
+令 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为观测值，则有：
+
+- **参数 $\Lambda$ 的先验分布**：$\text{Gamma}(\alpha,\beta)$ 或 $\text{Gamma}(\kappa,\theta)$
+- **后验分布的超参数**：
+
+  对于先验分布 $\text{Gamma}(\alpha,\beta)$：
+  $$
+  \left(\alpha+\sum_{i=1}^n x_i,\ \ \beta+n\right)
+  $$
+
+  对于先验分布 $\text{Gamma}(\kappa,\theta)$：
+  $$
+  \left(\kappa+\sum_{i=1}^n x_i,\ \ \frac{\theta}{n\theta+1}\right)
+  $$
+
+
+```{r}
+#| label: fig-poisson-shapes
+#| fig-cap: "Poisson 分布的形状随 Λ 变化：Λ 越大,分布越向右移、越接近对称"
+#| fig-alt: "四宫格图,展示不同Lambda值下Poisson分布从右偏到近似对称的形状变化"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_pois_plot <- function(lambda, title, kmax) {
+  df <- data.frame(x = 0:kmax, prob = dpois(0:kmax, lambda = lambda))
+  ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = "#1D3557", width = 0.7) +
+    labs(title = title, x = "k", y = "P(X=k)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_pois_plot(1, "Λ=1 (强右偏)", kmax = 10)
+p2 <- make_pois_plot(3, "Λ=3", kmax = 15)
+p3 <- make_pois_plot(10, "Λ=10 (趋于对称)", kmax = 25)
+p4 <- make_pois_plot(30, "Λ=30 (接近正态)", kmax = 60) +
+  geom_col(fill = "#B5432B", width = 0.7)
+
+(p1 | p2) / (p3 | p4)
+```
+
+
+#### (5) 分类分布（categorical distribution）
+
+也被称为**广义 Bernoulli 分布**（generalized Bernoulli distribution）。描述了一个随机变量的可能结果，该随机变量可以采用若干（记为 $k$）可能类别中的一个，并且每个类别有指定的概率，记为
+
+$$
+\boldsymbol{p} = (p_1,p_2,\ldots,p_k), \quad \sum_{i=1}^k p_i = 1
+$$
+
+其概率质量函数为
+
+$$
+f(x=i\mid \boldsymbol{p}) = p_i \quad \text{或} \quad f(x\mid\boldsymbol{p}) = \prod_{i=1}^k p_i^{[x=i]}
+$$
+
+这里
+
+$$
+[x=i] =
+\begin{cases}
+1, & x=i; \\
+0, & x\neq i.
+\end{cases}
+$$
+
+令 $\boldsymbol{c}=(c_1,c_2,\ldots,c_k)$，这里 $c_i$ 为属于第 $i$ 类观测值的个数，则：
+
+- **参数 $\boldsymbol{p}$ 的先验分布**：$\text{Dirichlet}(\boldsymbol{\alpha})$，$\boldsymbol{\alpha}=(\alpha_1,\alpha_2,\ldots,\alpha_k)$
+- **后验分布的超参数**：$\boldsymbol{\alpha}+\boldsymbol{c}$，或 $\{\alpha_i+c_i\}_{i=1}^k$
+
+```{r}
+#| label: fig-dirichlet-samples
+#| fig-cap: "Dirichlet(α) 先验的抽样示例：α 的大小和相对比例,决定了类别概率p的分布形态"
+#| fig-alt: "四宫格图,展示不同alpha参数下从Dirichlet分布抽样得到的类别概率条形图"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+# base R 没有内置 rdirichlet，用 rgamma 手写（标准做法，不依赖额外包）
+rdirichlet_manual <- function(n, alpha) {
+  k <- length(alpha)
+  samples <- matrix(rgamma(n * k, shape = alpha, rate = 1), ncol = k, byrow = TRUE)
+  samples / rowSums(samples)
+}
+
+make_dirichlet_plot <- function(alpha, title, seed = 1) {
+  set.seed(seed)
+  p <- rdirichlet_manual(1, alpha)
+  df <- data.frame(category = factor(seq_along(alpha)), prob = as.vector(p))
+  ggplot(df, aes(x = category, y = prob)) +
+    geom_col(fill = "#1D3557", width = 0.6) +
+    ylim(0, 1) +
+    labs(title = title, x = "类别 i", y = expression(p[i])) +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_dirichlet_plot(c(1,1,1), "α=(1,1,1) 无信息先验")
+p2 <- make_dirichlet_plot(c(10,10,10), "α=(10,10,10) 强先验,趋于均匀")
+p3 <- make_dirichlet_plot(c(5,2,1), "α=(5,2,1) 不对称先验")
+p4 <- make_dirichlet_plot(c(0.3,0.3,0.3), "α=(0.3,0.3,0.3) 稀疏先验") +
+  geom_col(fill = "#B5432B", width = 0.6)
+
+(p1 | p2) / (p3 | p4)
+```
+
+
+#### (6) 多项分布（multinomial distribution）
+
+它是二项分布所基于的 Bernoulli 试验从两个结果到多个（记为 $k$ 个）结果的推广，每个结果的概率固定，记为
+
+$$
+\boldsymbol{p} = (p_1,p_2,\ldots,p_k), \quad \sum_{i=1}^k p_i = 1
+$$
+
+多项分布描述了在固定试验次数（记为 $n$）中，得到各类次数
+
+$$
+\boldsymbol{x} = (x_1,x_2,\ldots,x_k), \quad \sum_{i=1}^k x_i = n
+$$
+
+的概率 $\text{Multi}(n,\boldsymbol{p})$。其概率质量函数为
+
+$$
+f(x_1,x_2,\ldots,x_k\mid n,p_1,p_2,\ldots,p_k) = \frac{n!}{x_1!\,x_2!\,\cdots\,x_k!}\,p_1^{x_1}\times p_2^{x_2}\times\cdots\times p_k^{x_k}
+$$
+
+记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_k)$，则有：
+
+- **参数 $\boldsymbol{p}$ 的先验分布**：$\text{Dirichlet}(\boldsymbol{\alpha})$，$\boldsymbol{\alpha}=(\alpha_1,\alpha_2,\ldots,\alpha_k)$
+- **后验分布的超参数**：$\boldsymbol{\alpha}+\boldsymbol{x} = (\alpha_1+x_1,\ \alpha_2+x_2,\ \ldots,\ \alpha_k+x_k)$
+
+
+```{r}
+#| label: fig-multinomial-samples
+#| fig-cap: "多项分布抽样示例：固定 n,不同 p 组合下各类别的实际计数"
+#| fig-alt: "四宫格图,展示相同试验次数n下不同概率向量p产生的各类别计数条形图"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_multi_plot <- function(n, p, title, seed = 1) {
+  set.seed(seed)
+  x <- as.vector(rmultinom(1, size = n, prob = p))
+  df <- data.frame(category = factor(seq_along(p)), count = x)
+  ggplot(df, aes(x = category, y = count)) +
+    geom_col(fill = "#1D3557", width = 0.6) +
+    labs(title = title, x = "类别 i", y = expression(x[i])) +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_multi_plot(100, c(1/3,1/3,1/3), "n=100, p均匀(1/3,1/3,1/3)")
+p2 <- make_multi_plot(100, c(0.6,0.3,0.1), "n=100, p不均匀(0.6,0.3,0.1)")
+p3 <- make_multi_plot(20,  c(1/3,1/3,1/3), "n=20 (样本量小,波动更大)")
+p4 <- make_multi_plot(100, c(0.6,0.3,0.1), "n=100, 换个随机种子(抽样波动)", seed = 7) +
+  geom_col(fill = "#B5432B", width = 0.6)
+
+(p1 | p2) / (p3 | p4)
+
+```
+
+#### (7) 超几何分布（hypergeometric distribution）
+
+考虑有刚好 $N$ 个对象，其中有 $K$ 个具有某种特征，超几何分布描述在 $n$ 次不放回的抽取中，刚好抽到 $k$ 个具有该特征对象的概率。其概率质量函数为
+
+$$
+p(k\mid N,K,n) = \frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}
+$$
+
+假定 $\boldsymbol{N}=(N_1,N_2,\ldots,N_n)$ 已知，记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，则：
+
+- **参数 $K$ 的先验分布**：$\text{Beta-binomial}(\boldsymbol{N},\alpha,\beta)$，这里已知的 $\boldsymbol{N}$ 不会在后验超参数中更新
+- **后验分布的超参数**：$\left(\alpha+\sum_{i=1}^n x_i,\ \ \beta+\sum_{i=1}^n N_i-\sum_{i=1}^n x_i\right)$
+
+```{r}
+#| label: fig-hypergeom-vs-binom
+#| fig-cap: "超几何分布 vs 二项分布：当 N 远大于 n 时(不放回抽样接近有放回抽样),两者趋于一致"
+#| fig-alt: "四宫格图,对比超几何分布和二项分布在总体规模N不同时的形状差异,展示N增大时两者趋同的效果"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+# 注意 R 的 dhyper(x, m, n, k) 参数名和书中记号不同:
+#   m = K (总体中具有特征的个数), n = N-K (不具有特征的个数), k = 抽取次数(书中的n)
+make_compare_plot <- function(N, K, ndraw, title) {
+  x <- 0:ndraw
+  df <- data.frame(
+    x = rep(x, 2),
+    prob = c(dhyper(x, m = K, n = N - K, k = ndraw),
+             dbinom(x, size = ndraw, prob = K / N)),
+    分布 = rep(c("超几何(不放回)", "二项(有放回近似)"), each = length(x))
+  )
+  ggplot(df, aes(x = x, y = prob, fill = 分布)) +
+    geom_col(position = "dodge", width = 0.7) +
+    scale_fill_manual(values = c("#1D3557", "#B5432B")) +
+    labs(title = title, x = "k", y = "P(X=k)") +
+    theme_minimal(base_size = 10) +
+    theme(legend.position = "bottom")
+}
+
+p1 <- make_compare_plot(N = 20,  K = 7, ndraw = 5, "N=20 (总体小,两者差异明显)")
+p2 <- make_compare_plot(N = 50,  K = 17.5, ndraw = 5, "N=50")
+p3 <- make_compare_plot(N = 200, K = 70, ndraw = 5, "N=200")
+p4 <- make_compare_plot(N = 2000, K = 700, ndraw = 5, "N=2000 (N远大于n,两者几乎重合)")
+
+(p1 | p2) / (p3 | p4)
+```
+
+#### (8) 几何分布（geometric distribution）
+
+是研究在 Bernoulli 试验中得到一个成功（记每次成功的概率为 $p$）时所需要的试验次数的分布（记为 $k$）。其概率质量函数为：
+
+$$
+f(k\mid p) = (1-p)^{k-1}p, \quad k=1,2,\ldots
+$$
+
+记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，则有：
+
+- **参数 $p$ 的先验分布**：$\text{Beta}(\alpha,\beta)$
+- **后验分布的超参数**：$\left(\alpha+n,\ \ \beta+\sum_{i=1}^n x_i-n\right)$
+
+```{r}
+#| label: fig-geometric-shapes
+#| fig-cap: "几何分布的形状随 p 变化：p 越小,需要等待的试验次数越长、拖尾越长"
+#| fig-alt: "四宫格图,展示不同成功概率p下几何分布从快速衰减到长尾拖延的形状变化"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+# 注意: R的dgeom(x,prob)中x是"失败次数"(0,1,2,...)
+# 书中的k是"总试验次数"(1,2,3,...), 换算关系: 书中k = R的x + 1
+make_geom_plot <- function(p, title, kmax) {
+  k <- 1:kmax                      # 书中的 k(总试验次数)
+  probs <- dgeom(k - 1, prob = p)  # 转换成 R 的 x = k - 1(失败次数)再调用
+  df <- data.frame(k = k, prob = probs)
+  ggplot(df, aes(x = k, y = prob)) +
+    geom_col(fill = "#1D3557", width = 0.7) +
+    labs(title = title, x = "k (总试验次数)", y = "P(K=k)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_geom_plot(0.7, "p=0.7 (成功率高,很快结束)", kmax = 10)
+p2 <- make_geom_plot(0.5, "p=0.5", kmax = 15)
+p3 <- make_geom_plot(0.3, "p=0.3", kmax = 20)
+p4 <- make_geom_plot(0.1, "p=0.1 (成功率低,长尾拖延)", kmax = 40) +
+  geom_col(fill = "#B5432B", width = 0.7)
+
+(p1 | p2) / (p3 | p4)
+```
+
+#### (9) 正态分布（normal distribution）或高斯分布（Gaussian distribution）
+
+有均值 $\mu$ 和方差 $\Sigma^2$ 的正态分布（记为 $N(\mu,\Sigma^2)$ 或 $\text{Gaussian}(\mu,\Sigma^2)$）可由下面概率密度函数定义：
+
+$$
+f(x\mid\mu,\Sigma^2) = \frac{1}{\sqrt{2\pi\Sigma^2}}\exp\left[-\frac{1}{2\Sigma^2}(x-\mu)^2\right]
+$$
+
+如果把方差的倒数作为参数**精度**：$\tau \equiv 1/\Sigma^2$，记为 $N(\mu,\tau)$，则概率密度函数为：
+
+$$
+f(x\mid\mu,\tau) = \sqrt{\frac{\tau}{2\pi}}\exp\left[-\frac{\tau}{2}(x-\mu)^2\right]
+$$
+
+记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，考虑下面几种情况：
+
+**(a) $N(\mu,\Sigma^2)$，方差 $\Sigma^2$ 已知**：
+
+- 参数 $\mu$ 的先验分布：$N(\mu_0,\Sigma_0^2)$
+- 后验分布的超参数：
+$$
+\left[\frac{1}{\frac{1}{\Sigma_0^2}+\frac{n}{\Sigma^2}}\left(\frac{\mu_0}{\Sigma_0^2}+\frac{\sum_{i=1}^n x_i}{\Sigma^2}\right),\ \ \left(\frac{1}{\Sigma_0^2}+\frac{n}{\Sigma^2}\right)^{-1}\right]
+$$
+
+**(b) $N(\mu,\tau)$，精度 $\tau$ 已知**：
+
+- 参数 $\mu$ 的先验分布：$N(\mu_0,\tau_0)$
+- 后验分布的超参数：
+$$
+\left(\frac{\tau_0\mu_0+\tau\sum_{i=1}^n x_i}{\tau_0+n\tau},\ \ \tau_0+n\tau\right)
+$$
+
+**(c) $N(\mu,\Sigma^2)$，均值 $\mu$ 已知，情况一**：
+
+- 参数 $\Sigma^2$ 的先验分布：逆 Gamma 分布 $\text{Inv-Gamma}(\alpha,\beta)$
+- 后验分布的超参数：
+$$
+\left[\alpha+\frac{n}{2},\ \ \beta+\frac{1}{2}\sum_{i=1}^n(x_i-\mu)^2\right]
+$$
+
+**(d) $N(\mu,\Sigma^2)$，均值 $\mu$ 已知，情况二**：
+
+- 参数 $\Sigma^2$ 的先验分布：缩放逆 $\chi^2$ 分布 $\text{Scale-inv-}\chi^2(\nu,\Sigma_0^2)$
+- 后验分布的超参数：
+$$
+\left[\nu+n,\ \ \frac{\nu\Sigma_0^2+\sum_{i=1}^n(x_i-\mu)^2}{\nu+n}\right]
+$$
+
+**(e) $N(\mu,\tau)$，均值 $\mu$ 已知**：
+
+- 参数 $\tau$ 的先验分布：$\text{Gamma}(\alpha,\beta)$
+- 后验分布的超参数：
+$$
+\left[\alpha+\frac{n}{2},\ \ \beta+\frac{1}{2}\sum_{i=1}^n(x_i-\mu)^2\right]
+$$
+
+**(f) $N(\mu,\Sigma^2)$，$\mu$ 和 $\Sigma^2$ 均未知（可交换）**：
+
+- 参数 $(\mu,\Sigma^2)$ 的先验分布：正态-逆 Gamma 分布 $\text{Normal-Inv-Gamma}(\mu_0,\nu,\alpha,\beta)$
+- 后验分布的超参数：
+$$
+\left[\frac{\nu\mu_0+n\bar{x}}{\nu+n},\ \ \nu+n,\ \ \alpha+\frac{n}{2},\ \ \beta+\frac{1}{2}\sum_{i=1}^n(x_i-\bar{x})^2+\frac{n\nu}{\nu+n}\frac{(\bar{x}-\mu_0)^2}{2}\right]
+$$
+
+**(g) $N(\mu,\tau)$，$\mu$ 和 $\tau$ 均未知（可交换）**：
+
+- 参数 $(\mu,\tau)$ 的先验分布：正态 Gamma 分布 $\text{Normal-Gamma}(\mu_0,\nu,\alpha,\beta)$
+- 后验分布的超参数：
+$$
+\left[\frac{\nu\mu_0+n\bar{x}}{\nu+n},\ \ \nu+n,\ \ \alpha+\frac{n}{2},\ \ \beta+\frac{1}{2}\sum_{i=1}^n(x_i-\bar{x})^2+\frac{n\nu}{\nu+n}\frac{(\bar{x}-\mu_0)^2}{2}\right]
+$$
+
+```{r}
+#| label: fig-normal-normal-update
+#| fig-cap: "正态-正态共轭更新(情况a):方差已知,随n增大,后验分布如何从先验逐步收缩、逼近真实均值"
+#| fig-alt: "四宫格图,展示样本量n从0到50时,均值mu的后验分布逐渐变窄并向真实值靠拢的过程"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+set.seed(1)
+true_mu <- 5
+sigma_sq <- 4                       # 已知的观测方差
+mu0 <- 0; sigma0_sq <- 100          # 先验很弱(方差大=不确定)
+x_all <- rnorm(50, mean = true_mu, sd = sqrt(sigma_sq))
+
+make_posterior_plot <- function(n, title) {
+  if (n == 0) {
+    post_mean <- mu0; post_var <- sigma0_sq
+  } else {
+    x <- x_all[1:n]
+    post_var <- 1 / (1/sigma0_sq + n/sigma_sq)
+    post_mean <- post_var * (mu0/sigma0_sq + sum(x)/sigma_sq)
+  }
+  grid <- seq(-10, 15, length.out = 300)
+  df <- data.frame(mu = grid, density = dnorm(grid, post_mean, sqrt(post_var)))
+  ggplot(df, aes(x = mu, y = density)) +
+    geom_line(color = "#1D3557", linewidth = 1) +
+    geom_vline(xintercept = true_mu, linetype = "dashed", color = "#B5432B") +
+    labs(title = title, x = expression(mu), y = "后验密度") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_posterior_plot(0,  "n=0 (只有先验,很平坦)")
+p2 <- make_posterior_plot(3,  "n=3 (少量数据,开始收缩)")
+p3 <- make_posterior_plot(10, "n=10 (更集中,更靠近真值)")
+p4 <- make_posterior_plot(50, "n=50 (高度集中于真值附近)")
+
+(p1 | p2) / (p3 | p4)
+```
+
+帮你梳理一下这一大块内容的组织逻辑：这7种情况本质上是同一件事——正态分布有两个参数（均值 $\mu$、方差/精度 $\Sigma^2/\tau$），根据"谁已知、谁未知"排列组合出不同的共轭先验搭配：
+
+| 情况 | 已知 | 未知 | 共轭先验 |
+|---|---|---|---|
+| (a)(b) | 方差/精度 | 均值 $\mu$ | 正态 |
+| (c)(d)(e) | 均值 | 方差/精度 | 逆Gamma / 缩放逆$\chi^2$ / Gamma |
+| (f)(g) | 都不知道 | $\mu$ 和 方差/精度 | 正态-逆Gamma / 正态-Gamma（联合先验） |
+
+
+#### (10) Gamma 分布（gamma distribution）
+
+该分布有两种形式。一种（记为 $\text{Gamma}(\alpha,\beta)$，$\alpha>0$ 称为形状参数，$\beta>0$ 称为速率（rate）参数）的概率密度函数为
+
+$$
+\frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x}, \quad x\in(0,\infty)
+$$
+
+这里的 $\Gamma(\alpha)$ 为 Gamma 函数；而另一种把上述参数重置为形状参数 $k=\alpha$ 及尺度参数 $\theta=1/\beta$，记为 $\text{Gamma}(k,\theta)$，其概率密度函数为：
+
+$$
+\frac{1}{\Gamma(k)\theta^k}x^{k-1}e^{-\frac{x}{\theta}}, \quad x\in(0,\infty)
+$$
+
+记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，考虑下面几种情况：
+
+**(a) $\alpha$ 已知**：
+
+- 参数 $\beta$ 的先验分布：$\text{Gamma}(\alpha_0,\beta_0)$
+- 后验分布的超参数：$\left(\alpha_0+n\alpha,\ \ \beta_0+\sum_{i=1}^n x_i\right)$
+
+**(b) $\beta$ 已知**：
+
+- 参数 $\alpha$ 的先验分布：$\propto \dfrac{a^{\alpha-1}\beta^{\alpha c}}{\Gamma(\alpha)^b}$，有 3 个超参数：$(a,b,c)$
+- 后验分布的超参数：$\left(a\prod_{i=1}^n x_i,\ \ b+n,\ \ c+n\right)$
+
+**(c) $\alpha,\beta$ 均未知，$\beta$ 是逆尺度**：
+
+- 参数 $(\alpha,\beta)$ 的先验分布：$\propto \dfrac{p^{\alpha-1}e^{-\beta q}}{\Gamma(\alpha)^r\beta^{-\alpha s}}$，有 4 个超参数：$(p,q,r,s)$
+- 后验分布的超参数：$\left(p\prod_{i=1}^n x_i,\ \ q+\sum_{i=1}^n x_i,\ \ r+n,\ \ s+n\right)$
+
+```{r}
+#| label: fig-gamma-shapes
+#| fig-cap: "Gamma分布的形状随 α(形状参数)、β(速率参数)变化"
+#| fig-alt: "四宫格图,展示不同alpha和beta参数组合下Gamma分布从指数型衰减到类正态峰形的形状变化"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_gamma_plot <- function(alpha, beta, title, xmax) {
+  x <- seq(0.001, xmax, length.out = 300)
+  df <- data.frame(x = x, density = dgamma(x, shape = alpha, rate = beta))
+  ggplot(df, aes(x = x, y = density)) +
+    geom_area(fill = "#1D3557", alpha = 0.7) +
+    geom_line(color = "#1D3557", linewidth = 0.8) +
+    labs(title = title, x = "x", y = "f(x)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_gamma_plot(1, 1, "α=1, β=1 (退化为指数分布)", xmax = 6)
+p2 <- make_gamma_plot(2, 1, "α=2, β=1 (开始出现峰形)", xmax = 8)
+p3 <- make_gamma_plot(5, 1, "α=5, β=1 (更对称,类似正态)", xmax = 15)
+p4 <- make_gamma_plot(5, 2, "α=5, β=2 (β增大,整体左移变窄)", xmax = 10) +
+  geom_area(fill = "#B5432B", alpha = 0.7) + geom_line(color = "#B5432B", linewidth = 0.8)
+
+(p1 | p2) / (p3 | p4)
+```
+
+
+#### (11) 指数分布（exponential distribution）
+
+当 $\text{Gamma}(k,\theta)$ 的参数 $k=1,\theta=1/\Lambda$ 时，就是指数分布，概率密度函数为
+
+$$
+f(x\mid\Lambda) = \Lambda e^{-\Lambda x}, \quad x\in[0,\infty)
+$$
+
+记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，则有：
+
+- **参数 $\Lambda$ 的先验分布**：$\text{Gamma}(\alpha,\beta)$
+- **后验分布的超参数**：$\left(\alpha+n,\ \ \beta+\sum_{i=1}^n x_i\right)$
+
+```{r}
+#| label: fig-exponential-shapes
+#| fig-cap: "指数分布的形状随速率 Λ 变化：Λ 越大,概率质量越快衰减、越集中在小x附近"
+#| fig-alt: "四宫格图,展示不同速率参数Lambda下指数分布从快速衰减到缓慢拖尾的形状变化"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_exp_plot <- function(lambda, title, xmax) {
+  x <- seq(0, xmax, length.out = 300)
+  df <- data.frame(x = x, density = dexp(x, rate = lambda))
+  ggplot(df, aes(x = x, y = density)) +
+    geom_area(fill = "#1D3557", alpha = 0.7) +
+    geom_line(color = "#1D3557", linewidth = 0.8) +
+    labs(title = title, x = "x", y = "f(x)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_exp_plot(2,   "Λ=2 (快速衰减)", xmax = 4)
+p2 <- make_exp_plot(1,   "Λ=1", xmax = 6)
+p3 <- make_exp_plot(0.5, "Λ=0.5", xmax = 10)
+p4 <- make_exp_plot(0.2, "Λ=0.2 (缓慢拖尾)", xmax = 20) +
+  geom_area(fill = "#B5432B", alpha = 0.7) + geom_line(color = "#B5432B", linewidth = 0.8)
+
+(p1 | p2) / (p3 | p4)
+```
+
+#### (12) 逆 Gamma 分布（inverse-gamma distribution）
+
+如果当 $Y\sim\text{Gamma}(\alpha,\beta)$，则 $X=1/Y$ 服从逆 Gamma 分布（记为 $\text{Inv-Gamma}(\alpha,\beta)$），其概率密度函数为：
+
+$$
+f(x\mid\alpha,\beta) = \frac{\beta^\alpha}{\Gamma(\alpha)}x^{-\alpha-1}\exp\left(-\frac{\beta}{x}\right)
+$$
+
+记观测值为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，假定 $\alpha$ 已知，$\beta$ 是逆尺度，则有：
+
+- **参数 $\beta$ 的先验分布**：$\text{Gamma}(\alpha_0,\beta_0)$
+- **后验分布的超参数**：
+$$
+\left(\alpha_0+n\alpha,\ \ \beta_0+\sum_{i=1}^n\frac{1}{x_i}\right)
+$$
+
+
+```{r}
+#| label: fig-invgamma-shapes
+#| fig-cap: "逆Gamma分布的形状随 α、β 变化：常用作方差参数的共轭先验,注意它的重尾特性"
+#| fig-alt: "四宫格图,展示不同alpha和beta参数组合下逆Gamma分布的形状差异,体现其右侧重尾特性"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+# base R 没有内置 dinvgamma，手写(标准做法：Y~Gamma, X=1/Y 变换)
+dinvgamma <- function(x, alpha, beta) {
+  beta^alpha / gamma(alpha) * x^(-alpha - 1) * exp(-beta / x)
+}
+
+make_invgamma_plot <- function(alpha, beta, title, xmax) {
+  x <- seq(0.01, xmax, length.out = 300)
+  df <- data.frame(x = x, density = dinvgamma(x, alpha, beta))
+  ggplot(df, aes(x = x, y = density)) +
+    geom_area(fill = "#1D3557", alpha = 0.7) +
+    geom_line(color = "#1D3557", linewidth = 0.8) +
+    labs(title = title, x = "x", y = "f(x)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_invgamma_plot(2, 1, "α=2, β=1", xmax = 5)
+p2 <- make_invgamma_plot(2, 3, "α=2, β=3 (β增大,整体右移)", xmax = 8)
+p3 <- make_invgamma_plot(5, 3, "α=5, β=3 (α增大,峰更集中)", xmax = 5)
+p4 <- make_invgamma_plot(1, 1, "α=1, β=1 (α小,重尾更明显)", xmax = 10) +
+  geom_area(fill = "#B5432B", alpha = 0.7) + geom_line(color = "#B5432B", linewidth = 0.8)
+
+(p1 | p2) / (p3 | p4)
+```
+
+
+#### (13) Beta 分布（beta distribution）
+
+如果 $Y\sim\text{Gamma}(\alpha,\theta)$，$Z\sim\text{Gamma}(\beta,\theta)$，则
+
+$$
+X = \frac{Y}{Y+Z}
+$$
+
+服从参数为 $\alpha>0,\beta>0$ 的 Beta 分布（记为 $\text{Beta}(\alpha,\beta)$ 或 $\text{B}(\alpha,\beta)$），其概率密度函数为：
+
+$$
+f(x\mid\alpha,\beta) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1} = \frac{1}{\text{B}(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}
+$$
+
+```{r}
+#| label: fig-beta-shapes
+#| fig-cap: "Beta分布的形状随 α、β 变化：这是本书前面几乎所有比例类参数的共轭先验"
+#| fig-alt: "四宫格图,展示不同alpha和beta参数组合下Beta分布从均匀到左偏、右偏、U形的形状变化"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_beta_plot <- function(alpha, beta, title) {
+  x <- seq(0.001, 0.999, length.out = 300)
+  df <- data.frame(x = x, density = dbeta(x, alpha, beta))
+  ggplot(df, aes(x = x, y = density)) +
+    geom_area(fill = "#1D3557", alpha = 0.7) +
+    geom_line(color = "#1D3557", linewidth = 0.8) +
+    labs(title = title, x = "x", y = "f(x)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_beta_plot(1, 1, "α=1, β=1 (退化为均匀分布)")
+p2 <- make_beta_plot(2, 5, "α=2, β=5 (左偏,偏向小x)")
+p3 <- make_beta_plot(5, 2, "α=5, β=2 (右偏,偏向大x)")
+p4 <- make_beta_plot(0.5, 0.5, "α=0.5, β=0.5 (U形,两端极化)") +
+  geom_area(fill = "#B5432B", alpha = 0.7) + geom_line(color = "#B5432B", linewidth = 0.8)
+
+(p1 | p2) / (p3 | p4)
+```
+
+#### (14) Dirichlet 分布（Dirichlet distribution）
+
+是 Beta 分布的多元推广。在 $k\geq 2$ 并且有参数 $\boldsymbol{\alpha}=(\alpha_1,\alpha_2,\ldots,\alpha_k)$，$\alpha_i>0,\ \forall i$，则该分布有概率密度函数
+
+$$
+f(x_1,x_2,\ldots,x_k;\alpha_1,\alpha_2,\ldots,\alpha_k) = \frac{1}{\text{B}(\boldsymbol{\alpha})}\prod_{i=1}^k x_i^{\alpha_i-1}
+$$
+
+这里
+
+$$
+\sum_{i=1}^k x_i = 1 \quad \text{而且} \quad x_i\geq 0,\ \forall i=1,2,\ldots,k
+$$
+
+而 $\text{B}(\boldsymbol{\alpha})$ 为多元 Beta 函数：
+
+$$
+\text{B}(\boldsymbol{\alpha}) = \frac{\prod_{i=1}^k\Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^k\alpha_i\right)}, \qquad \boldsymbol{\alpha}=(\alpha_1,\alpha_2,\ldots,\alpha_k)
+$$
+
+```{r}
+#| label: fig-dirichlet-beta-equivalence
+#| fig-cap: "验证：k=2 时 Dirichlet(α1,α2) 退化为 Beta(α1,α2)"
+#| fig-alt: "对比图,展示k=2维Dirichlet分布第一分量的抽样直方图与理论Beta分布密度曲线完全重合"
+#| fig-width: 7
+#| fig-height: 5
+
+library(ggplot2)
+
+rdirichlet_manual <- function(n, alpha) {
+  k <- length(alpha)
+  samples <- matrix(rgamma(n * k, shape = alpha, rate = 1), ncol = k, byrow = TRUE)
+  samples / rowSums(samples)
+}
+
+set.seed(1)
+alpha1 <- 3; alpha2 <- 5
+samples <- rdirichlet_manual(50000, c(alpha1, alpha2))
+df <- data.frame(x = samples[, 1])
+
+ggplot(df, aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 60,
+                  fill = "#1D3557", alpha = 0.6) +
+  stat_function(fun = dbeta, args = list(shape1 = alpha1, shape2 = alpha2),
+                color = "#B5432B", linewidth = 1) +
+  labs(title = "Dirichlet(3,5) 第一分量的抽样直方图 vs Beta(3,5) 理论曲线",
+       x = "x", y = "密度") +
+  theme_minimal(base_size = 11)
+```
+
+### 指数 先 验分布 族 的一些结果
+
 ## Q1--Q5 速查
 
 | | 书中概念 | 我的框架对应 |
