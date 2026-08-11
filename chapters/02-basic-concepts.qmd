@@ -128,13 +128,16 @@ flowchart TD
 
 $$
 p(\theta \mid x) = p(x \mid \theta)\,p(\theta) / p(x) \propto p(x \mid \theta)\,p(\theta)
+
 \\ 
+
 后验 \propto 似然 \times 先验
 $$
 
 这里的比例常数能够由 $p(\theta\mid x)$ 关于 $\theta$ 的和（或积分）为 1 而得到。显然，上式是**贝叶斯定理的另一种形式**。
 
 > $ \propto $： 正比于（proportional to）
+
 > 意思是：左边和右边只相差一个常数倍数
 
 ::: {.callout-note title="思考题：什么是似然（Likelihood）？" collapse="false"}
@@ -204,7 +207,7 @@ $$
 ### 贝叶斯定理
 
 
-### 例 2.2：两份试卷的贝叶斯推断
+例 2.2：两份试卷的贝叶斯推断
 
 假定学生随机从两份试卷（A、B 卷）中选择一份。根据先验知识，选中 A 卷的概率为 $1/10$，选中 B 卷的概率为 $9/10$；已知 A 卷是 10 道 2 选 1 的题目，B 卷是 10 道 4 选 1 的题目。如果一个什么都不懂、仅仅靠运气的学生恰好答对了 5 道题，那么该学生选中 A 卷的后验概率是多少？
 
@@ -263,10 +266,20 @@ p2=dbinom(5,10,1/4)*.9
 但画图需要的不是一个数字，是一整条曲线——把 `x` 换成一整个序列 `0:10`，`dbinom` 会一次性算出11个概率（答对0道到答对10道，每种都算一遍）：
 
 ```{r}
-x <- 0:10
-probs <- dbinom(x, 10, 1/2)
-# probs 现在是11个数字：答对0道的概率、答对1道的概率、...、答对10道的概率
-plot(x, probs, type = "h")   # 每个 x 位置画一根高度等于概率的竖线/柱子
+#| label: fig-bernoulli
+#| fig-cap: "Bernoulli(p=0.7) 分布：只有两个取值，k=0 和 k=1"
+#| fig-alt: "柱状图,显示Bernoulli分布在p=0.7时的两根柱子,k=0高度0.3,k=1高度0.7"
+
+p <- 0.7
+x <- c(0, 1)
+probs <- dbinom(x, size = 1, prob = p)  # Bernoulli 就是 size=1 的二项分布
+
+barplot(probs, names.arg = c("k=0 (失败)", "k=1 (成功)"),
+        col = c("#6C757D", "#1D3557"),
+        ylim = c(0, 1),
+        main = paste0("Bernoulli(p=", p, ")"),
+        ylab = "概率")
+text(x = c(0.7, 1.9), y = probs + 0.03, labels = round(probs, 2))
 ```
 
 这11个数字加起来正好等于1（因为"答对0到10道"涵盖了所有可能结果，没有遗漏）。画出来是一座山：中间（答对5道左右）概率最高，两头（全对或全错）概率极低。
@@ -283,6 +296,183 @@ $$
 - $\binom{n}{k} = \dfrac{n!}{k!(n-k)!}$：从 $n$ 次里选出 $k$ 次成功，有多少种不同的排列方式
 
 :::
+
+### 似然函数
+
+### 后验分布包含的信息
+
+1. 一些简单的度量
+
+- 后验分布的摸
+- 后验期望
+- 后验分布中位数
+
+2. 最高密度区域
+
+3. 贝叶斯因子和假设检验
+
+### 先验分布的形式
+
+1. 充分 统计 量 及 数据 变换 的 似然函 数 例子
+
+2. Jeffreys 先验分布
+
+## 共轭先验分布族
+
+前面多次涉及共轭分布的概念，它是数学上最方便的先验分布族。如果后验分布 $p(\theta\mid x)$ 与先验概率分布 $p(\theta)$ 属相同的概率分布族，则先验和后验被称为共轭分布，并且先验被称为似然函数的**共轭先验分布**。
+
+形式上，共轭分布族定义如下：假定 $\mathcal{F} = \{f(x\mid\theta)\}\ (x\in\mathcal{X})$ 是以参数 $\theta$ 识别的分布族。一个先验分布族类 $\Pi$ 称为对于 $\mathcal{F}$ 是共轭的，如果对所有的 $f\in\mathcal{F}$，所有 $\Pi$ 中的先验分布及所有的 $x\in\mathcal{X}$，后验分布均属于 $\Pi$。
+
+**指数分布族的所有成员都有共轭先验分布。** 对于概率密度函数为
+
+$$
+f(x\mid\theta) = h(x)\exp\left[\theta x - \Psi(\theta)\right]
+$$
+- **$x$**：观测到的数据
+- **$\theta$**：分布的参数（比如二项分布里的 $p$、正态分布里的均值 $\mu$）——这里 $\theta$ 被称为**自然参数**（natural parameter），是这个参数的一种特殊写法，不一定是你平时最熟悉的那个参数本身
+- **$h(x)$**：只跟数据 $x$ 有关、跟参数 $\theta$ 完全无关的一个函数——起"基础权重"的作用，负责数据本身的形状，不参与"调节参数"这件事
+- **$\theta x$**：参数和数据**相乘**后放进指数里——这是整个指数族公式的核心特征：不管什么分布，只要能写成"参数和数据线性相乘、再放进指数"这个形式，就属于指数族
+- **$\Psi(\theta)$**：只跟参数 $\theta$ 有关、跟数据 $x$ 无关的一个函数，叫**对数配分函数**（log-partition function）——它的唯一作用是**归一化**，负责把整个式子调整到积分（或求和）等于1，本身不携带"信息"，纯粹是数学上的配平项。读作 psi，中文读作普西或帕西
+- **$\exp[\cdot]$**：把"$\theta x - \Psi(\theta)$"这一整块放进指数函数——这一步是为什么运算会变简单的关键：指数把"乘法"变成了"加法"（对数尺度下 $\theta x$ 和 $\Psi(\theta)$ 是相加减的关系，不是纠缠在一起的复杂函数）
+
+**为什么这个形式重要**：几乎你已经学过的所有分布——二项分布、正态分布、泊松分布——都能整理成这个样子（只是 $h(x)$、$\theta$、$\Psi(\theta)$ 具体长什么样不一样）。正因为它们共享同一个"骨架"，才使得"共轭先验"这套理论可以**一次性对所有这些分布通用**，不需要每换一个分布就重新推导一遍——这也是为什么你之前学的 Beta-Binomial、Gamma-Poisson、Normal-Normal 这些共轭对，背后其实是同一条数学逻辑在不同分布上的具体实现。
+
+的指数族分布，其关于 $\theta$ 的共轭分布族形为
+
+$$
+\pi(\theta\mid\mu,\Lambda) = K(\mu,\Lambda)\exp\left[\theta\mu - \Lambda\Psi(\theta)\right]
+$$
+
+- $ \Lambda $ 读作 lambda（中文读"拉姆达"）,是先验分布的一个超参数
+
+而相应的后验分布形为
+
+$$
+\pi(\theta\mid \mu+x,\ \Lambda+1)
+$$
+
+读者可以自己验证这个关系。
+
+### 常用分布及其参数的共轭先验分布
+
+#### (1) Bernoulli 分布（Bernoulli distribution）
+
+考虑具有两种可能结果的独立试验，称为 Bernoulli 试验，这里假定每次成功概率均为 $p$。在一次试验中成功次数 $k$（取值 0 或 1）的概率分布称为 Bernoulli 分布，其概率质量函数为
+
+$$
+f(k\mid p) =
+\begin{cases}
+p, & k=1; \\
+1-p, & k=0.
+\end{cases}
+$$
+
+令 $\boldsymbol{x} = (x_1, x_2, \ldots, x_n)$ 为观测值，则有：
+
+- **参数 $p$ 的先验分布**：$\text{Beta}(\alpha,\beta)$
+- **后验分布的超参数**：$\left(\alpha + \sum_{i=1}^n x_i,\ \ \beta + n - \sum_{i=1}^n x_i\right)$
+
+画图表示
+```{r}
+p <- 0.7
+x <- c(0, 1)
+probs <- dbinom(x, size = 1, prob = p)  # Bernoulli 就是 size=1 的二项分布
+
+barplot(probs, names.arg = c("k=0 (失败)", "k=1 (成功)"),
+        col = c("#6C757D", "#1D3557"),
+        ylim = c(0, 1),
+        main = paste0("Bernoulli(p=", p, ")"),
+        ylab = "概率")
+text(x = c(0.7, 1.9), y = probs + 0.03, labels = round(probs, 2))
+```
+
+#### (2) 二项分布（binomial distribution）
+
+在 $n$ 次 Bernoulli 试验中（每次成功概率记为 $p$）成功次数 $k$ 的分布（记为 $B(n,p)$，或 $\text{Bin}(n,p)$），其概率质量函数为
+
+$$
+f(k\mid n,p) = \binom{n}{k}p^k(1-p)^{n-k}, \quad k=0,1,2,\ldots,n
+$$
+
+这里
+
+$$
+\binom{n}{k} = \frac{n!}{k!(n-k)!}
+$$
+
+令 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，$\boldsymbol{N}=(N_1,N_2,\ldots,N_n)$ 为观测值，则有：
+
+- **参数 $p$ 的先验分布**：$\text{Beta}(\alpha,\beta)$
+- **后验分布的超参数**：$\left(\alpha+\sum_{i=1}^n x_i,\ \ \beta+\sum_{i=1}^n N_i-\sum_{i=1}^n x_i\right)$
+
+```{r}
+#| label: fig-binomial-shapes
+#| fig-cap: "二项分布的四种代表性形状：n、p 不同,分布的偏态和集中程度也不同"
+#| fig-alt: "四宫格图,分别展示n=10不同p值下的左偏/对称/右偏分布,以及n=50时分布趋近正态的效果"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_binom_plot <- function(n, p, title) {
+  df <- data.frame(x = 0:n, prob = dbinom(0:n, n, p))
+  ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = "#1D3557", width = 0.7) +
+    labs(title = title, x = "k", y = "P(X=k)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_binom_plot(10, 0.2, "n=10, p=0.2 (左偏)")
+p2 <- make_binom_plot(10, 0.5, "n=10, p=0.5 (对称)")
+p3 <- make_binom_plot(10, 0.8, "n=10, p=0.8 (右偏)")
+p4 <- make_binom_plot(50, 0.5, "n=50, p=0.5 (n增大,趋于正态)") +
+  geom_col(fill = "#B5432B", width = 0.7)
+
+(p1 | p2) / (p3 | p4)   # patchwork 的排版语法: | 左右拼, / 上下拼
+```
+
+#### (3) 负二项分布（negative binomial distribution）
+
+考虑一系列独立同分布伯努利试验（记成功概率为 $p$）。负二项式分布是在指定的（非随机）失败次数（记为 $r$）之前成功次数（记为 $k$）的离散概率分布（记为 $\text{NB}(r,p)$）。其概率质量函数为：
+
+$$
+f(k\mid r,p) = \binom{k+r-1}{k}p^k(1-p)^r, \quad k=0,1,2,\ldots
+$$
+
+假定 $r$ 已知，令 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为观测值，则有：
+
+- **参数 $p$ 的先验分布**：$\text{Beta}(\alpha,\beta)$
+- **后验分布的超参数**：$\left(\alpha+\sum_{i=1}^n x_i,\ \ \beta+rn\right)$
+
+```{r}
+#| label: fig-negbinom-shapes
+#| fig-cap: "负二项分布的形状随 r 和 p 变化"
+#| fig-alt: "四宫格图,展示不同r、p组合下负二项分布的形状差异"
+#| fig-width: 9
+#| fig-height: 7
+
+library(ggplot2)
+library(patchwork)
+
+make_negbinom_plot <- function(r, p, title, kmax = 30) {
+  df <- data.frame(x = 0:kmax, prob = dnbinom(0:kmax, size = r, prob = p))
+  ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = "#1D3557", width = 0.7) +
+    labs(title = title, x = "k", y = "P(X=k)") +
+    theme_minimal(base_size = 11)
+}
+
+p1 <- make_negbinom_plot(3, 0.5, "r=3, p=0.5")
+p2 <- make_negbinom_plot(3, 0.3, "r=3, p=0.3 (p变小,拖尾更长)")
+p3 <- make_negbinom_plot(10, 0.5, "r=10, p=0.5 (r变大,整体右移)")
+p4 <- make_negbinom_plot(10, 0.3, "r=10, p=0.3") +
+  geom_col(fill = "#B5432B", width = 0.7)
+
+(p1 | p2) / (p3 | p4)
+```
+
+> 但要注意 R 官方文档对 prob 参数的定义，和你截图这本书对 p 的定义，成功/失败的角色可能是反的
 
 ## Q1--Q5 速查
 
