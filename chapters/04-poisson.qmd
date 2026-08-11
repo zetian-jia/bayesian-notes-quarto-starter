@@ -1,3 +1,0 @@
-# 发生率的推断：Poisson 模型
-
-> 待整理：Q1 = 发生率 λ，Q2 = k ~ Poisson(λ)，Q3 = Gamma 共轭先验，Q4 = 闭式解（Gamma 后验）。

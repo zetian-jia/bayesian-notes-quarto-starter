@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,12 +71,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-be0981c3d56b10cf2ded56dab99333fd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-cf47de34d1f20a62c93610a59629f2be.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -225,14 +225,8 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/04-poisson.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">发生率的推断：Poisson 模型</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../chapters/05-normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">正态总体的情况</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">正态总体的情况</span></span></a>
   </div>
 </li>
       </ul>
@@ -249,13 +243,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/06-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/07-stan-pymc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
   </div>
 </li>
       </ul>
@@ -1884,6 +1878,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -2045,6 +2041,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -3398,17 +3395,19 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-1148"><a href="#cb21-1148" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-1149"><a href="#cb21-1149" aria-hidden="true" tabindex="-1"></a><span class="fu">### 指数 先 验分布 族 的一些结果</span></span>
 <span id="cb21-1150"><a href="#cb21-1150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-1151"><a href="#cb21-1151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q5 速查</span></span>
+<span id="cb21-1151"><a href="#cb21-1151" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-1152"><a href="#cb21-1152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-1153"><a href="#cb21-1153" aria-hidden="true" tabindex="-1"></a>| | 书中概念 | 我的框架对应 |</span>
-<span id="cb21-1154"><a href="#cb21-1154" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
-<span id="cb21-1155"><a href="#cb21-1155" aria-hidden="true" tabindex="-1"></a>| Q1 | 参数 $\theta$ | 潜变量 |</span>
-<span id="cb21-1156"><a href="#cb21-1156" aria-hidden="true" tabindex="-1"></a>| Q2 | 似然函数 $L(\theta)=p(Y\mid\theta)$ | 观测模型（把 $Y$ 固定看 $\theta$） |</span>
-<span id="cb21-1157"><a href="#cb21-1157" aria-hidden="true" tabindex="-1"></a>| Q3 | 先验分布 $p(\theta)$、共轭先验族 | 先验结构 |</span>
-<span id="cb21-1158"><a href="#cb21-1158" aria-hidden="true" tabindex="-1"></a>| Q4 | 后验分布 $p(\theta\mid Y)$ | 计算目标 |</span>
-<span id="cb21-1159"><a href="#cb21-1159" aria-hidden="true" tabindex="-1"></a>| Q5 | （书中较少展开） | 独立轴，需要自己补充阅读 |</span>
-<span id="cb21-1160"><a href="#cb21-1160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-1161"><a href="#cb21-1161" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待补充：共轭先验族那一节的具体推导笔记。</span></span>
+<span id="cb21-1153"><a href="#cb21-1153" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q5 速查</span></span>
+<span id="cb21-1154"><a href="#cb21-1154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-1155"><a href="#cb21-1155" aria-hidden="true" tabindex="-1"></a>| | 书中概念 | 我的框架对应 |</span>
+<span id="cb21-1156"><a href="#cb21-1156" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
+<span id="cb21-1157"><a href="#cb21-1157" aria-hidden="true" tabindex="-1"></a>| Q1 | 参数 $\theta$ | 潜变量 |</span>
+<span id="cb21-1158"><a href="#cb21-1158" aria-hidden="true" tabindex="-1"></a>| Q2 | 似然函数 $L(\theta)=p(Y\mid\theta)$ | 观测模型（把 $Y$ 固定看 $\theta$） |</span>
+<span id="cb21-1159"><a href="#cb21-1159" aria-hidden="true" tabindex="-1"></a>| Q3 | 先验分布 $p(\theta)$、共轭先验族 | 先验结构 |</span>
+<span id="cb21-1160"><a href="#cb21-1160" aria-hidden="true" tabindex="-1"></a>| Q4 | 后验分布 $p(\theta\mid Y)$ | 计算目标 |</span>
+<span id="cb21-1161"><a href="#cb21-1161" aria-hidden="true" tabindex="-1"></a>| Q5 | （书中较少展开） | 独立轴，需要自己补充阅读 |</span>
+<span id="cb21-1162"><a href="#cb21-1162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-1163"><a href="#cb21-1163" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待补充：共轭先验族那一节的具体推导笔记。</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

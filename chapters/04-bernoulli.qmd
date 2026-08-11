@@ -40,6 +40,179 @@ $$
 
 上面的模型形式上可以用下面的公式和图描述。
 
+```{r}
+
+#| label: fig-beta-posterior-family
+#| fig-cap: "n=8 时,不同成功次数 s=0,1,...,8 对应的后验分布族(无信息先验 α=β=1)"
+#| fig-alt: "九条Beta后验密度曲线叠加图,从s=0(左侧陡峭偏向0)到s=8(右侧陡峭偏向1)平滑过渡,中间s=4附近曲线较为平缓"
+
+n <- 8
+colors <- colorRampPalette(c("#1D3557", "#B5432B"))(n + 1)
+
+for (s in 0:n) {
+  curve(dbeta(x, s + 1, n - s + 1), 0, 1,
+        add = (s != 0),
+        col = colors[s + 1], lwd = 2,
+        xlab = expression(theta), ylab = "后验密度",
+        main = paste0("n=", n, " 时不同 s 对应的后验分布族"))
+}
+legend("top", legend = paste0("s=", 0:n), col = colors, lwd = 2,
+       ncol = 3, cex = 0.7, bty = "n")
+
+```
+
+::: {.callout-important title="必须掌握（这些会直接出现在你的代码里）"}
+
+1. **共轭结构本身**：$\text{Beta}(\alpha,\beta)$ 先验 + Binomial 似然 → $\text{Beta}(s+\alpha,\ n-s+\beta)$ 后验——这不是这本书随便举的一个例子，**这就是单细胞甲基化数据建模的标准范式本身**。你自己在最早那份框架文档里写的 $k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})$，配 $\theta_{ij}\sim\text{Beta}$ 先验，就是这条公式的原样应用。DSS、methylKit 这些真实的甲基化差异分析工具，内核都是这个（或它的经验贝叶斯变体）。
+
+$$
+k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})
+$$
+> 读作： k sub i j **服从**，二项分布，参数是 n sub i j, $\theta$ sub i j
+
+- $k$ 观测到的甲基化 read 数（真正测到的数字，比如"5个甲基化read"）
+- $n$ 该位点的总覆盖 read 数（总共测了几条read，比如"总共10条read"）
+- $\theta$ 真实甲基化倾向（你想知道但看不见的那个概率，取值在0到1之间）
+- $i$ 第几个细胞的编号（比如细胞1、细胞2……）
+- $j$ 第几个位点的编号（比如基因组上第1个CpG位点、第2个……）
+- $k_{ij}$ "细胞 i 在位点 j 处"测到的甲基化read数——两个下标锁定了具体是哪个细胞、哪个位点 
+- $n_{ij}$ 	"细胞 i 在位点 j 处"的总覆盖read数 
+- $\theta$ 	"细胞 i 在位点 j 处"的真实甲基化倾向 
+-  $\alpha \beta$ Beta先验的两个超参数（前面学过，控制先验形状/强度）
+
+2. **后验均值公式** $\hat\theta = \dfrac{s+\alpha}{n+\alpha+\beta}$——这是你以后写代码时**真正会敲进去的那一行**。理解它的直觉比理解推导过程更重要：
+
+$$
+\hat\theta = \frac{s+\alpha}{n+\alpha+\beta} = \frac{\text{真实成功次数} + \text{先验"虚拟成功次数"}}{\text{真实总次数} + \text{先验"虚拟总次数"}}
+$$
+
+$\alpha,\beta$ 本质上是"先验帮你偷偷加的伪计数"——这个直觉在你处理**低覆盖度位点**（$n_{ij}$ 很小）时特别关键：伪计数占比重，估计会被先验拉着走；覆盖度足够大时，伪计数占比可以忽略，估计几乎完全由数据决定。这正是你项目文档里提到的"经验贝叶斯收缩"的数学根源。
+
+:::
+
+::: {.callout-important title="r语言 beta分布函数"}
+
+
+| 前缀 | 全称 | 回答的问题 | 输入 | 输出 |
+|---|---|---|---|---|
+| **d** | density | "这一点的概率密度是多少" | 一个 $\theta$ 值 | 密度高度 |
+| **p** | probability | "小于等于这一点的累积概率是多少" | 一个 $\theta$ 值 | 一个概率（0~1） |
+| **q** | quantile | "要达到这个累积概率，$\theta$ 得取多少"（p 的反函数） | 一个概率（0~1） | 一个 $\theta$ 值 |
+| **r** | random | "真的从这个分布里随机抽一个样本出来" | 抽样个数 | 一串随机数 |
+
+: 四个前缀的统一逻辑（不止 Beta，所有分布通用）
+
+```{r}
+#| label: fig-dpqr-beta
+#| fig-cap: "d/p/q/r 四个函数在Beta(2,5)分布上的统一展示：density、CDF、分位数函数(CDF的反函数)、随机抽样"
+#| fig-alt: "四宫格图,依次展示Beta分布的概率密度函数dbeta、累积分布函数pbeta、分位数函数qbeta、随机抽样直方图rbeta,并标注三者在theta=0.3处的对应关系"
+#| fig-width: 9
+#| fig-height: 7
+
+par(mfrow = c(2, 2), mar = c(4.5, 4.5, 3, 1))
+
+alpha <- 2; beta <- 5
+x <- seq(0, 1, length.out = 300)
+
+# 1. dbeta: 密度函数 —— "这一点的密度有多高"
+plot(x, dbeta(x, alpha, beta), type = "l", lwd = 2, col = "#1D3557",
+     main = "dbeta: 概率密度函数", xlab = expression(theta), ylab = "密度")
+abline(v = 0.3, lty = 2, col = "#B5432B")
+
+# 2. pbeta: 累积分布函数 —— "小于等于这一点的概率"
+plot(x, pbeta(x, alpha, beta), type = "l", lwd = 2, col = "#1D3557",
+     main = "pbeta: 累积分布函数(CDF)", xlab = expression(theta), ylab = "累积概率")
+abline(v = 0.3, h = pbeta(0.3, alpha, beta), lty = 2, col = "#B5432B")
+
+# 3. qbeta: 分位数函数 —— pbeta的反函数,"给定概率倒推theta"
+p_seq <- seq(0, 1, length.out = 300)
+plot(p_seq, qbeta(p_seq, alpha, beta), type = "l", lwd = 2, col = "#1D3557",
+     main = "qbeta: 分位数函数(pbeta的反函数)", xlab = "概率", ylab = expression(theta))
+abline(h = 0.3, v = pbeta(0.3, alpha, beta), lty = 2, col = "#B5432B")
+
+# 4. rbeta: 随机抽样 —— 抽样直方图应贴合dbeta密度曲线
+set.seed(1)
+samples <- rbeta(2000, alpha, beta)
+hist(samples, breaks = 40, freq = FALSE, col = "#6C757D", border = "white",
+     main = "rbeta: 随机抽样(直方图逼近密度曲线)", xlab = expression(theta))
+lines(x, dbeta(x, alpha, beta), col = "#1D3557", lwd = 2)
+```
+
+:::
+
+
+### 例 4.1：关于 $\theta$ 的最高密度区域的 R 代码计算
+
+为了得到最高密度区域，有很多现成的程序包，比如利用 `hdrcde` 包，可以得到各种最高密度区域，下面是得到默认的 99%、95%、50% 最高密度区域并且产生相应的图（见图4.1.2）的代码：
+
+```{r}
+library(hdrcde)
+x <- rbeta(100000, 2, 27)
+hdr.den(x)
+```
+
+```{r}
+#| label: fig-hdr-beta
+#| fig-cap: "Beta(2,27) 的最高密度区域(HDR):99%/95%/50%三层嵌套区间"
+#| fig-alt: "Beta(2,27)密度曲线,曲线下方用三层不同深浅的阴影标出99%、95%、50%最高密度区域,区域以密度峰值为中心向两侧扩展但不对称"
+#| fig-width: 7
+#| fig-height: 5
+
+# hdrcde 需要联网从CRAN安装；这里手写一个等价的HDR计算函数，
+# 不依赖额外包，原理相同：把密度曲线从高到低"切一刀"，
+# 使刀线以上覆盖的面积恰好等于目标概率
+compute_hdr_threshold <- function(dens_fun, prob, lower, upper, n_grid = 3000) {
+  grid <- seq(lower, upper, length.out = n_grid)
+  dens <- dens_fun(grid)
+  ord <- order(dens, decreasing = TRUE)
+  dx <- diff(grid)[1]
+  cum_area <- cumsum(dens[ord] * dx)
+  cutoff_idx <- which(cum_area >= prob)[1]
+  dens[ord][cutoff_idx]
+}
+
+set.seed(1)
+dens_fun <- function(theta) dbeta(theta, 2, 27)
+x_grid <- seq(0, 0.5, length.out = 3000)
+y <- dens_fun(x_grid)
+
+t50 <- compute_hdr_threshold(dens_fun, 0.50, 0, 0.5)
+t95 <- compute_hdr_threshold(dens_fun, 0.95, 0, 0.5)
+t99 <- compute_hdr_threshold(dens_fun, 0.99, 0, 0.5)
+
+plot(x_grid, y, type = "l", lwd = 2, col = "#1D3557",
+     xlab = expression(theta), ylab = "density",
+     main = "Beta(2,27) 的最高密度区域: 99% / 95% / 50%")
+
+polygon(c(x_grid[y>=t99], rev(x_grid[y>=t99])), c(y[y>=t99], rep(0,sum(y>=t99))),
+        col = adjustcolor("#B5432B", 0.2), border = NA)
+polygon(c(x_grid[y>=t95], rev(x_grid[y>=t95])), c(y[y>=t95], rep(0,sum(y>=t95))),
+        col = adjustcolor("#B5432B", 0.3), border = NA)
+polygon(c(x_grid[y>=t50], rev(x_grid[y>=t50])), c(y[y>=t50], rep(0,sum(y>=t50))),
+        col = adjustcolor("#B5432B", 0.5), border = NA)
+
+legend("topright", legend = c("99% HDR", "95% HDR", "50% HDR"),
+       fill = c(adjustcolor("#B5432B", 0.2),
+                adjustcolor("#B5432B", 0.3),
+                adjustcolor("#B5432B", 0.5)),
+       bty = "n")
+```
+
+例 4.2：三合一图（triplot）
+
+利用程序包 `LearnBayes` 的函数 `triplot`，可以基于 $\text{Beta}(2,18)$ 先验分布及数据（0次感染，9次无感染）画出先验密度、似然函数及后验密度图（见图4.1.3）：
+
+```{r}
+library(LearnBayes)
+triplot(c(2,18), c(0,9), where="top")
+```
+
+`triplot` 的两个参数分别是：
+
+- **`c(2,18)`**：先验超参数 $(\alpha,\beta)$，即 $\text{Beta}(2,18)$
+- **`c(0,9)`**：观测数据 $(s,f)$，即 $s=0$ 次成功（感染）、$f=9$ 次失败（无感染），共 $n=9$ 次试验
+
+
 ## Q1--Q4 拆解
 
 - **Q1**：$\theta$ = 某个事件发生的真实概率
@@ -52,6 +225,42 @@ $$
 $$
 
 这是整本书里最干净的一个"闭式解"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。
+
+
+```{r}
+#| label: fig-triplot
+#| fig-cap: "先验、似然、后验三合一图：Beta(2,18)先验 + 数据(s=0,f=9) → 后验Beta(2,27)"
+#| fig-alt: "叠加线图,展示先验密度曲线Beta(2,18)、标准化似然曲线、后验密度曲线Beta(2,27)三者的相对位置,后验因数据全为失败而比先验更偏向theta接近0的一侧"
+#| fig-width: 7
+#| fig-height: 5
+
+# LearnBayes 需要联网从CRAN安装；这里手写一个等价的triplot函数，
+# 逻辑完全相同：同时画出先验、(标准化)似然、后验三条密度曲线
+my_triplot <- function(prior, data, xmax = 0.5) {
+  a <- prior[1]; b <- prior[2]   # 先验超参数(alpha, beta)
+  s <- data[1];  f <- data[2]    # 观测: s次成功, f次失败
+
+  theta <- seq(0.001, xmax, length.out = 500)
+
+  prior_d <- dbeta(theta, a, b)
+  # 似然本身不是概率密度(不积分为1),这里标准化一下方便跟先验/后验同尺度比较形状
+  lik_raw <- theta^s * (1 - theta)^f
+  lik_d <- lik_raw / sum(lik_raw) / diff(theta)[1]
+  post_d <- dbeta(theta, a + s, b + f)
+
+  ymax <- max(prior_d, lik_d, post_d)
+  plot(theta, post_d, type = "l", lwd = 2, col = "#1D3557", ylim = c(0, ymax * 1.1),
+       xlab = expression(theta), ylab = "密度",
+       main = paste0("先验Beta(", a, ",", b, ") + 数据(s=", s, ",f=", f, ") → 后验"))
+  lines(theta, prior_d, lwd = 2, col = "#6C757D", lty = 2)
+  lines(theta, lik_d, lwd = 2, col = "#B5432B", lty = 3)
+  legend("topright", legend = c("后验 posterior", "先验 prior", "似然 likelihood(标准化)"),
+         col = c("#1D3557", "#6C757D", "#B5432B"), lwd = 2, lty = c(1, 2, 3), bty = "n")
+}
+
+my_triplot(c(2, 18), c(0, 9))
+```
+
 
 ## 代码：先验敏感性
 

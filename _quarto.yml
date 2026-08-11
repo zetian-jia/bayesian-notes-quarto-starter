@@ -21,7 +21,6 @@ book:
     - part: "第二部分：初等贝叶斯模型"
       chapters:
         - chapters/04-bernoulli.qmd
-        - chapters/04-poisson.qmd
         - chapters/05-normal.qmd
     - part: "第三部分：算法与概率编程"
       chapters:
