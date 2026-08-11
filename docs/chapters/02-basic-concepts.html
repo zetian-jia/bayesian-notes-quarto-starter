@@ -104,6 +104,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -270,8 +273,16 @@ window.Quarto = {
   <li><a href="#概率的规则及贝叶斯定理" id="toc-概率的规则及贝叶斯定理" class="nav-link active" data-scroll-target="#概率的规则及贝叶斯定理"><span class="header-section-number">2.1</span> 概率的规则及贝叶斯定理</a>
   <ul class="collapse">
   <li><a href="#概率的规则" id="toc-概率的规则" class="nav-link" data-scroll-target="#概率的规则"><span class="header-section-number">2.1.1</span> 概率的规则</a></li>
+  <li><a href="#概率规则的合理性-贝叶斯定理-优势比-后验分布" id="toc-概率规则的合理性-贝叶斯定理-优势比-后验分布" class="nav-link" data-scroll-target="#概率规则的合理性-贝叶斯定理-优势比-后验分布"><span class="header-section-number">2.1.2</span> 概率规则的合理性 、贝叶斯定理 、优势比 、后验分布</a></li>
+  <li><a href="#贝叶斯与经典统计学概念的比较" id="toc-贝叶斯与经典统计学概念的比较" class="nav-link" data-scroll-target="#贝叶斯与经典统计学概念的比较"><span class="header-section-number">2.1.3</span> 贝叶斯与经典统计学概念的比较</a></li>
   </ul></li>
-  <li><a href="#q1q5-速查" id="toc-q1q5-速查" class="nav-link" data-scroll-target="#q1q5-速查"><span class="header-section-number">2.2</span> Q1–Q5 速查</a></li>
+  <li><a href="#决策的基本概念" id="toc-决策的基本概念" class="nav-link" data-scroll-target="#决策的基本概念"><span class="header-section-number">2.2</span> 决策的基本概念</a></li>
+  <li><a href="#贝叶斯统计的基本概念" id="toc-贝叶斯统计的基本概念" class="nav-link" data-scroll-target="#贝叶斯统计的基本概念"><span class="header-section-number">2.3</span> 贝叶斯统计的基本概念</a>
+  <ul class="collapse">
+  <li><a href="#贝叶斯定理" id="toc-贝叶斯定理" class="nav-link" data-scroll-target="#贝叶斯定理"><span class="header-section-number">2.3.1</span> 贝叶斯定理</a></li>
+  <li><a href="#例-2.2两份试卷的贝叶斯推断" id="toc-例-2.2两份试卷的贝叶斯推断" class="nav-link" data-scroll-target="#例-2.2两份试卷的贝叶斯推断"><span class="header-section-number">2.3.2</span> 例 2.2：两份试卷的贝叶斯推断</a></li>
+  </ul></li>
+  <li><a href="#q1q5-速查" id="toc-q1q5-速查" class="nav-link" data-scroll-target="#q1q5-速查"><span class="header-section-number">2.4</span> Q1–Q5 速查</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/02-basic-concepts.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -280,7 +291,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">第一部分：基础篇</a></li><li class="breadcrumb-item"><a href="../chapters/02-basic-concepts.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">基本概念</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">基本概念</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">基本概念</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -301,19 +312,19 @@ window.Quarto = {
 <h2 data-number="2.1" class="anchored" data-anchor-id="概率的规则及贝叶斯定理"><span class="header-section-number">2.1</span> 概率的规则及贝叶斯定理</h2>
 <section id="概率的规则" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="概率的规则"><span class="header-section-number">2.1.1</span> 概率的规则</h3>
-<p>概率的频率派定义：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。</p>
+<p>概率的<strong>频率派定义</strong>：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。</p>
 <p>以掷骰子为例，“掷出偶数”这个事件的概率可以写成：</p>
 <p><span class="math display">\[
 p(\text{掷出偶数}) = \frac{\text{掷出偶数的次数}}{\text{总试验次数}}
 \]</span></p>
-<p>频率派的概率定义，对某些问题完全不起作用，比如：</p>
+<p>但是，<strong>频率派</strong>的概率定义，对某些问题完全不起作用，比如：</p>
 <ul>
 <li>刘阿姨的女儿今年考上大学的概率是多少？</li>
 <li>中国足球队下一次进入世界杯决赛的概率是多少？</li>
 <li>下一次重大国际危机发生在亚洲的概率是多少？</li>
 </ul>
-<p>这类问题无法通过大量重复试验获得频率，人们只能用自己的<strong>相信程度</strong>（degree of belief）来描述——这种概率称为<strong>主观概率</strong>（subjective probability）。</p>
-<p>频率派无法处理主观概率，贝叶斯统计对两种概率都能自然处理。</p>
+<p>这类问题，无法通过大量重复试验获得频率，人们只能用自己的<strong>相信程度</strong>（degree of belief）来描述——这种概率称为<strong>主观概率</strong>（subjective probability）。</p>
+<p><strong>频率派</strong>无法处理主观概率，但是，<strong>贝叶斯统计</strong>对两种概率都能自然处理。</p>
 <p>贝叶斯统计用概率度量”你对一个不确定事件为真的相信程度”，这个度量基于你已有的知识。</p>
 <ul>
 <li>设 <span class="math inline">\(H\)</span> 是一个事件（或假设），<span class="math inline">\(K\)</span> 是试验前你已有的知识，则 <span class="math inline">\(p(H \mid K)\)</span> 表示：给定 <span class="math inline">\(K\)</span>，你对 <span class="math inline">\(H\)</span> 的相信程度</li>
@@ -325,7 +336,7 @@ p(\text{掷出偶数}) = \frac{\text{掷出偶数的次数}}{\text{总试验次�
 </blockquote>
 <p>例子：<span class="math inline">\(p(H \mid D \cap K)\)</span> 怎么用</p>
 <ul>
-<li><span class="math inline">\(H\)</span>：这枚硬币是均匀的</li>
+<li><span class="math inline">\(H\)</span>：假设这枚硬币是均匀的</li>
 <li><span class="math inline">\(D\)</span>：抛 10 次，7 次正面</li>
 <li><span class="math inline">\(K\)</span>：这枚硬币是朋友随手给我的，没有作弊动机</li>
 </ul>
@@ -334,10 +345,345 @@ p(H \mid D \cap K)
 \]</span></p>
 <p>含义：<strong>结合”抛10次7次正面”这个新数据，以及”这是朋友随手给的硬币”这个背景知识，硬币均匀的概率是多少。</strong></p>
 <p>如果把 <span class="math inline">\(K\)</span> 换成”这枚硬币是魔术师给我的”，同样的数据 <span class="math inline">\(D\)</span>，算出来的 <span class="math inline">\(p(H \mid D \cap K)\)</span> 会不一样——这说明 <span class="math inline">\(K\)</span> 不是摆设，它真实参与了运算。</p>
+<p>概率论的正式规则有三条 , 所有其他的性质都可从它们导出.</p>
+<ol type="1">
+<li><strong>凸性</strong>：对任何事件 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> , $ 0 p(A B) $ 及 $ p(A A) = 1 $</li>
+</ol>
+<blockquote class="blockquote">
+<p>概率值必须落在一个”凸集”（这里就是闭区间 [0,1]）里，不能跑到区间外面去。</p>
+</blockquote>
+<ol start="2" type="1">
+<li><strong>可加性</strong>：对于互斥事件 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span>，和任意事件 <span class="math inline">\(C\)</span>，</li>
+</ol>
+<p><span class="math display">\[
+p(A \cup B \mid C) = p(A \mid C) + p(B \mid C)
+\]</span></p>
+<p>（这条对任意可数的无穷集合也成立。）</p>
+<blockquote class="blockquote">
+<p>A 和 B 互斥，A 或 B 发送的概率就是直接把两者的概率相加</p>
+</blockquote>
+<ol start="3" type="1">
+<li><strong>乘法规则</strong>：</li>
+</ol>
+<p><span class="math display">\[
+p(A \cap B \mid C) = p(B \mid C)\, p(A \mid B \cap C)
+\]</span></p>
+<blockquote class="blockquote">
+<p>这条是三条公理里最关键的一条——贝叶斯定理本质上就是从这条规则重新排列变形推出来的。 联合概率 = 一个先发生的概率 × 另一个在它基础上跟着发生的概率。</p>
+</blockquote>
+</section>
+<section id="概率规则的合理性-贝叶斯定理-优势比-后验分布" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="概率规则的合理性-贝叶斯定理-优势比-后验分布"><span class="header-section-number">2.1.2</span> 概率规则的合理性 、贝叶斯定理 、优势比 、后验分布</h3>
+<p>注意，由于 <span class="math inline">\(K\)</span> 作为每一个条件事件的一部分，<span class="math inline">\(K\)</span> 已经包含在基于先验知识的概率 <span class="math inline">\(p(H) \equiv p(H \mid K)\)</span> 之中，所以任何以 <span class="math inline">\(H\)</span> 为条件的概率都包含了 <span class="math inline">\(K\)</span> 的信息。从这些规则可以证明<strong>贝叶斯定理</strong>：</p>
+<p><span class="math display">\[
+p(H \mid D) = \frac{p(D \mid H)\,p(H)}{p(D)}
+= \frac{p(D \mid H)\,p(H)}{p(D \mid H)\,p(H) + p(D \mid H^C)\,p(H^C)}
+\]</span></p>
+<blockquote class="blockquote">
+<p>1分子：表示 H 成立 且观察到 D 发生的概率 $ p(D H)p(H) = p(D H) $ 1分母：不管 H 是否成立，D 发生的概率 1 整体，这是一个比例，H 成立且发生D，占所有 D 中的多大份额 在所有能导致你观测到这份数据 D 的可能世界里，H 为真的那部分世界占多大比例——这个比例，就是你看到 D 之后应该赋予 H 的新概率。 这就是 后验概率 $ p(H D) $ 的真实含义，<strong>用数据把不符合的可能行过滤掉，剩下的里面再看 $ H $ 占多少</strong></p>
+</blockquote>
+<div class="callout callout-style-default callout-note callout-titled" title="思考题：为什么贝叶斯公式是乘法规则变体？">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+思考题：为什么贝叶斯公式是乘法规则变体？
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>先把乘法规则原文摆出来</p>
+<p><span class="math display">\[
+p(A \cap B \mid C) = p(B \mid C)\, p(A \mid B \cap C)
+\]</span></p>
+<p>代入 A=D，B=H</p>
+<p><span class="math display">\[
+p(D \cap H \mid C) = p(H \mid C)p(D \mid H \cap C)
+\]</span></p>
+<p>如果我们把背景知识 C（也就是 K）先按下表（因为之前说过它一直隐藏在每个概率符号背后），这条式子写简化一点就是：</p>
+<p><span class="math display">\[
+p(D \cap H) = p(H)p(D \mid H)
+\]</span></p>
+<p>这一步没有引入任何新规则，就是把”乘法规则”里的字母A、B 换成了具体的 D、H，纯粹是同一条规则的一次应用，不是巧合，也不是新东西。</p>
+</div>
+</div>
+</div>
+<p>这里 <span class="math inline">\(H^C\)</span> 是 <span class="math inline">\(H\)</span> 的互补事件。上式显示对事件 <span class="math inline">\(H\)</span> 的信念 <span class="math inline">\(p(H)\)</span> 是如何通过新的数据信息 <span class="math inline">\(D\)</span> 转换到更新的信念 <span class="math inline">\(p(H\mid D)\)</span> 的。贝叶斯关于概率的思维能够用下图说明：</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A["最初概率值 p(H)"] --&gt; C["贝叶斯定理"]
+    B["数据 D"] --&gt; C
+    C --&gt; D["重新估价的概率值 p(H|D)"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>为什么用<strong>概率</strong>适合研究不确定性？</p>
+<p>（1）参照一个标准：优势比 （2）得分规则 （3）决策分析</p>
+</section>
+<section id="贝叶斯与经典统计学概念的比较" class="level3" data-number="2.1.3">
+<h3 data-number="2.1.3" class="anchored" data-anchor-id="贝叶斯与经典统计学概念的比较"><span class="header-section-number">2.1.3</span> 贝叶斯与经典统计学概念的比较</h3>
+<p>关于 <span class="math inline">\(\theta\)</span>，也就是关于不确定性上，传统统计和贝叶斯统计就不一致了。按照我们的推理，它应仍然有一个称为<strong>先验概率</strong>的概率密度，比如记为 <span class="math inline">\(p(\theta)\)</span>，它代表了得到数据之前所具有的知识的细节。这个特性在大多数统计方法中是没有的。由此，正如上面所解释的，推断能够从<strong>后验概率</strong> <span class="math inline">\(p(\theta \mid x)\)</span> 来着手，它描述给定数据 <span class="math inline">\(x\)</span> 后 <span class="math inline">\(\theta\)</span> 的不确定性，并且有计算关系</p>
+<p><span class="math display">\[
+p(\theta \mid x) = p(x \mid \theta)\,p(\theta) / p(x) \propto p(x \mid \theta)\,p(\theta)
+\\
+后验 \propto 似然 \times 先验
+\]</span></p>
+<p>这里的比例常数能够由 <span class="math inline">\(p(\theta\mid x)\)</span> 关于 <span class="math inline">\(\theta\)</span> 的和（或积分）为 1 而得到。显然，上式是<strong>贝叶斯定理的另一种形式</strong>。</p>
+<blockquote class="blockquote">
+<p>$ $： 正比于（proportional to） 意思是：左边和右边只相差一个常数倍数</p>
+</blockquote>
+<div class="callout callout-style-default callout-note callout-titled" title="思考题：什么是似然（Likelihood）？">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+思考题：什么是似然（Likelihood）？
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(p(x\mid\theta)\)</span> 这个表达式，在贝叶斯公式里被叫做”似然”，它和”概率”是什么关系？</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="我的回答">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+我的回答
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>就是同一个表达式 <span class="math inline">\(p(x\mid\theta)\)</span>，换一个看待角度：</p>
+<p><span class="math display">\[
+L(\theta) \;=\; p(x\mid\theta)
+\]</span></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>谁固定</th>
+<th>谁变化</th>
+<th>是什么</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>概率</strong> <span class="math inline">\(p(x\mid\theta)\)</span></td>
+<td><span class="math inline">\(\theta\)</span> 固定</td>
+<td><span class="math inline">\(x\)</span> 变化</td>
+<td>关于 <span class="math inline">\(x\)</span> 的概率分布，积分=1</td>
+</tr>
+<tr class="even">
+<td><strong>似然</strong> <span class="math inline">\(L(\theta)\)</span></td>
+<td><span class="math inline">\(x\)</span> 固定（已经测到的数据）</td>
+<td><span class="math inline">\(\theta\)</span> 变化</td>
+<td>关于 <span class="math inline">\(\theta\)</span> 的函数，<strong>不是概率分布</strong>，积分不等于1</td>
+</tr>
+</tbody>
+</table>
+<p>结合贝叶斯公式看：</p>
+<p><span class="math display">\[
+p(\theta\mid x) \propto \underbrace{p(x\mid\theta)}_{\text{似然}} \times \underbrace{p(\theta)}_{\text{先验}}
+\]</span></p>
+<p>这一步的关键动作，是把 <span class="math inline">\(p(x\mid\theta)\)</span> <strong>从”<span class="math inline">\(x\)</span> 的概率”重新解读成”<span class="math inline">\(\theta\)</span> 的似然”</strong>——固定住已经观测到的数据 <span class="math inline">\(x\)</span>，看不同的 <span class="math inline">\(\theta\)</span> 取值会让这份数据出现的可能性有多大。似然越大，说明这个 <span class="math inline">\(\theta\)</span> 越”支持”观测到的数据，后验就越偏向这个 <span class="math inline">\(\theta\)</span>。</p>
+<p>一句话理解：<strong>似然回答的是”如果 <span class="math inline">\(\theta\)</span> 是这个值，我看到手上这份数据的可能性有多大”，不是”<span class="math inline">\(\theta\)</span> 本身有多大概率”</strong>——后面这个问题才是后验 <span class="math inline">\(p(\theta\mid x)\)</span> 要回答的。</p>
+</div>
+</div>
+</div>
+<ol type="1">
+<li><p>置信区间问题</p></li>
+<li><p>通过概率解决多余参数、重复观测问题</p></li>
+<li><p>关于重复</p></li>
+<li><p>似然原理</p></li>
+<li><p>后验概率 $ p(x) $ 给出了 $ $ 的完全推断</p></li>
+<li><p>贝叶斯统计证据度量与经典统计比较</p></li>
+</ol>
+<p>（传统统计用 $ p$ 作为证据的度量）</p>
+<table class="caption-top table">
+<caption>Goodman 指出 p 值的 12 个误导</caption>
+<colgroup>
+<col style="width: 62%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">序号</th>
+<th>误解（Misconception）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td>如果 <span class="math inline">\(P=.05\)</span>，原假设为真的概率只有 5%。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td>不显著的差异（如 <span class="math inline">\(P\geq.05\)</span>）意味着组间没有差异。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td>统计显著的结果在临床上就是重要的。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td><span class="math inline">\(P\)</span> 值落在 <span class="math inline">\(.05\)</span> 两侧的研究结果是相互矛盾的。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td><span class="math inline">\(P\)</span> 值相同的研究，对原假设提供的反对证据强度也相同。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td><span class="math inline">\(P=.05\)</span> 意味着，在原假设成立的情况下，只有 5% 的概率会观测到这样的数据。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td><span class="math inline">\(P=.05\)</span> 和 <span class="math inline">\(P\leq.05\)</span> 是同一回事。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td><span class="math inline">\(P\)</span> 值应该写成不等式的形式（例如 <span class="math inline">\(P=.015\)</span> 时应写作”<span class="math inline">\(P\leq.02\)</span>“）。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9</td>
+<td><span class="math inline">\(P=.05\)</span> 意味着，如果你拒绝原假设，第一类错误的概率只有 5%。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10</td>
+<td>用 <span class="math inline">\(P=.05\)</span> 作为显著性阈值，第一类错误发生的概率就是 5%。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">11</td>
+<td>当你不关心某个方向上的结果、或者该方向上的差异不可能发生时，应该用单侧 <span class="math inline">\(P\)</span> 值。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12</td>
+<td>科学结论或治疗方案应该基于 <span class="math inline">\(P\)</span> 值是否显著来决定。</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
-<section id="q1q5-速查" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="q1q5-速查"><span class="header-section-number">2.2</span> Q1–Q5 速查</h2>
+<section id="决策的基本概念" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="决策的基本概念"><span class="header-section-number">2.2</span> 决策的基本概念</h2>
+</section>
+<section id="贝叶斯统计的基本概念" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="贝叶斯统计的基本概念"><span class="header-section-number">2.3</span> 贝叶斯统计的基本概念</h2>
+<section id="贝叶斯定理" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="贝叶斯定理"><span class="header-section-number">2.3.1</span> 贝叶斯定理</h3>
+</section>
+<section id="例-2.2两份试卷的贝叶斯推断" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="例-2.2两份试卷的贝叶斯推断"><span class="header-section-number">2.3.2</span> 例 2.2：两份试卷的贝叶斯推断</h3>
+<p>假定学生随机从两份试卷（A、B 卷）中选择一份。根据先验知识，选中 A 卷的概率为 <span class="math inline">\(1/10\)</span>，选中 B 卷的概率为 <span class="math inline">\(9/10\)</span>；已知 A 卷是 10 道 2 选 1 的题目，B 卷是 10 道 4 选 1 的题目。如果一个什么都不懂、仅仅靠运气的学生恰好答对了 5 道题，那么该学生选中 A 卷的后验概率是多少？</p>
+<p><strong>定义指标变量</strong>：</p>
+<p><span class="math display">\[
+\theta =
+\begin{cases}
+0, &amp; \text{选中 A 卷} \\
+1, &amp; \text{选中 B 卷}
+\end{cases}
+\]</span></p>
+<p><span class="math inline">\(p(\theta=0)=0.1\)</span>、<span class="math inline">\(p(\theta=1)=0.9\)</span> 分别为选中 A 卷、B 卷的先验概率，<span class="math inline">\(x=5\)</span> 为学生答对的题目数。我们希望得到后验概率 <span class="math inline">\(p(\theta=0\mid x=5)\)</span>。根据贝叶斯定理：</p>
+<p><span class="math display">\[
+p(\theta=0\mid x=5) = \frac{p(x=5,\theta=0)}{p(x=5)}
+= \frac{p(x=5\mid\theta=0)\,p(\theta=0)}{p(x=5\mid\theta=0)\,p(\theta=0) + p(x=5\mid\theta=1)\,p(\theta=1)}
+\]</span></p>
+<p><strong>根据二项分布</strong>，对 A 卷及 B 卷猜对 5 道题的概率为：</p>
+<p><span class="math display">\[
+p(x=5\mid\theta=0) = \binom{10}{5}\left(\frac{1}{2}\right)^5\left(\frac{1}{2}\right)^{10-5} = 0.2461
+\]</span> 不是只算”某一种特定的5道题蒙对”的概率（那个概率其实很小，只有 0.000977），而是要把”随便哪5道题蒙对”的所有可能情况（一共252种）都算一遍再加起来——因为题目问的是”恰好答对5道”，不限定是哪5道。</p>
+<p><span class="math display">\[
+p(x=5\mid\theta=1) = \binom{10}{5}\left(\frac{1}{4}\right)^5\left(\frac{3}{4}\right)^{10-5} = 0.0584
+\]</span></p>
+<p><strong>由贝叶斯定理得到后验概率</strong>：</p>
+<p><span class="math display">\[
+p(\theta=0\mid x=5) = \frac{0.2461\times 0.1}{0.2461\times 0.1 + 0.0584\times 0.9} = 0.3189
+\]</span></p>
+<p>例2.2 计算的 R 代码为：</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>p1<span class="ot">=</span><span class="fu">dbinom</span>(<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">*</span>.<span class="dv">1</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>p2<span class="ot">=</span><span class="fu">dbinom</span>(<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)<span class="sc">*</span>.<span class="dv">9</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>(<span class="at">post=</span>p1<span class="sc">/</span>(p1<span class="sc">+</span>p2) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3189038</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="理解 dbinom：一次算出一整条二项分布">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+理解 dbinom：一次算出一整条二项分布
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>dbinom(x, size, prob)</code> 是 R 里算二项分布概率的函数：</p>
+<ul>
+<li><code>x</code>：你想问”恰好答对几道”</li>
+<li><code>size</code>：总共几道题（对应公式里的 <span class="math inline">\(n\)</span>）</li>
+<li><code>prob</code>：每道题蒙对的概率（对应公式里的 <span class="math inline">\(p\)</span>）</li>
+</ul>
+<p>单独跑 <code>dbinom(5, 10, 1/2)</code> 会得到 <code>0.2461</code>，就是”10道题、每题蒙对概率1/2、恰好答对5道”的概率。</p>
+<p>但画图需要的不是一个数字，是一整条曲线——把 <code>x</code> 换成一整个序列 <code>0:10</code>，<code>dbinom</code> 会一次性算出11个概率（答对0道到答对10道，每种都算一遍）：</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(x, <span class="dv">10</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># probs 现在是11个数字：答对0道的概率、答对1道的概率、...、答对10道的概率</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, probs, <span class="at">type =</span> <span class="st">"h"</span>)   <span class="co"># 每个 x 位置画一根高度等于概率的竖线/柱子</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02-basic-concepts_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>这11个数字加起来正好等于1（因为”答对0到10道”涵盖了所有可能结果，没有遗漏）。画出来是一座山：中间（答对5道左右）概率最高，两头（全对或全错）概率极低。</p>
+<p><strong>二项分布概率函数</strong></p>
+<p><span class="math display">\[
+p(x=k) = \binom{n}{k}\,p^k(1-p)^{n-k}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(n\)</span>：总共试验次数（比如10道题）</li>
+<li><span class="math inline">\(k\)</span>：关心”恰好成功几次”（比如恰好答对5道）</li>
+<li><span class="math inline">\(p\)</span>：单次试验成功的概率（比如每道题蒙对的概率）</li>
+<li><span class="math inline">\(\binom{n}{k} = \dfrac{n!}{k!(n-k)!}\)</span>：从 <span class="math inline">\(n\)</span> 次里选出 <span class="math inline">\(k\)</span> 次成功，有多少种不同的排列方式</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="q1q5-速查" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="q1q5-速查"><span class="header-section-number">2.4</span> Q1–Q5 速查</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1013,64 +1359,304 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 基本概念</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 概率的规则及贝叶斯定理</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### 概率的规则</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>概率的频率派定义：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>以掷骰子为例，"掷出偶数"这个事件的概率可以写成：</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>p(\text{掷出偶数}) = \frac{\text{掷出偶数的次数}}{\text{总试验次数}}</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>频率派的概率定义，对某些问题完全不起作用，比如：</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>刘阿姨的女儿今年考上大学的概率是多少？</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>中国足球队下一次进入世界杯决赛的概率是多少？</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>下一次重大国际危机发生在亚洲的概率是多少？</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>这类问题无法通过大量重复试验获得频率，人们只能用自己的**相信程度**（degree of belief）来描述——这种概率称为**主观概率**（subjective probability）。</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>频率派无法处理主观概率，贝叶斯统计对两种概率都能自然处理。</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>贝叶斯统计用概率度量"你对一个不确定事件为真的相信程度"，这个度量基于你已有的知识。</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>设 $H$ 是一个事件（或假设），$K$ 是试验前你已有的知识，则 $p(H \mid K)$ 表示：给定 $K$，你对 $H$ 的相信程度</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>试验后得到数据 $D$，你需要把概率修订为 $p(H \mid D \cap K)$</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>这次修订取决于：在 $H$ 为真、以及 $H$ 为假两种情况下，$D$ 出现的可能性分别有多大</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 对纯粹的贝叶斯派来说，**所有概率都是条件概率**——所以不必每次都特意写出"条件"二字。</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>例子：$p(H \mid D \cap K)$ 怎么用</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H$：这枚硬币是均匀的</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$D$：抛 10 次，7 次正面</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$K$：这枚硬币是朋友随手给我的，没有作弊动机</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>p(H \mid D \cap K)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>含义：**结合"抛10次7次正面"这个新数据，以及"这是朋友随手给的硬币"这个背景知识，硬币均匀的概率是多少。**</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>如果把 $K$ 换成"这枚硬币是魔术师给我的"，同样的数据 $D$，算出来的 $p(H \mid D \cap K)$ 会不一样——这说明 $K$ 不是摆设，它真实参与了运算。</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q5 速查</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>| | 书中概念 | 我的框架对应 |</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>| Q1 | 参数 $\theta$ | 潜变量 |</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>| Q2 | 似然函数 $L(\theta)=p(Y\mid\theta)$ | 观测模型（把 $Y$ 固定看 $\theta$） |</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>| Q3 | 先验分布 $p(\theta)$、共轭先验族 | 先验结构 |</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>| Q4 | 后验分布 $p(\theta\mid Y)$ | 计算目标 |</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>| Q5 | （书中较少展开） | 独立轴，需要自己补充阅读 |</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待补充：共轭先验族那一节的具体推导笔记。</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 基本概念</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 概率的规则及贝叶斯定理</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### 概率的规则</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>概率的**频率派定义**：某事件发生的概率，是重复试验次数趋于无穷时，该事件发生次数占总试验次数的比例。</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>以掷骰子为例，"掷出偶数"这个事件的概率可以写成：</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>p(\text{掷出偶数}) = \frac{\text{掷出偶数的次数}}{\text{总试验次数}}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>但是，**频率派**的概率定义，对某些问题完全不起作用，比如：</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>刘阿姨的女儿今年考上大学的概率是多少？</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>中国足球队下一次进入世界杯决赛的概率是多少？</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>下一次重大国际危机发生在亚洲的概率是多少？</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>这类问题，无法通过大量重复试验获得频率，人们只能用自己的**相信程度**（degree of belief）来描述——这种概率称为**主观概率**（subjective probability）。</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>**频率派**无法处理主观概率，但是，**贝叶斯统计**对两种概率都能自然处理。</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>贝叶斯统计用概率度量"你对一个不确定事件为真的相信程度"，这个度量基于你已有的知识。</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>设 $H$ 是一个事件（或假设），$K$ 是试验前你已有的知识，则 $p(H \mid K)$ 表示：给定 $K$，你对 $H$ 的相信程度</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>试验后得到数据 $D$，你需要把概率修订为 $p(H \mid D \cap K)$</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>这次修订取决于：在 $H$ 为真、以及 $H$ 为假两种情况下，$D$ 出现的可能性分别有多大</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 对纯粹的贝叶斯派来说，**所有概率都是条件概率**——所以不必每次都特意写出"条件"二字。</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>例子：$p(H \mid D \cap K)$ 怎么用</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H$：假设这枚硬币是均匀的</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$D$：抛 10 次，7 次正面</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$K$：这枚硬币是朋友随手给我的，没有作弊动机</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>p(H \mid D \cap K)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>含义：**结合"抛10次7次正面"这个新数据，以及"这是朋友随手给的硬币"这个背景知识，硬币均匀的概率是多少。**</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>如果把 $K$ 换成"这枚硬币是魔术师给我的"，同样的数据 $D$，算出来的 $p(H \mid D \cap K)$ 会不一样——这说明 $K$ 不是摆设，它真实参与了运算。</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>概率论的正式规则有三条 , 所有其他的性质都可从它们导出.</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>(1) **凸性**：对任何事件 $A$ 和 $B$ , $ 0 \leq p(A \mid B) \leq 1 $ 及 $ p(A \mid A) = 1 $</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 概率值必须落在一个"凸集"（这里就是闭区间 </span><span class="co">[</span><span class="ot">0,1</span><span class="co">]</span><span class="at">）里，不能跑到区间外面去。</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>(2) **可加性**：对于互斥事件 $A$ 和 $B$，和任意事件 $C$，</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>p(A \cup B \mid C) = p(A \mid C) + p(B \mid C)</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>（这条对任意可数的无穷集合也成立。）</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; A 和 B 互斥，A 或 B 发送的概率就是直接把两者的概率相加</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>(3) **乘法规则**：</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>p(A \cap B \mid C) = p(B \mid C)\, p(A \mid B \cap C)</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 这条是三条公理里最关键的一条——贝叶斯定理本质上就是从这条规则重新排列变形推出来的。</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 联合概率 = 一个先发生的概率 × 另一个在它基础上跟着发生的概率。</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="fu">### 概率规则的合理性 、贝叶斯定理 、优势比 、后验分布</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>注意，由于 $K$ 作为每一个条件事件的一部分，$K$ 已经包含在基于先验知识的概率 $p(H) \equiv p(H \mid K)$ 之中，所以任何以 $H$ 为条件的概率都包含了 $K$ 的信息。从这些规则可以证明**贝叶斯定理**：</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>p(H \mid D) = \frac{p(D \mid H)\,p(H)}{p(D)}</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>= \frac{p(D \mid H)\,p(H)}{p(D \mid H)\,p(H) + p(D \mid H^C)\,p(H^C)}</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 1分子：表示 H 成立 且观察到 D 发生的概率 $ p(D \mid H)p(H) = p(D \cap H) $</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 1分母：不管 H 是否成立，D 发生的概率</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 1 整体，这是一个比例，H 成立且发生D，占所有 D 中的多大份额</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 在所有能导致你观测到这份数据 D 的可能世界里，H 为真的那部分世界占多大比例——这个比例，就是你看到 D 之后应该赋予 H 的新概率。</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 这就是 后验概率 $ p(H \mid D) $ 的真实含义，**用数据把不符合的可能行过滤掉，剩下的里面再看 $ H $ 占多少**</span></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="思考题：为什么贝叶斯公式是乘法规则变体？" collapse="false"}</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>先把乘法规则原文摆出来</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>p(A \cap B \mid C) = p(B \mid C)\, p(A \mid B \cap C)</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>代入 A=D，B=H</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>p(D \cap H \mid C) = p(H \mid C)p(D \mid H \cap C)</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>如果我们把背景知识 C（也就是 K）先按下表（因为之前说过它一直隐藏在每个概率符号背后），这条式子写简化一点就是：</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>p(D \cap H) = p(H)p(D \mid H)</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>这一步没有引入任何新规则，就是把"乘法规则"里的字母A、B 换成了具体的 D、H，纯粹是同一条规则的一次应用，不是巧合，也不是新东西。</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>这里 $H^C$ 是 $H$ 的互补事件。上式显示对事件 $H$ 的信念 $p(H)$ 是如何通过新的数据信息 $D$ 转换到更新的信念 $p(H\mid D)$ 的。贝叶斯关于概率的思维能够用下图说明：</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="in">flowchart TD</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a><span class="in">    A["最初概率值 p(H)"] --&gt; C["贝叶斯定理"]</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a><span class="in">    B["数据 D"] --&gt; C</span></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a><span class="in">    C --&gt; D["重新估价的概率值 p(H|D)"]</span></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>为什么用**概率**适合研究不确定性？</span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>（1）参照一个标准：优势比</span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>（2）得分规则</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>（3）决策分析</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="fu">### 贝叶斯与经典统计学概念的比较</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>关于 $\theta$，也就是关于不确定性上，传统统计和贝叶斯统计就不一致了。按照我们的推理，它应仍然有一个称为**先验概率**的概率密度，比如记为 $p(\theta)$，它代表了得到数据之前所具有的知识的细节。这个特性在大多数统计方法中是没有的。由此，正如上面所解释的，推断能够从**后验概率** $p(\theta \mid x)$ 来着手，它描述给定数据 $x$ 后 $\theta$ 的不确定性，并且有计算关系</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>p(\theta \mid x) = p(x \mid \theta)\,p(\theta) / p(x) \propto p(x \mid \theta)\,p(\theta)</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a><span class="sc">\\</span> </span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>后验 \propto 似然 \times 先验</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>这里的比例常数能够由 $p(\theta\mid x)$ 关于 $\theta$ 的和（或积分）为 1 而得到。显然，上式是**贝叶斯定理的另一种形式**。</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; $ \propto $： 正比于（proportional to）</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 意思是：左边和右边只相差一个常数倍数</span></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="思考题：什么是似然（Likelihood）？" collapse="false"}</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>$p(x\mid\theta)$ 这个表达式，在贝叶斯公式里被叫做"似然"，它和"概率"是什么关系？</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="我的回答" collapse="true"}</span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>就是同一个表达式 $p(x\mid\theta)$，换一个看待角度：</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>L(\theta) \;=\; p(x\mid\theta)</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>| | 谁固定 | 谁变化 | 是什么 |</span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|</span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>| **概率** $p(x\mid\theta)$ | $\theta$ 固定 | $x$ 变化 | 关于 $x$ 的概率分布，积分=1 |</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>| **似然** $L(\theta)$ | $x$ 固定（已经测到的数据） | $\theta$ 变化 | 关于 $\theta$ 的函数，**不是概率分布**，积分不等于1 |</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>结合贝叶斯公式看：</span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a>p(\theta\mid x) \propto \underbrace{p(x\mid\theta)}_{\text{似然}} \times \underbrace{p(\theta)}_{\text{先验}}</span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>这一步的关键动作，是把 $p(x\mid\theta)$ **从"$x$ 的概率"重新解读成"$\theta$ 的似然"**——固定住已经观测到的数据 $x$，看不同的 $\theta$ 取值会让这份数据出现的可能性有多大。似然越大，说明这个 $\theta$ 越"支持"观测到的数据，后验就越偏向这个 $\theta$。</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>一句话理解：**似然回答的是"如果 $\theta$ 是这个值，我看到手上这份数据的可能性有多大"，不是"$\theta$ 本身有多大概率"**——后面这个问题才是后验 $p(\theta\mid x)$ 要回答的。</span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>置信区间问题</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>通过概率解决多余参数、重复观测问题</span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>关于重复</span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>似然原理</span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>后验概率 $ p(\theta \mid x) $ 给出了 $ \theta $ 的完全推断</span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>贝叶斯统计证据度量与经典统计比较</span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>（传统统计用 $ p$ 作为证据的度量）</span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a>| 序号 | 误解（Misconception） |</span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a>|:---:|---|</span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a>| 1 | 如果 $P=.05$，原假设为真的概率只有 5%。 |</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>| 2 | 不显著的差异（如 $P\geq.05$）意味着组间没有差异。 |</span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>| 3 | 统计显著的结果在临床上就是重要的。 |</span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>| 4 | $P$ 值落在 $.05$ 两侧的研究结果是相互矛盾的。 |</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>| 5 | $P$ 值相同的研究，对原假设提供的反对证据强度也相同。 |</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>| 6 | $P=.05$ 意味着，在原假设成立的情况下，只有 5% 的概率会观测到这样的数据。 |</span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>| 7 | $P=.05$ 和 $P\leq.05$ 是同一回事。 |</span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>| 8 | $P$ 值应该写成不等式的形式（例如 $P=.015$ 时应写作"$P\leq.02$"）。 |</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>| 9 | $P=.05$ 意味着，如果你拒绝原假设，第一类错误的概率只有 5%。 |</span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a>| 10 | 用 $P=.05$ 作为显著性阈值，第一类错误发生的概率就是 5%。 |</span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>| 11 | 当你不关心某个方向上的结果、或者该方向上的差异不可能发生时，应该用单侧 $P$ 值。 |</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>| 12 | 科学结论或治疗方案应该基于 $P$ 值是否显著来决定。 |</span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>: Goodman 指出 p 值的 12 个误导</span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## 决策的基本概念</span></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## 贝叶斯统计的基本概念</span></span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### 贝叶斯定理</span></span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a><span class="fu">### 例 2.2：两份试卷的贝叶斯推断</span></span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a>假定学生随机从两份试卷（A、B 卷）中选择一份。根据先验知识，选中 A 卷的概率为 $1/10$，选中 B 卷的概率为 $9/10$；已知 A 卷是 10 道 2 选 1 的题目，B 卷是 10 道 4 选 1 的题目。如果一个什么都不懂、仅仅靠运气的学生恰好答对了 5 道题，那么该学生选中 A 卷的后验概率是多少？</span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a>**定义指标变量**：</span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>\theta =</span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a>\begin{cases}</span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>0, &amp; \text{选中 A 卷} <span class="sc">\\</span></span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a>1, &amp; \text{选中 B 卷}</span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a>\end{cases}</span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>$p(\theta=0)=0.1$、$p(\theta=1)=0.9$ 分别为选中 A 卷、B 卷的先验概率，$x=5$ 为学生答对的题目数。我们希望得到后验概率 $p(\theta=0\mid x=5)$。根据贝叶斯定理：</span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>p(\theta=0\mid x=5) = \frac{p(x=5,\theta=0)}{p(x=5)}</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>= \frac{p(x=5\mid\theta=0)\,p(\theta=0)}{p(x=5\mid\theta=0)\,p(\theta=0) + p(x=5\mid\theta=1)\,p(\theta=1)}</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>**根据二项分布**，对 A 卷及 B 卷猜对 5 道题的概率为：</span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>p(x=5\mid\theta=0) = \binom{10}{5}\left(\frac{1}{2}\right)^5\left(\frac{1}{2}\right)^{10-5} = 0.2461</span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>不是只算"某一种特定的5道题蒙对"的概率（那个概率其实很小，只有 0.000977），而是要把"随便哪5道题蒙对"的所有可能情况（一共252种）都算一遍再加起来——因为题目问的是"恰好答对5道"，不限定是哪5道。</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>p(x=5\mid\theta=1) = \binom{10}{5}\left(\frac{1}{4}\right)^5\left(\frac{3}{4}\right)^{10-5} = 0.0584</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>**由贝叶斯定理得到后验概率**：</span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>p(\theta=0\mid x=5) = \frac{0.2461\times 0.1}{0.2461\times 0.1 + 0.0584\times 0.9} = 0.3189</span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>例2.2 计算的 R 代码为：</span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>p1<span class="ot">=</span><span class="fu">dbinom</span>(<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">*</span>.<span class="dv">1</span> </span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>p2<span class="ot">=</span><span class="fu">dbinom</span>(<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>)<span class="sc">*</span>.<span class="dv">9</span> </span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>(<span class="at">post=</span>p1<span class="sc">/</span>(p1<span class="sc">+</span>p2) )</span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="理解 dbinom：一次算出一整条二项分布"}</span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a><span class="in">`dbinom(x, size, prob)`</span> 是 R 里算二项分布概率的函数：</span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`x`</span>：你想问"恰好答对几道"</span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`size`</span>：总共几道题（对应公式里的 $n$）</span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`prob`</span>：每道题蒙对的概率（对应公式里的 $p$）</span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a>单独跑 <span class="in">`dbinom(5, 10, 1/2)`</span> 会得到 <span class="in">`0.2461`</span>，就是"10道题、每题蒙对概率1/2、恰好答对5道"的概率。</span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a>但画图需要的不是一个数字，是一整条曲线——把 <span class="in">`x`</span> 换成一整个序列 <span class="in">`0:10`</span>，<span class="in">`dbinom`</span> 会一次性算出11个概率（答对0道到答对10道，每种都算一遍）：</span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(x, <span class="dv">10</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a><span class="co"># probs 现在是11个数字：答对0道的概率、答对1道的概率、...、答对10道的概率</span></span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, probs, <span class="at">type =</span> <span class="st">"h"</span>)   <span class="co"># 每个 x 位置画一根高度等于概率的竖线/柱子</span></span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a>这11个数字加起来正好等于1（因为"答对0到10道"涵盖了所有可能结果，没有遗漏）。画出来是一座山：中间（答对5道左右）概率最高，两头（全对或全错）概率极低。</span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a>**二项分布概率函数**</span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>p(x=k) = \binom{n}{k}\,p^k(1-p)^{n-k}</span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$n$：总共试验次数（比如10道题）</span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$k$：关心"恰好成功几次"（比如恰好答对5道）</span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$p$：单次试验成功的概率（比如每道题蒙对的概率）</span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\binom{n}{k} = \dfrac{n!}{k!(n-k)!}$：从 $n$ 次里选出 $k$ 次成功，有多少种不同的排列方式</span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q5 速查</span></span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>| | 书中概念 | 我的框架对应 |</span>
+<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
+<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>| Q1 | 参数 $\theta$ | 潜变量 |</span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a>| Q2 | 似然函数 $L(\theta)=p(Y\mid\theta)$ | 观测模型（把 $Y$ 固定看 $\theta$） |</span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a>| Q3 | 先验分布 $p(\theta)$、共轭先验族 | 先验结构 |</span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a>| Q4 | 后验分布 $p(\theta\mid Y)$ | 计算目标 |</span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a>| Q5 | （书中较少展开） | 独立轴，需要自己补充阅读 |</span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待补充：共轭先验族那一节的具体推导笔记。</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

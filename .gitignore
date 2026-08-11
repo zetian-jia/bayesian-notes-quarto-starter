@@ -9,3 +9,5 @@ __pycache__/
 run-render.sh
 
 chapters/*quarto_ipynb
+
+.vscode/*
