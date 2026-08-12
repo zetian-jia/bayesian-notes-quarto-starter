@@ -1,0 +1,58 @@
+## DNA甲基化 DMR 检测工具方法论综述
+
+### 主流工具一览
+
+| 工具 | 核心统计方法 | 一句话特点 |
+|---|---|---|
+| **DSS** | Beta-Binomial 似然 + Wald 检验，离散度参数用经验贝叶斯收缩 | 本框架笔记里最常提到的方法，本质就是从头学到尾的Beta-Binomial模型 |
+| **methylKit** | Fisher精确检验 或 逻辑回归 | 最简单朴素，位点独立检验，不借力 |
+| **bsseq / dmrseq** | BSmooth平滑 + Beta-Binomial检验DMC，再用自回归相关性合并DMR，BH法控FDR | 先平滑再检验，考虑了位点间的空间相关性 |
+| **RADMeth** | 类似的加权逻辑回归 | |
+| **RnBeads** | 分层线性模型 | |
+| **HMM-DM / HMM-Fisher / ComMet** | 隐马尔可夫模型，binomial/beta混合作为发射函数 | HMM章节内容的真实应用 |
+| **MethSCAn** | 核平滑估计跨细胞平均曲线 + 每个细胞对平均曲线的残差，残差取平均时用伪计数做收缩 | 频率学派收缩估计，非严格贝叶斯后验 |
+
+### 逐个映射到 Q1–Q5 框架
+
+#### DSS
+
+- **Q1**：$\theta_{ij}$ = 位点真实甲基化比例
+- **Q2**：$k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})$
+- **Q3**：$\theta_{ij}\sim\text{Beta}(\alpha,\beta)$，$\alpha,\beta$ 不是主观设定，是从全基因组数据里估出来的（经验贝叶斯，对应"收缩到常数"这一支先验）
+- **Q4**：Wald检验（基于后验的渐近正态近似，呼应拉普拉斯近似）
+- **Q5**：BH法控制FDR
+
+#### bsseq / dmrseq
+
+核心模型（Beta-Binomial）与DSS完全一致，区别只在Q3：DSS假设每个位点独立，dmrseq/BSmooth的先验里加入了"相邻位点甲基化水平相近"这个假设（核平滑），本质上是把"光滑先验"和"收缩先验"组合在了一起。
+
+#### HMM-DM / ComMet
+
+Q3 换成了马尔可夫先验——"这个位点的甲基化状态（高/低），依赖于它前一个位点的状态"，对应隐状态链 $S_1\to S_2\to\cdots$，$O_t$（观测read计数）对应发射矩阵 $B$。
+
+#### MethSCAn
+
+更接近频率学派的收缩估计，不是严格的贝叶斯后验：
+
+$$
+\text{细胞} i \text{在区间的甲基化值} = \text{shrink}\left(\frac{1}{n_i}\sum_{j} r_{ij}\right)
+$$
+
+- 先用核平滑估计"所有细胞的平均甲基化曲线"
+- 每个细胞的甲基化值，用它和这条平均曲线的残差来表示（而不是原始比例）
+- 残差取平均时，用伪计数做收缩——低覆盖度的细胞，残差往0收缩
+
+单细胞数据量极大，完整跑一遍MCMC/Beta-Binomial对每个组合都太慢，MethSCAn选择了用更快的、启发式的收缩方法换取速度，这是频率/贝叶斯方法选择权衡的实际案例。
+
+### DSS 相关文献时间线
+
+| 年份 | 论文 | 处理什么问题 |
+|---|---|---|
+| **2013** | Wu, Wang, Wu — *A new shrinkage estimator for dispersion...*（Biostatistics） | 离散度收缩技巧最早提出的地方，针对 RNA-seq（Gamma-Poisson模型） |
+| **2014** | Feng, Conneely, Wu — *A bayesian hierarchical model to detect DML...*（NAR） | 把方法搬到甲基化数据上的关键论文，Beta-Binomial贝叶斯层次模型 |
+| **2015** | Wu et al. — *Detection of DMRs...without replicates*（NAR） | 扩展到无生物学重复时的处理，从单点DML扩展到连续区域DMR |
+| **2016** | Park, Wu — *Differential methylation analysis...general experimental design*（Bioinformatics） | 扩展到更复杂的实验设计（协变量、多因素） |
+
+> 引用列表中出现的 Huber et al. 2015（Nature Methods）和 Gentleman et al. 2004（Genome Biology）为 Bioconductor 平台声明性引用，不含DSS方法本身的数学细节。
+
+**建议阅读路径**：先读 2014年 Feng, Conneely, Wu 那篇（doi:10.1093/nar/gku154），是甲基化DML/DMR检测方法的第一手贝叶斯层次模型应用；再按需读2015、2016年扩展应用；2013年那篇视是否关心"离散度收缩"技巧的历史渊源决定要不要读。

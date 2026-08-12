@@ -165,7 +165,7 @@
     "href": "chapters/02-basic-concepts.html#q1q5-速查",
     "title": "2  基本概念",
     "section": "2.6 Q1–Q5 速查",
-    "text": "2.6 Q1–Q5 速查\n\n\n\n\n\n\n\n\n\n书中概念\n我的框架对应\n\n\n\n\nQ1\n参数 \\(\\theta\\)\n潜变量\n\n\nQ2\n似然函数 \\(L(\\theta)=p(Y\\mid\\theta)\\)\n观测模型（把 \\(Y\\) 固定看 \\(\\theta\\)）\n\n\nQ3\n先验分布 \\(p(\\theta)\\)、共轭先验族\n先验结构\n\n\nQ4\n后验分布 \\(p(\\theta\\mid Y)\\)\n计算目标\n\n\nQ5\n（书中较少展开）\n独立轴，需要自己补充阅读\n\n\n\n\n待补充：共轭先验族那一节的具体推导笔记。",
+    "text": "2.6 Q1–Q5 速查\n\n\n\n\n\n\n\n\n\n书中概念\n我的框架对应\n\n\n\n\nQ1\n参数 \\(\\theta\\)\n潜变量——我关心但看不见的量\n\n\nQ2\n似然函数 \\(L(\\theta)=p(Y\\mid\\theta)\\)\n观测模型（把 \\(Y\\) 固定看 \\(\\theta\\)）——覆盖度/噪声机制从这里进入\n\n\nQ3\n先验分布 \\(p(\\theta)\\)、共轭先验族\n先验结构——潜变量之间怎么关联；词汇表只有六种：光滑 / 稀疏 / 低秩 / 分组 / 马尔可夫 / 收缩到常数\n\n\nQ4\n后验分布 \\(p(\\theta\\mid Y)\\) 的计算\n计算策略——闭式 / MAP / 拉普拉斯近似 / MCMC(Gibbs、Metropolis) / EM / 变分推断(VI/ADVI)；只决定快不快，不决定对不对\n\n\nQ5\n（书中较少展开）\n独立于 Q1–Q4 的一条轴——数据划分、置换检验、选择性推断；模型完全正确，但若用同一份数据既选特征又做检验，p 值/后验依然是废的\n\n\n\n三个提醒，避免最常见的两类错误：\n\nQ1–Q3 决定”对不对”（模型本身），Q4 决定”快不快”（算法选择），Q5 决定”信不信”（推断有效性）——三件事经常被混为一谈\n把 Q4 当成 Q3 是典型错误：以为”用了 MCMC”和”用了变分推断”是两个不同的模型——其实只是同一个后验的两种求解算法，模型（Q1-Q3）完全没变\n忽略 Q5 是另一个典型错误：本书正文的绝大部分内容都在讲 Q1-Q4（怎么建模、怎么算），Q5 需要额外补充阅读（数据划分、选择性推断这类内容）",
     "crumbs": [
       "第一部分：基础篇",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>基本概念</span>"
@@ -348,58 +348,157 @@
     ]
   },
   {
-    "objectID": "chapters/13-bayes-net.html",
-    "href": "chapters/13-bayes-net.html",
-    "title": "8  第 13 章 贝叶斯网络",
+    "objectID": "chapters/11-survival.html",
+    "href": "chapters/11-survival.html",
+    "title": "",
     "section": "",
-    "text": "8.1 13.1 概述",
+    "text": "第四部分：更多的贝叶斯模型8  11-survival.html Code",
     "crumbs": [
       "第四部分：更多的贝叶斯模型",
-      "<span class='chapter-number'>8</span>  <span class='chapter-title'>第 13 章 贝叶斯网络</span>"
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>11-survival.html</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/12-naive-bayes.html",
+    "href": "chapters/12-naive-bayes.html",
+    "title": "9  第 12 章 朴素贝叶斯",
+    "section": "",
+    "text": "9.1 12.1 基本概念",
+    "crumbs": [
+      "第四部分：更多的贝叶斯模型",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>第 12 章 朴素贝叶斯</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/12-naive-bayes.html#基本概念",
+    "href": "chapters/12-naive-bayes.html#基本概念",
+    "title": "9  第 12 章 朴素贝叶斯",
+    "section": "",
+    "text": "9.1.1 12.1.1 类条件独立性假定\n如果因变量有 \\(K\\) 类，为 \\(c_1,c_2,\\ldots,c_K\\)，朴素贝叶斯假定在给定 \\(c_k\\)（\\(k=1,2,\\ldots,K\\)）的条件下自变量 \\(\\boldsymbol{x}=(x_1,x_2,\\ldots,x_n)\\) 都是独立的，这称为类条件独立性（class conditional independence）。这种独立性假定给了该方法”朴素”（或天真，naive）的帽子，它意味着改变一个变量的值，不直接影响或改变算法中使用的任何其他变量的值。\n朴素贝叶斯方法通常在给定类别（比如 \\(c_k\\)）之后假定了它们的条件分布 \\(p(x_i\\mid c_k)\\) 的类型，比如正态分布、多项分布或 Bernoulli 分布等。\n朴素贝叶斯的目的就是要计算在给定数据 \\(\\boldsymbol{x}\\) 的条件下属于类 \\(c_k\\) 的概率，即后验概率 \\(p(c_k\\mid\\boldsymbol{x})\\)，并且求使后验概率最大的类 \\(c_k\\)。\n根据贝叶斯定理，后验分布（给定数据 \\(\\boldsymbol{x}\\) 的条件下属于类 \\(c_k\\) 的概率）\n\\[\np(c_k\\mid\\boldsymbol{x}) = \\frac{p(c_k)p(\\boldsymbol{x}\\mid c_k)}{p(\\boldsymbol{x})} \\tag{12.1.1}\n\\]\n\\[\n\\propto p(c_k)p(\\boldsymbol{x}\\mid c_k) = p(c_k)p(x_1,x_2,\\ldots,x_n\\mid c_k) \\tag{12.1.2}\n\\]\n\\[\n= p(c_k)p(x_1\\mid c_k)p(x_2\\mid c_k)\\cdots p(x_n\\mid c_k) = p(c_k)\\prod_{i=1}^n p(x_i\\mid c_k) \\tag{12.1.3}\n\\]\n其中，式(12.1.1)是贝叶斯定理，式(12.1.2)是因为分母的概率 \\(p(\\boldsymbol{x})\\) 与我们关心的类没有关系（这里符号 \\(\\propto\\) 是”成比例”的意思），式(12.1.3)是因为假定了观测值 \\(x_1,x_2,\\ldots,x_n\\) 在给定了 \\(c_k\\) 的条件下独立。\n有了上面的式子及假定的 \\(p(x_i\\mid c_k)\\) 的条件分布，给定数据 \\(x_1,x_2,\\ldots,x_n\\) 之后，我们就可以寻求使得 \\(p(c_k)\\prod_{i=1}^n p(x_i\\mid c_k)\\) 最大的类 \\(c_k\\)。\n\n\n9.1.2 12.1.2 朴素贝叶斯分类器类型\n如果没有具体的概率分布则无法计算。上面说到，给定类别（比如 \\(c_k\\)）之后需要假定它们的条件分布 \\(p(x_i\\mid c_k)\\) 的类型，比如正态分布、多项分布或 Bernoulli 分布等。\n\n多项朴素贝叶斯：可用于属性分类的问题。比如一个评论是正面、负面还是中性等；一个文档是属于体育、科技、民生、新闻等。预测变量多为某种特征的频数\nBernoulli 朴素贝叶斯：预测变量通常是二分变量或布尔变量\n高斯朴素贝叶斯：当预测变量是连续的而非离散的时，通常假设这些值有正态总体\n\n虽然在上面做了一些诸如独立性或分布等假定，实际上这些假定并不一定满足，但这个方法却产生很精确的分类。因此从某种意义上说，朴素贝叶斯方法仅仅是借用了贝叶斯定理及后验分布的思想来解释其方法的根据。",
+    "crumbs": [
+      "第四部分：更多的贝叶斯模型",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>第 12 章 朴素贝叶斯</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/12-naive-bayes.html#朴素贝叶斯方法分类数值例子",
+    "href": "chapters/12-naive-bayes.html#朴素贝叶斯方法分类数值例子",
+    "title": "9  第 12 章 朴素贝叶斯",
+    "section": "9.2 12.2 朴素贝叶斯方法分类数值例子",
+    "text": "9.2 12.2 朴素贝叶斯方法分类数值例子\n例 12.1（indian_diabetes.csv）该数据集描述了皮马印第安人的医疗记录以及每个患者是否在多年内患有糖尿病。具体变量描述如下：preg（怀孕的次数），plas（口服葡萄糖耐量试验中的2小时血浆葡萄糖浓度），pres（舒张压，mmHg），skin（肱三头肌皮肤褶皱厚度，mm），test（2小时血清胰岛素，\\(\\mu\\)U/ml），bmi（体重指数，体重kg/身高\\(m^2\\)），pedi（糖尿病谱系功能），age（年龄，岁），class（类，1：糖尿病检测阳性，0：",
+    "crumbs": [
+      "第四部分：更多的贝叶斯模型",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>第 12 章 朴素贝叶斯</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/13-bayes-net.html",
+    "href": "chapters/13-bayes-net.html",
+    "title": "10  第 13 章 贝叶斯网络",
+    "section": "",
+    "text": "10.1 13.1 概述",
+    "crumbs": [
+      "第四部分：更多的贝叶斯模型",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>第 13 章 贝叶斯网络</span>"
     ]
   },
   {
     "objectID": "chapters/13-bayes-net.html#概述",
     "href": "chapters/13-bayes-net.html#概述",
-    "title": "8  第 13 章 贝叶斯网络",
+    "title": "10  第 13 章 贝叶斯网络",
     "section": "",
-    "text": "8.1.1 13.1.1 基本概念\n属于概率图形（probabilistic graphical models, GM）族的网络模型贝叶斯网络（Bayesian networks, BN）包括图理论、概率论、计算机科学及统计的概念，是多变量概率分布的一种概率图模型。\n贝叶斯网络包含有向无回路图（directed acyclic graph, DAG）。DAG 是由节点（node）或顶点（vertex）和有向边或有向弧组成的。无回路意味着没有节点是它自己的祖先或后代，也就是顺着箭头不会经过已经走过的节点。DAG 的每个节点都对应于一个变量，箭头代表变量之间的相依关系。每个箭头的终点称为”子节点”（child），起点称为”父节点”（parent）。和图模型类似，没有父节点的节点称为根节点（root node），没有子节点的节点称为叶节点（leaf node），其他节点称为中间节点（intermediate node）。每个变量都附有给定其父节点的（条件）局部概率，因此贝叶斯网络也称为概率有向无回路图模型（probabilistic directed acyclic graphical model），这就区别于其他具有DAG的图模型。\n贝叶斯网络的每个变量 \\(x_i\\) 在一个有向无回路图中表示为节点（或称顶点）；概率分布 \\(p(x_1,x_2,\\ldots,x_N)\\) 以因子分解的形式表示如下：\n\\[\np(x_1,x_2,\\ldots,x_N) = \\prod_{i=1}^{M} p(\\boldsymbol{x}_i\\mid\\Pi_{x_i}) \\tag{13.1.1}\n\\]\n这里 \\(\\Pi_{x_i}\\) 是图中 \\(x_i\\) 父节点的集合。这个表达式显示了贝叶斯网络满足因果马尔可夫假定，即每个点的概率在给定其父节点时独立于其他祖先，表达式(13.1.1)还使得一个原本非常烦琐的联合分布大大简化。贝叶斯网络被下面二者完全确定：\n\n图结构，即图中的有向弧（或有向边）\n对每个变量 \\(x_i\\) 的条件概率表（conditional probability table, CPT）\n\n当一个贝叶斯网络被确定之后，就可以通过式(13.1.1)计算想要的任何条件概率，这可以直接用手算（比如对下面例13.1的简单情况），当然，通常是用计算机软件实现。\n贝叶斯网络非常便于表示概率因果关系系统。一方面，通过从一个节点到另一个节点（比如图13.1.1中的 \\(C\\) 到 \\(R\\)）添加有向边并适当地设置概率，就可以很容易地在网络中确立”\\(C\\) 如何经常导致 \\(R\\)“的事实；另一方面，如果 \\(C\\) 对 \\(B\\) 没有因果影响，它们之间就不会有一个有向边。\n贝叶斯网络广泛应用于统计、机器学习、人工智能等领域。贝叶斯网络在数学上严格而且易于理解。虽然箭头代表变量间直接的因果关系，但推理能够作用于任何方向（无论有没有箭头）。\n贝叶斯网络不像完全主观建造而又很难更新或修改的结构方程模型，它根据数据中变量之间的相关性来构建图中的变量联系，同时也可以加上主观的介入。因此，贝叶斯网络从某种意义上来说比图模型更加客观，与数据所反映的现实世界的关系也更加密切。\n\n\n8.1.2 13.1.2 贝叶斯网络的难点及优缺点\n贝叶斯网络中有哪些变量（节点）、它们之间的关系（那些有向边或有向弧）以及有关的条件概率表（CPT）实际上是很难事先知道的，这些必须根据数据来获得，这就是贝叶斯网络最核心也是充斥着难点的地方。\n\n8.1.2.1 1. 优点\n\n适用于较小的和不完全的数据集\n能够通过数据学习网络结构和各种条件概率\n可结合不同来源的信息，包括主观的、怀疑的以及证据确凿的信息\n明白地处理不确定性，并支持决策系统\n所有结构都以解析的形式描述，一旦结构的学习过程完成，可以很快得到想要的结论\n\n\n\n8.1.2.2 2. 缺点\n\n选择先验分布不很容易\n对于连续变量有困难，通常需要离散化，这有利有弊\n把专家知识构造进贝叶斯网络有各种困难，包括概率的确定\n做完全的贝叶斯学习过程极其花费计算资源，即使在网络结构已知的情况下仍然不易\n对于高维数据贝叶斯网络表现不佳\n贝叶斯网络可能不易解释，特别是不同部分效果的区分\n对于并非不常见的循环的关系，会很困难（可能需要非指向的图模型，诸如马尔可夫随机域）\n\n\n\n\n8.1.3 13.1.3 贝叶斯网络的一个简单例子\n例 13.1 图13.1.1是一个简单的贝叶斯网络例子。\\(C\\) 表示通常的感冒，\\(R\\) 表示流鼻涕，\\(H\\) 表示头疼，\\(B\\) 表示接触过有禽流感的家禽，\\(A\\) 是禽流感，\\(N\\) 是一般抗生素无效。左图为贝叶斯网络，右图为每个变量为真（T，用哑元1代表）及为伪（F，哑元0代表）的概率及条件概率。",
+    "text": "10.1.1 13.1.1 基本概念\n属于概率图形（probabilistic graphical models, GM）族的网络模型贝叶斯网络（Bayesian networks, BN）包括图理论、概率论、计算机科学及统计的概念，是多变量概率分布的一种概率图模型。\n贝叶斯网络包含有向无回路图（directed acyclic graph, DAG）。DAG 是由节点（node）或顶点（vertex）和有向边或有向弧组成的。无回路意味着没有节点是它自己的祖先或后代，也就是顺着箭头不会经过已经走过的节点。DAG 的每个节点都对应于一个变量，箭头代表变量之间的相依关系。每个箭头的终点称为”子节点”（child），起点称为”父节点”（parent）。和图模型类似，没有父节点的节点称为根节点（root node），没有子节点的节点称为叶节点（leaf node），其他节点称为中间节点（intermediate node）。每个变量都附有给定其父节点的（条件）局部概率，因此贝叶斯网络也称为概率有向无回路图模型（probabilistic directed acyclic graphical model），这就区别于其他具有DAG的图模型。\n贝叶斯网络的每个变量 \\(x_i\\) 在一个有向无回路图中表示为节点（或称顶点）；概率分布 \\(p(x_1,x_2,\\ldots,x_N)\\) 以因子分解的形式表示如下：\n\\[\np(x_1,x_2,\\ldots,x_N) = \\prod_{i=1}^{M} p(\\boldsymbol{x}_i\\mid\\Pi_{x_i}) \\tag{13.1.1}\n\\]\n这里 \\(\\Pi_{x_i}\\) 是图中 \\(x_i\\) 父节点的集合。这个表达式显示了贝叶斯网络满足因果马尔可夫假定，即每个点的概率在给定其父节点时独立于其他祖先，表达式(13.1.1)还使得一个原本非常烦琐的联合分布大大简化。贝叶斯网络被下面二者完全确定：\n\n图结构，即图中的有向弧（或有向边）\n对每个变量 \\(x_i\\) 的条件概率表（conditional probability table, CPT）\n\n当一个贝叶斯网络被确定之后，就可以通过式(13.1.1)计算想要的任何条件概率，这可以直接用手算（比如对下面例13.1的简单情况），当然，通常是用计算机软件实现。\n贝叶斯网络非常便于表示概率因果关系系统。一方面，通过从一个节点到另一个节点（比如图13.1.1中的 \\(C\\) 到 \\(R\\)）添加有向边并适当地设置概率，就可以很容易地在网络中确立”\\(C\\) 如何经常导致 \\(R\\)“的事实；另一方面，如果 \\(C\\) 对 \\(B\\) 没有因果影响，它们之间就不会有一个有向边。\n贝叶斯网络广泛应用于统计、机器学习、人工智能等领域。贝叶斯网络在数学上严格而且易于理解。虽然箭头代表变量间直接的因果关系，但推理能够作用于任何方向（无论有没有箭头）。\n贝叶斯网络不像完全主观建造而又很难更新或修改的结构方程模型，它根据数据中变量之间的相关性来构建图中的变量联系，同时也可以加上主观的介入。因此，贝叶斯网络从某种意义上来说比图模型更加客观，与数据所反映的现实世界的关系也更加密切。\n\n\n10.1.2 13.1.2 贝叶斯网络的难点及优缺点\n贝叶斯网络中有哪些变量（节点）、它们之间的关系（那些有向边或有向弧）以及有关的条件概率表（CPT）实际上是很难事先知道的，这些必须根据数据来获得，这就是贝叶斯网络最核心也是充斥着难点的地方。\n\n10.1.2.1 1. 优点\n\n适用于较小的和不完全的数据集\n能够通过数据学习网络结构和各种条件概率\n可结合不同来源的信息，包括主观的、怀疑的以及证据确凿的信息\n明白地处理不确定性，并支持决策系统\n所有结构都以解析的形式描述，一旦结构的学习过程完成，可以很快得到想要的结论\n\n\n\n10.1.2.2 2. 缺点\n\n选择先验分布不很容易\n对于连续变量有困难，通常需要离散化，这有利有弊\n把专家知识构造进贝叶斯网络有各种困难，包括概率的确定\n做完全的贝叶斯学习过程极其花费计算资源，即使在网络结构已知的情况下仍然不易\n对于高维数据贝叶斯网络表现不佳\n贝叶斯网络可能不易解释，特别是不同部分效果的区分\n对于并非不常见的循环的关系，会很困难（可能需要非指向的图模型，诸如马尔可夫随机域）\n\n\n\n\n10.1.3 13.1.3 贝叶斯网络的一个简单例子\n例 13.1 图13.1.1是一个简单的贝叶斯网络例子。\\(C\\) 表示通常的感冒，\\(R\\) 表示流鼻涕，\\(H\\) 表示头疼，\\(B\\) 表示接触过有禽流感的家禽，\\(A\\) 是禽流感，\\(N\\) 是一般抗生素无效。左图为贝叶斯网络，右图为每个变量为真（T，用哑元1代表）及为伪（F，哑元0代表）的概率及条件概率。",
     "crumbs": [
       "第四部分：更多的贝叶斯模型",
-      "<span class='chapter-number'>8</span>  <span class='chapter-title'>第 13 章 贝叶斯网络</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>第 13 章 贝叶斯网络</span>"
     ]
   },
   {
     "objectID": "chapters/14-HMM.html",
     "href": "chapters/14-HMM.html",
-    "title": "9  隐马尔可夫模型",
+    "title": "11  隐马尔可夫模型",
     "section": "",
-    "text": "9.1 14.1 概述\n隐马尔可夫模型（hidden Markov model, HMM）是具有不可观察（即隐藏）状态的马尔可夫模型。它可以表示为最简单的动态贝叶斯网络。HMM 背后的数学最初是由 Baum and Petrie (1966) 提出的。HMM 与早期 Stratonovich (1960) 关于最优非线性滤波问题的研究密切相关。\n在更简单的马尔可夫模型（如马尔可夫链）中，状态对于观察者是直接可见的，因此状态转移概率是唯一的参数，而在隐马尔可夫模型中，可观测的仅仅是取决于不可观测状态的显示。这些显示的数据给出了关于状态的信息而不是状态本身。\n隐马尔可夫模型可以认为是混合模型的推广，这里控制混合分量的隐变量不是独立的而是由马尔可夫模型联系的，也称为依赖混合模型（dependent mixture model）。HMM 强化学习和瞬时模式识别等在诸如心理学、经济学、遗传学及各种社会科学领域中有广泛的应用。\n举例来说，我们可以看见下雨（Rain）、阴天（Cloudy）和不下雨（Dry），这是可观测的状况，相应的高空气压有高（High）、低（Low）之分，这是人们不可观测的状态。假定高空状态是个马尔可夫链，有状态转移概率矩阵：\n\\[\n\\boldsymbol{A} = \\begin{bmatrix} 0.7 & 0.3 \\\\ 0.2 & 0.8 \\end{bmatrix}\n\\]\n或者\n对于这个马尔可夫链，可假定有一个初始概率：\n\\[\n\\boldsymbol{\\pi} = \\begin{bmatrix} 0.6 \\\\ 0.4 \\end{bmatrix}\n\\]\n或者\n\\[\nP(\\text{High})=0.6;\\quad P(\\text{Low})=0.4\n\\]\n这样，通过 \\(n\\) 次转移之后的各个状态的概率为 \\(\\boldsymbol{A}^n\\boldsymbol{\\pi}\\)。\n从不可见的状态到可观测的状态会有一个发送（emission）概率转移矩阵：\n\\[\n\\boldsymbol{B} = \\begin{bmatrix} 0.6 & 0.3 & 0.1 \\\\ 0.2 & 0.2 & 0.6 \\end{bmatrix}\n\\]\n或者\n这时，如果 \\(\\boldsymbol{\\pi},\\boldsymbol{A},\\boldsymbol{B}\\) 都已知，那么在 \\(n\\) 次转移之后的可观测状态的概率为 \\(\\boldsymbol{B}^\\top\\boldsymbol{A}^n\\boldsymbol{\\pi}\\)。当然，在现实世界，这些概率并不一定都是已知的。 图14.1.1为马尔可夫链的隐状态 \\(\\{S_t\\}\\)、可观测状态 \\(\\{O_t\\}\\)（\\(t=1,2,\\ldots,T\\)）通过转移概率矩阵 \\(\\boldsymbol{A}\\) 及 \\(\\boldsymbol{B}\\) 导出的关系示意图。\n图 14.1.1 隐状态 \\(\\{S_t\\}\\)、可观测状态 \\(\\{O_t\\}\\)（\\(t=1,2,\\ldots,T\\)）通过转移概率矩阵 \\(\\boldsymbol{A}\\) 及 \\(\\boldsymbol{B}\\) 导出的关系示意图\n下面定义一些符号：\n对于前面天气和气压的例子，如果我们的观测值为\n\\[\n\\boldsymbol{O} = (\\text{Rain}, \\text{Rain}, \\text{Cloudy}, \\text{Dry})\n\\]\n除了前面给出的 \\(\\boldsymbol{\\pi},\\boldsymbol{A},\\boldsymbol{B}\\) 之外，对于该例有\n\\[\nT=4,\\quad n=2,\\quad \\boldsymbol{s}=\\{\\text{High},\\text{Low}\\},\\quad m=3,\\quad \\boldsymbol{V}=\\{\\text{Rain},\\text{Cloudy},\\text{Dry}\\}\n\\]\n对于任意状态序列 \\(s_i\\in\\boldsymbol{s}\\)（\\(i=1,\\ldots,n\\)），不可观测状态的马尔可夫性定义为\n\\[\nP(S_n=s_n\\mid S_1=s_1,\\ldots,S_{n-1}=s_{n-1}) = P(S_n=s_n\\mid S_{n-1}=s_{n-1})\n\\]\n隐马尔可夫模型（HMM）由三个概率表示为\n\\[\nM = (\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\n\\]",
+    "text": "11.1 14.1 概述\n隐马尔可夫模型（hidden Markov model, HMM）是具有不可观察（即隐藏）状态的马尔可夫模型。它可以表示为最简单的动态贝叶斯网络。HMM 背后的数学最初是由 Baum and Petrie (1966) 提出的。HMM 与早期 Stratonovich (1960) 关于最优非线性滤波问题的研究密切相关。\n在更简单的马尔可夫模型（如马尔可夫链）中，状态对于观察者是直接可见的，因此状态转移概率是唯一的参数，而在隐马尔可夫模型中，可观测的仅仅是取决于不可观测状态的显示。这些显示的数据给出了关于状态的信息而不是状态本身。\n隐马尔可夫模型可以认为是混合模型的推广，这里控制混合分量的隐变量不是独立的而是由马尔可夫模型联系的，也称为依赖混合模型（dependent mixture model）。HMM 强化学习和瞬时模式识别等在诸如心理学、经济学、遗传学及各种社会科学领域中有广泛的应用。\n举例来说，我们可以看见下雨（Rain）、阴天（Cloudy）和不下雨（Dry），这是可观测的状况，相应的高空气压有高（High）、低（Low）之分，这是人们不可观测的状态。假定高空状态是个马尔可夫链，有状态转移概率矩阵：\n\\[\n\\boldsymbol{A} = \\begin{bmatrix} 0.7 & 0.3 \\\\ 0.2 & 0.8 \\end{bmatrix}\n\\]\n或者\n对于这个马尔可夫链，可假定有一个初始概率：\n\\[\n\\boldsymbol{\\pi} = \\begin{bmatrix} 0.6 \\\\ 0.4 \\end{bmatrix}\n\\]\n或者\n\\[\nP(\\text{High})=0.6;\\quad P(\\text{Low})=0.4\n\\]\n这样，通过 \\(n\\) 次转移之后的各个状态的概率为 \\(\\boldsymbol{A}^n\\boldsymbol{\\pi}\\)。\n从不可见的状态到可观测的状态会有一个发送（emission）概率转移矩阵：\n\\[\n\\boldsymbol{B} = \\begin{bmatrix} 0.6 & 0.3 & 0.1 \\\\ 0.2 & 0.2 & 0.6 \\end{bmatrix}\n\\]\n或者\n这时，如果 \\(\\boldsymbol{\\pi},\\boldsymbol{A},\\boldsymbol{B}\\) 都已知，那么在 \\(n\\) 次转移之后的可观测状态的概率为 \\(\\boldsymbol{B}^\\top\\boldsymbol{A}^n\\boldsymbol{\\pi}\\)。当然，在现实世界，这些概率并不一定都是已知的。 图14.1.1为马尔可夫链的隐状态 \\(\\{S_t\\}\\)、可观测状态 \\(\\{O_t\\}\\)（\\(t=1,2,\\ldots,T\\)）通过转移概率矩阵 \\(\\boldsymbol{A}\\) 及 \\(\\boldsymbol{B}\\) 导出的关系示意图。\n图 14.1.1 隐状态 \\(\\{S_t\\}\\)、可观测状态 \\(\\{O_t\\}\\)（\\(t=1,2,\\ldots,T\\)）通过转移概率矩阵 \\(\\boldsymbol{A}\\) 及 \\(\\boldsymbol{B}\\) 导出的关系示意图\n下面定义一些符号：\n对于前面天气和气压的例子，如果我们的观测值为\n\\[\n\\boldsymbol{O} = (\\text{Rain}, \\text{Rain}, \\text{Cloudy}, \\text{Dry})\n\\]\n除了前面给出的 \\(\\boldsymbol{\\pi},\\boldsymbol{A},\\boldsymbol{B}\\) 之外，对于该例有\n\\[\nT=4,\\quad n=2,\\quad \\boldsymbol{s}=\\{\\text{High},\\text{Low}\\},\\quad m=3,\\quad \\boldsymbol{V}=\\{\\text{Rain},\\text{Cloudy},\\text{Dry}\\}\n\\]\n对于任意状态序列 \\(s_i\\in\\boldsymbol{s}\\)（\\(i=1,\\ldots,n\\)），不可观测状态的马尔可夫性定义为\n\\[\nP(S_n=s_n\\mid S_1=s_1,\\ldots,S_{n-1}=s_{n-1}) = P(S_n=s_n\\mid S_{n-1}=s_{n-1})\n\\]\n隐马尔可夫模型（HMM）由三个概率表示为\n\\[\nM = (\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\n\\]",
     "crumbs": [
       "第四部分：更多的贝叶斯模型",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>隐马尔可夫模型</span>"
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>隐马尔可夫模型</span>"
     ]
   },
   {
     "objectID": "chapters/14-HMM.html#概述",
     "href": "chapters/14-HMM.html#概述",
-    "title": "9  隐马尔可夫模型",
+    "title": "11  隐马尔可夫模型",
     "section": "",
     "text": "High\nLow\n\n\n\n\nHigh\n\\(P(\\text{High}\\mid\\text{High})=0.70\\)\n\\(P(\\text{Low}\\mid\\text{High})=0.30\\)\n\n\nLow\n\\(P(\\text{High}\\mid\\text{Low})=0.20\\)\n\\(P(\\text{Low}\\mid\\text{Low})=0.80\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDry\nCloudy\nRain\n\n\n\n\nHigh\n\\(P(\\text{Dry}\\mid\\text{High})=0.60\\)\n\\(P(\\text{Cloudy}\\mid\\text{High})=0.30\\)\n\\(P(\\text{Rain}\\mid\\text{High})=0.10\\)\n\n\nLow\n\\(P(\\text{Dry}\\mid\\text{Low})=0.20\\)\n\\(P(\\text{Cloudy}\\mid\\text{Low})=0.20\\)\n\\(P(\\text{Rain}\\mid\\text{Low})=0.60\\)\n\n\n\n\n```{mermaid}\nflowchart LR\n    S1((S1)) --&gt;|A| S2((S2)) --&gt;|A| S3((...)) --&gt;|A| ST((ST))\n    S1 --&gt;|B| O1[O1]\n    S2 --&gt;|B| O2[O2]\n    S3 --&gt;|B| O3[...]\n    ST --&gt;|B| OT[OT]\n```\n\n\n\n\\(\\boldsymbol{S}=\\{S_t\\}\\ (t=1,2,\\ldots,T)\\)：隐马尔可夫过程\n\\(T\\)：观测序列长度\n\\(n\\)：模型中状态个数\n\\(m\\)：可观测的值的个数\n\\(\\boldsymbol{s}=\\{s_i\\}\\)：有 \\(n\\) 个元素的状态空间，即隐马尔可夫过程的不同的状态\n\\(\\boldsymbol{V}=\\{v_1,v_2,\\ldots,v_m\\}\\)：可能观测到的值的集合\n\\(\\boldsymbol{A}=\\{a_{ij}\\}\\)：\\((n\\times n)\\) 状态转移概率矩阵，有可能是某协变量 \\(\\boldsymbol{z}_t\\) 的函数 \\(a_{ij}(\\boldsymbol{z}_t)\\)\n\\(\\boldsymbol{B}\\)：\\((n\\times m)\\) 发送转移概率矩阵，其元素有时记为 \\(\\{b_{S_i}(O_j)\\}\\)。它有可能是某协变量 \\(\\boldsymbol{z}_t\\) 的函数\n\\(\\boldsymbol{\\pi}=\\{\\pi_i\\}\\)：状态的初始分布的 \\((n)\\) 维向量，有可能是某协变量 \\(\\boldsymbol{z}_t\\) 的函数 \\(\\pi_i(\\boldsymbol{z}_t)\\)\n\\(\\boldsymbol{O}=\\{O_t\\}\\)：观测值序列",
     "crumbs": [
       "第四部分：更多的贝叶斯模型",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>隐马尔可夫模型</span>"
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>隐马尔可夫模型</span>"
     ]
   },
   {
     "objectID": "chapters/14-HMM.html#hmm-的三个主要问题",
     "href": "chapters/14-HMM.html#hmm-的三个主要问题",
-    "title": "9  隐马尔可夫模型",
-    "section": "9.2 14.2 HMM 的三个主要问题",
-    "text": "9.2 14.2 HMM 的三个主要问题\n(1) 评估问题：对于 HMM 问题 \\(M=(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\\) 和观测序列 \\(\\boldsymbol{O}=\\{O_i\\}\\)，找到产生 \\(\\{O_i\\}\\) 序列的概率 \\(P(\\boldsymbol{O}\\mid M)\\)。方法是得到 \\(\\boldsymbol{O}\\) 相对于给定模型 \\(M\\) 的得分。\n(2) 解码问题：对于 HMM 问题 \\(M=(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\\) 和观测序列 \\(\\boldsymbol{O}=\\{O_i\\}\\)，找到隐马尔可夫过程的最佳状态序列，也就是最可能产生 \\(\\boldsymbol{O}\\) 的隐马尔可夫过程。\n(3) 学习问题：给定观察序列 \\(\\boldsymbol{O}\\) 与维度 \\(n\\) 和 \\(m\\)，找到最可能产生 \\(\\boldsymbol{O}\\) 的概率模型 \\(M=(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\\)，即训练模型以最佳地拟合观察到的数据。这也可视为在参数 \\(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi}\\) 的（离散）空间上的登山法。\n下面对这三个问题作出说明。\n\n9.2.1 14.2.1 评估问题\n观测序列 \\(\\boldsymbol{O}=\\{O_i\\}\\)，找到产生 \\(\\{O_i\\}\\) 序列的概率 \\(P(\\boldsymbol{O}\\mid M)\\)。我们有\n\\[\nP(\\boldsymbol{O}\\mid M) = \\sum_{S\\in\\boldsymbol{s}} P(\\boldsymbol{O}\\mid S,M)P(S\\mid M)\n\\]\n\\[\n= \\sum_{S\\in\\boldsymbol{s}} \\pi_{S_1}b_{S_1}(O_1)\\cdot a_{S_1,S_2}b_{S_2}(O_2)\\cdot a_{S_2,S_3}b_{S_3}(O_3)\\cdots a_{S_{T-1},S_T}b_{S_T}(O_T) \\tag{14.2.1}\n\\]\n然而，这种直接计算通常是不可行的，因为它需要乘大约 \\(2\\times T\\times n^T\\) 次。但存在能够达到同样结果的更加有效的算法。下面介绍具体的算法。",
+    "title": "11  隐马尔可夫模型",
+    "section": "11.2 14.2 HMM 的三个主要问题",
+    "text": "11.2 14.2 HMM 的三个主要问题\n(1) 评估问题：对于 HMM 问题 \\(M=(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\\) 和观测序列 \\(\\boldsymbol{O}=\\{O_i\\}\\)，找到产生 \\(\\{O_i\\}\\) 序列的概率 \\(P(\\boldsymbol{O}\\mid M)\\)。方法是得到 \\(\\boldsymbol{O}\\) 相对于给定模型 \\(M\\) 的得分。\n(2) 解码问题：对于 HMM 问题 \\(M=(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\\) 和观测序列 \\(\\boldsymbol{O}=\\{O_i\\}\\)，找到隐马尔可夫过程的最佳状态序列，也就是最可能产生 \\(\\boldsymbol{O}\\) 的隐马尔可夫过程。\n(3) 学习问题：给定观察序列 \\(\\boldsymbol{O}\\) 与维度 \\(n\\) 和 \\(m\\)，找到最可能产生 \\(\\boldsymbol{O}\\) 的概率模型 \\(M=(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi})\\)，即训练模型以最佳地拟合观察到的数据。这也可视为在参数 \\(\\boldsymbol{A},\\boldsymbol{B},\\boldsymbol{\\pi}\\) 的（离散）空间上的登山法。\n下面对这三个问题作出说明。\n\n11.2.1 14.2.1 评估问题\n观测序列 \\(\\boldsymbol{O}=\\{O_i\\}\\)，找到产生 \\(\\{O_i\\}\\) 序列的概率 \\(P(\\boldsymbol{O}\\mid M)\\)。我们有\n\\[\nP(\\boldsymbol{O}\\mid M) = \\sum_{S\\in\\boldsymbol{s}} P(\\boldsymbol{O}\\mid S,M)P(S\\mid M)\n\\]\n\\[\n= \\sum_{S\\in\\boldsymbol{s}} \\pi_{S_1}b_{S_1}(O_1)\\cdot a_{S_1,S_2}b_{S_2}(O_2)\\cdot a_{S_2,S_3}b_{S_3}(O_3)\\cdots a_{S_{T-1},S_T}b_{S_T}(O_T) \\tag{14.2.1}\n\\]\n然而，这种直接计算通常是不可行的，因为它需要乘大约 \\(2\\times T\\times n^T\\) 次。但存在能够达到同样结果的更加有效的算法。下面介绍具体的算法。",
     "crumbs": [
       "第四部分：更多的贝叶斯模型",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>隐马尔可夫模型</span>"
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>隐马尔可夫模型</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/21-intro.html",
+    "href": "chapters/21-intro.html",
+    "title": "12  DNA甲基化 DMR 检测工具方法论综述",
+    "section": "",
+    "text": "12.0.1 主流工具一览\n\n\n\n\n\n\n\n\n工具\n核心统计方法\n一句话特点\n\n\n\n\nDSS\nBeta-Binomial 似然 + Wald 检验，离散度参数用经验贝叶斯收缩\n本框架笔记里最常提到的方法，本质就是从头学到尾的Beta-Binomial模型\n\n\nmethylKit\nFisher精确检验 或 逻辑回归\n最简单朴素，位点独立检验，不借力\n\n\nbsseq / dmrseq\nBSmooth平滑 + Beta-Binomial检验DMC，再用自回归相关性合并DMR，BH法控FDR\n先平滑再检验，考虑了位点间的空间相关性\n\n\nRADMeth\n类似的加权逻辑回归\n\n\n\nRnBeads\n分层线性模型\n\n\n\nHMM-DM / HMM-Fisher / ComMet\n隐马尔可夫模型，binomial/beta混合作为发射函数\nHMM章节内容的真实应用\n\n\nMethSCAn\n核平滑估计跨细胞平均曲线 + 每个细胞对平均曲线的残差，残差取平均时用伪计数做收缩\n频率学派收缩估计，非严格贝叶斯后验\n\n\n\n\n\n12.0.2 逐个映射到 Q1–Q5 框架\n\n12.0.2.1 DSS\n\nQ1：\\(\\theta_{ij}\\) = 位点真实甲基化比例\nQ2：\\(k_{ij}\\sim\\text{Binomial}(n_{ij},\\theta_{ij})\\)\nQ3：\\(\\theta_{ij}\\sim\\text{Beta}(\\alpha,\\beta)\\)，\\(\\alpha,\\beta\\) 不是主观设定，是从全基因组数据里估出来的（经验贝叶斯，对应”收缩到常数”这一支先验）\nQ4：Wald检验（基于后验的渐近正态近似，呼应拉普拉斯近似）\nQ5：BH法控制FDR\n\n\n\n12.0.2.2 bsseq / dmrseq\n核心模型（Beta-Binomial）与DSS完全一致，区别只在Q3：DSS假设每个位点独立，dmrseq/BSmooth的先验里加入了”相邻位点甲基化水平相近”这个假设（核平滑），本质上是把”光滑先验”和”收缩先验”组合在了一起。\n\n\n12.0.2.3 HMM-DM / ComMet\nQ3 换成了马尔可夫先验——“这个位点的甲基化状态（高/低），依赖于它前一个位点的状态”，对应隐状态链 \\(S_1\\to S_2\\to\\cdots\\)，\\(O_t\\)（观测read计数）对应发射矩阵 \\(B\\)。\n\n\n12.0.2.4 MethSCAn\n更接近频率学派的收缩估计，不是严格的贝叶斯后验：\n\\[\n\\text{细胞} i \\text{在区间的甲基化值} = \\text{shrink}\\left(\\frac{1}{n_i}\\sum_{j} r_{ij}\\right)\n\\]\n\n先用核平滑估计”所有细胞的平均甲基化曲线”\n每个细胞的甲基化值，用它和这条平均曲线的残差来表示（而不是原始比例）\n残差取平均时，用伪计数做收缩——低覆盖度的细胞，残差往0收缩\n\n单细胞数据量极大，完整跑一遍MCMC/Beta-Binomial对每个组合都太慢，MethSCAn选择了用更快的、启发式的收缩方法换取速度，这是频率/贝叶斯方法选择权衡的实际案例。\n\n\n\n12.0.3 DSS 相关文献时间线\n\n\n\n\n\n\n\n\n年份\n论文\n处理什么问题\n\n\n\n\n2013\nWu, Wang, Wu — A new shrinkage estimator for dispersion…（Biostatistics）\n离散度收缩技巧最早提出的地方，针对 RNA-seq（Gamma-Poisson模型）\n\n\n2014\nFeng, Conneely, Wu — A bayesian hierarchical model to detect DML…（NAR）\n把方法搬到甲基化数据上的关键论文，Beta-Binomial贝叶斯层次模型\n\n\n2015\nWu et al. — Detection of DMRs…without replicates（NAR）\n扩展到无生物学重复时的处理，从单点DML扩展到连续区域DMR\n\n\n2016\nPark, Wu — Differential methylation analysis…general experimental design（Bioinformatics）\n扩展到更复杂的实验设计（协变量、多因素）\n\n\n\n\n引用列表中出现的 Huber et al. 2015（Nature Methods）和 Gentleman et al. 2004（Genome Biology）为 Bioconductor 平台声明性引用，不含DSS方法本身的数学细节。\n\n建议阅读路径：先读 2014年 Feng, Conneely, Wu 那篇（doi:10.1093/nar/gku154），是甲基化DML/DMR检测方法的第一手贝叶斯层次模型应用；再按需读2015、2016年扩展应用；2013年那篇视是否关心”离散度收缩”技巧的历史渊源决定要不要读。",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>DNA甲基化 DMR 检测工具方法论综述</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/22-basic.html",
+    "href": "chapters/22-basic.html",
+    "title": "13  基础内容",
+    "section": "",
+    "text": "13.1 Fisher 精确检验",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>基础内容</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/22-basic.html#fisher-精确检验",
+    "href": "chapters/22-basic.html#fisher-精确检验",
+    "title": "13  基础内容",
+    "section": "",
+    "text": "13.1.1 什么是 Fisher 精确检验\nFisher精确检验回答的问题：给定一个 \\(2\\times2\\) 列联表，两组之间的比例差异，是不是纯属偶然？\n跟卡方检验不同，Fisher精确检验不依赖大样本近似，直接计算超几何分布（对，就是你之前学过的超几何分布！）下观测到当前这张表或更极端情况的精确概率——这也是它名字里”精确”（exact）的来历，小样本下比卡方检验更可靠。\n对应到甲基化场景：一个CpG位点，两组样本（比如处理组vs对照组）的”甲基化/非甲基化”read计数，摆成一张 \\(2\\times2\\) 表：\n\n\n\n\nMethylated\nUnmethylated\n\n\n\n\nGroup A\n45\n15\n\n\nGroup B\n20\n40\n\n\n\n检验的原假设：两组的甲基化比例相同。\n\n\n13.1.2 Fisher 精确检验使用的前提条件\n1. 数据必须是分类变量的计数（不是连续数值）——处理的是”落在每个格子里有多少个”这种计数数据，不能直接用在连续的甲基化比例（\\(M/(M+U)\\)）上。\n2. 样本之间必须相互独立——同一条read不能同时算进两个组。\n3. 每个观测只能属于一个类别组合（互斥）——一条read要么甲基化要么不甲基化，不能同时是两者。\n4. 边际总数应固定或在此条件下检验有意义——这是检验基于超几何分布计算精确概率的数学前提，通常自动满足。\n样本量小或某格子期望频数过低时（经验规则：小于5）优先用 Fisher 检验而非卡方检验，因为它不依赖大样本近似。\n\n\n\n\n\n\n最容易被违反的前提：独立性假设\n\n\n\nFisher检验假设表格里每一个计数都是独立同分布的观测。如果把多个生物学重复的read直接加总成一张表，各重复间本身存在的生物学变异就被忽略了——相当于假装”多个重复完全等同，纯粹是同一过程反复抽样”，但真实情况是重复之间本身就有个体差异。\n这正是 DSS 用 Beta-Binomial 模型取代 Fisher 检验的根本原因：Beta-Binomial 显式用 Q3（先验分布）建模”重复/位点间本身存在变异”，Fisher检验没有这层机制。一旦独立性假设被违反，Fisher检验的 p 值会偏乐观（更容易误判为显著）。\n结论：单样本/无重复/纯技术重复 → Fisher检验合适；多个生物学重复 → 应改用 Beta-Binomial（DSS）或 GLMM 这类能建模组间变异的方法。\n\n\n\n\nCode\n# 构造2x2列联表: 两组(处理/对照) x 甲基化状态\ntab &lt;- matrix(c(45, 15,\n                20, 40),\n              nrow = 2, byrow = TRUE,\n              dimnames = list(Group = c(\"A\",\"B\"), Status = c(\"Methylated\",\"Unmethylated\")))\n\n# fisher.test() 是base R自带函数,不需要额外装包\nresult &lt;- fisher.test(tab)\n\n# 画图: 每组按比例对比甲基化/非甲基化\nprop &lt;- prop.table(tab, margin = 1)\nbarplot(t(prop), beside = TRUE,\n        col = c(\"#1D3557\", \"#B5432B\"),\n        names.arg = c(\"Group A\", \"Group B\"),\n        ylab = \"Proportion\", ylim = c(0, 1),\n        main = paste0(\"Fisher's Exact Test\\np = \", format(result$p.value, digits = 3),\n                       \", OR = \", round(result$estimate, 2)))\nlegend(\"topright\", legend = c(\"Methylated\", \"Unmethylated\"),\n       fill = c(\"#1D3557\", \"#B5432B\"), bty = \"n\")\n\n\n\n\n\n\n\n\nFigure 13.1: Fisher精确检验：两组甲基化比例对比,标题显示p值和优势比(OR)\n\n\n\n\n\n代码里的两个关键量：\n\np.value：这里 \\(p=8.26\\times10^{-6}\\)，极小，说明两组比例差异不太可能是偶然产生的\nestimate（优势比 Odds Ratio，OR）：这里 \\(\\text{OR}=5.9\\)，意思是Group A”甲基化 vs 非甲基化”这个比值，是Group B的约5.9倍——OR是Fisher检验独有的效应量，\\(t\\)检验、卡方检验都不直接给你这个数字\n\n回到你之前学的那段引文，这里能具体演示”合并计数丢信息”是什么意思：如果你有3个生物学重复，正确做法应该是每个重复单独检验（或者用DSS那种Beta-Binomial模型统一处理），而不是像上面这样把3个重复的read数直接加总成一张表——加总会让Fisher检验完全看不到”重复1和重复2的甲基化比例其实不一样”这个变异信息，这正是引文批评的”隐含假设数据来自同一分布”。\n\n\nCode\nlibrary(rstatix)\nlibrary(tidyverse)\nlibrary(gt)\n\ndf &lt;- tibble(\n  group = rep(c(\"A\",\"B\"), each = 60),\n  status = c(rep(\"Methylated\", 45), rep(\"Unmethylated\", 15),\n             rep(\"Methylated\", 20), rep(\"Unmethylated\", 40))\n)\n\ntab &lt;- table(df$group, df$status)\n\ntab\n\n\n   \n    Methylated Unmethylated\n  A         45           15\n  B         20           40\n\n\nCode\ntab %&gt;% as.data.frame() %&gt;% gt()\nres &lt;- tab %&gt;% fisher_test(detailed = TRUE)\n\nres %&gt;%\n  select(n, estimate, conf.low, conf.high, p, p.signif) %&gt;%\n  gt() %&gt;%\n  tab_header(title = \"Fisher's Exact Test\", subtitle = \"Group A vs Group B methylation status\") %&gt;%\n  cols_label(\n    n = \"Total N\",\n    estimate = \"Odds Ratio\",\n    conf.low = \"95% CI Lower\",\n    conf.high = \"95% CI Upper\",\n    p = \"P-value\",\n    p.signif = \"Sig.\"\n  ) %&gt;%\n  fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 2) %&gt;%\n  fmt_scientific(columns = p, decimals = 2) %&gt;%\n  tab_options(table.width = pct(80))\n\n\n\n\nTable 13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)\n\n\n\n\n\n\n\n\n\nVar1\nVar2\nFreq\n\n\n\n\nA\nMethylated\n45\n\n\nB\nMethylated\n20\n\n\nA\nUnmethylated\n15\n\n\nB\nUnmethylated\n40\n\n\n\n\n\n\n\n\n\n\n\n\n\nFisher's Exact Test\n\n\nGroup A vs Group B methylation status\n\n\nTotal N\nOdds Ratio\n95% CI Lower\n95% CI Upper\nP-value\nSig.\n\n\n\n\n120\n5.90\n2.54\n14.38\n8.26 × 10−6\n****\n\n\n\n\n\n\n\n\n\n\n\n\nCode\nlibrary(rstatix)\nlibrary(tidyverse)\n\ndf &lt;- tibble(\n  group = rep(c(\"A\",\"B\"), each = 60),\n  status = c(rep(\"Methylated\", 45), rep(\"Unmethylated\", 15),\n             rep(\"Methylated\", 20), rep(\"Unmethylated\", 40))\n)\n\ntab &lt;- table(df$group, df$status)\n\nres &lt;- tab %&gt;% fisher_test(detailed = TRUE)\n\nplot_df &lt;- df %&gt;%\n  count(group, status) %&gt;%\n  group_by(group) %&gt;%\n  mutate(prop = n / sum(n))\n\nggplot(plot_df, aes(x = group, y = prop, fill = status)) +\n  geom_col(position = \"dodge\", width = 0.6) +\n  scale_fill_manual(values = c(\"Methylated\" = \"#1D3557\", \"Unmethylated\" = \"#B5432B\")) +\n  labs(title = paste0(\"Fisher's Exact Test (rstatix)\\n\",\n                       \"p = \", format(res$p, digits = 3),\n                       \", OR = \", round(res$estimate, 2),\n                       \" [\", round(res$conf.low, 2), \", \", round(res$conf.high, 2), \"]\"),\n       x = NULL, y = \"Proportion\") +\n  theme_minimal(base_size = 12)\n\n\n\n\n\n\n\n\nFigure 13.2: rstatix版本: detailed=TRUE一次调用同时获得p值、优势比、置信区间\n\n\n\n\n\n跟 base R 版本的三点区别，帮你判断什么时候该用哪个：\n\n\n\n\n\n\n\n\n\nbase R fisher.test()\nrstatix fisher_test()\n\n\n\n\n输入格式\n宽格式（2×2矩阵）\n长格式/整洁数据（一行一观测），更符合真实数据从数据库/文件读进来的样子\n\n\n输出格式\nlist（要手动取 $p.value）\ntibble（列名规整，直接能接 dplyr 管道）\n\n\n批量检验场景\n需要写 for 循环或 sapply\n配合 group_by() + fisher_test() 天然支持成千上万个位点一次性批量检验\n\n\n\n最后一行对你实际最有用——你的甲基化项目不是只做一次Fisher检验，是要对成千上万个CpG位点各自做一次。rstatix 这套”整洁数据+管道”的风格，天生适合这种场景：\n# 伪代码示意: 对每个位点分别做Fisher检验,一行代码搞定成千上万次检验\nresults &lt;- df_all_sites %&gt;%\n  group_by(site_id) %&gt;%\n  fisher_test(status ~ group)\nbase R 的 fisher.test() 要做到同样的事，得手写循环、手动拼接结果——这也是为什么之前建议你深入学 tidybayes/rstatix 这类整洁数据工具的原因，不是”为了赶时髦用新包”，是因为你的实际数据规模决定了这类工具能帮你省下大量重复劳动。",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>基础内容</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/22-basic.html#卡方检验细胞类型与甲基化状态是否独立",
+    "href": "chapters/22-basic.html#卡方检验细胞类型与甲基化状态是否独立",
+    "title": "13  基础内容",
+    "section": "13.2 卡方检验：细胞类型与甲基化状态是否独立",
+    "text": "13.2 卡方检验：细胞类型与甲基化状态是否独立\n\n13.2.1 什么是卡方检验\n卡方检验回答的问题：给定一张列联表，行变量和列变量是不是相互独立（两组的比例分布是不是一样）？\n跟Fisher精确检验不同，卡方检验依赖大样本近似——它假设检验统计量在样本量足够大时近似服从卡方分布，样本量小或某个格子的期望频数太低时，这个近似会失真（这也是为什么有”\\(n\\geq40\\) 且 \\(T\\geq5\\)“这条使用前提，不满足就该退回 Fisher 精确检验）。\n\\[\n\\chi^2 = \\sum_{i,j} \\frac{(O_{ij}-E_{ij})^2}{E_{ij}}\n\\]\n\\(O_{ij}\\) 是实际观测到的格子频数，\\(E_{ij}\\) 是”如果两组真的没差异”理论上应有的期望频数——观测和期望差得越远，\\(\\chi^2\\) 值越大，越支持”两组确实不同”。\n对应到甲基化场景：某基因区域的甲基化状态（高/低），跟细胞类型（神经元/胶质细胞）之间摆成一张 \\(2\\times2\\) 表：\n\n\n\n\n高甲基化\n低甲基化\n\n\n\n\n神经元\n80\n20\n\n\n胶质细胞\n30\n70\n\n\n\n检验的原假设：细胞类型和甲基化状态相互独立（两种细胞的高/低甲基化比例应该差不多）。\n\n\n13.2.2 具体问题\n问题：某基因区域的甲基化状态（高/低），是不是跟细胞类型（神经元/胶质细胞）有关？\n\n\n\n\n高甲基化\n低甲基化\n\n\n\n\n神经元\n80\n20\n\n\n胶质细胞\n30\n70\n\n\n\n\\[\n\\chi^2 = \\sum_{i,j} \\frac{(O_{ij}-E_{ij})^2}{E_{ij}}\n\\]\n\\(O_{ij}\\) 是实际观测频数，\\(E_{ij}\\) 是”两组真的没差异”时理论上应有的期望频数——观测与期望差得越远，越支持”两组确实不同”。\n使用前提：\\(n\\geq40\\) 且所有格子期望频数 \\(T\\geq5\\)，才能用（未校正）卡方检验；不满足则应改用 Fisher 精确检验。\n\n\nCode\nlibrary(rstatix)\nlibrary(tidyverse)\n\ndf &lt;- tibble(\n  cell_type = rep(c(\"Neuron\",\"Glia\"), each = 100),\n  status = c(rep(\"High\", 80), rep(\"Low\", 20),\n             rep(\"High\", 30), rep(\"Low\", 70))\n)\n\ntab &lt;- table(df$cell_type, df$status)\n\n# 先检查是否满足使用前提: n&gt;=40 且所有期望频数T&gt;=5\nexpected &lt;- chisq.test(tab, correct = FALSE)$expected\ncat(\"总样本量 n =\", sum(tab), \"\\n\")\n\n\n总样本量 n = 200 \n\n\nCode\ncat(\"最小期望频数 T =\", min(expected), \"\\n\")\n\n\n最小期望频数 T = 45 \n\n\nCode\n# rstatix::chisq_test() 同样遵循 detailed=TRUE 才给完整信息的惯例\nres &lt;- tab %&gt;% chisq_test()\nres\n\n\n# A tibble: 1 × 6\n      n statistic        p    df method          p.signif\n* &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;   \n1   200      48.5 3.29e-12     1 Chi-square test ****    \n\n\nCode\nplot_df &lt;- df %&gt;%\n  count(cell_type, status) %&gt;%\n  group_by(cell_type) %&gt;%\n  mutate(prop = n / sum(n))\n\nggplot(plot_df, aes(x = cell_type, y = prop, fill = status)) +\n  geom_col(position = \"dodge\", width = 0.6) +\n  scale_fill_manual(values = c(\"High\" = \"#1D3557\", \"Low\" = \"#B5432B\")) +\n  labs(title = paste0(\"Chi-squared Test (rstatix)\\n\",\n                       \"\\u03c7\\u00b2 = \", round(res$statistic, 2),\n                       \", df = \", res$df,\n                       \", p = \", format(res$p, digits = 3)),\n       x = NULL, y = \"Proportion\") +\n  theme_minimal(base_size = 12)\n\n\n\n\n\n\n\n\nFigure 13.3: 卡方检验(rstatix): 细胞类型与甲基化状态的关联性检验\n\n\n\n\n\n\n\nCode\npar(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1))\n\n# 左图: 不同自由度下卡方分布的形状对比\nx &lt;- seq(0.01, 30, length.out = 500)\ndfs &lt;- c(1, 2, 3, 5, 10)\ncolors &lt;- colorRampPalette(c(\"#1D3557\", \"#B5432B\"))(length(dfs))\n\nplot(x, dchisq(x, df = dfs[1]), type = \"l\", col = colors[1], lwd = 2, ylim = c(0, 0.5),\n     xlab = expression(chi^2), ylab = \"density\", main = \"不同自由度下的卡方分布形状\")\nfor (i in 2:length(dfs)) lines(x, dchisq(x, df = dfs[i]), col = colors[i], lwd = 2)\nlegend(\"topright\", legend = paste0(\"df=\", dfs), col = colors, lwd = 2, bty = \"n\")\n\n# 右图: df=1的临界值与实际统计量对比\nx2 &lt;- seq(0.01, 60, length.out = 2000)\ny2 &lt;- dchisq(x2, df = 1)\nplot(x2, y2, type = \"l\", col = \"#1D3557\", lwd = 2, ylim = c(0, 0.05),\n     xlab = expression(chi^2), ylab = \"density\", main = \"df=1: 临界值 vs 观测统计量\")\n\ncrit_05 &lt;- qchisq(0.95, df = 1)\npolygon(c(x2[x2 &gt;= crit_05], rev(x2[x2 &gt;= crit_05])),\n        c(y2[x2 &gt;= crit_05], rep(0, sum(x2 &gt;= crit_05))),\n        col = adjustcolor(\"#B5432B\", 0.4), border = NA)\nabline(v = crit_05, col = \"#B5432B\", lty = 2, lwd = 1.5)\ntext(crit_05 + 1, 0.04, paste0(\"临界值(alpha=0.05)\\n=\", round(crit_05, 2)),\n     col = \"#B5432B\", cex = 0.8, pos = 4)\n\nobs_stat &lt;- 50.505\nabline(v = obs_stat, col = \"#1D3557\", lty = 1, lwd = 2)\ntext(obs_stat, 0.02, paste0(\"观测统计量\\n=\", obs_stat), col = \"#1D3557\", cex = 0.8, pos = 2)\n\n\n\n\n\n\n\n\nFigure 13.4: 左图: 不同自由度下卡方分布的形状对比; 右图: df=1时临界值(拒绝域,红色阴影)与观测统计量的对比",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>基础内容</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/22-basic.html#什么是-t-检验",
+    "href": "chapters/22-basic.html#什么是-t-检验",
+    "title": "13  基础内容",
+    "section": "13.3 什么是 \\(t\\) 检验",
+    "text": "13.3 什么是 \\(t\\) 检验\n\\(t\\) 检验回答的问题：两组数据的均值，是不是真的不一样（还是只是抽样误差造成的偶然差异）？\n\\[\nt = \\frac{\\bar{x}_1-\\bar{x}_2}{\\text{SE}(\\bar{x}_1-\\bar{x}_2)}\n\\]\n分子是”两组均值实际差多少”，分母是”这个差值本身的标准误”——\\(t\\) 值本质上是在问”这个差异，相对于抽样带来的噪声，算大还是算小”。\n对应到甲基化场景：每个生物学重复算一个甲基化比例 \\(M/(M+U)\\)，两组各有若干个这样的比例值，直接对这些比例值做 \\(t\\) 检验。\n\n13.3.1 使用前提条件\n\n数据（或组内误差）近似服从正态分布——小样本下尤其重要，样本量大时因中心极限定理可适当放松\n两组方差齐性（标准两样本 \\(t\\) 检验）——方差差异大时应改用不假设方差相等的 Welch’s \\(t\\) 检验\n观测值相互独立——组内、组间都要独立\n数据是连续变量——这正是甲基化场景里最容易踩的坑：\\(t\\) 检验假设喂给它的是”连续测量值”，而 \\(M/(M+U)\\) 这种比例本质上是从离散计数（\\(M\\)次甲基化，\\(U\\)次未甲基化）算出来的衍生统计量，它自带的不确定性（覆盖度越低，比例估计得越不准）在转成”一个连续数字”喂给 \\(t\\) 检验的那一刻就丢失了\n\n\n\nCode\nlibrary(rstatix)\nlibrary(tidyverse)\nlibrary(gt)\n\nset.seed(42)\nn_rep &lt;- 6\ncovA &lt;- sample(c(3,5,300,250,4,280), n_rep)\ncovB &lt;- sample(c(300,4,270,3,290,5), n_rep)\n\ndf &lt;- tibble(\n  group = rep(c(\"A\",\"B\"), each = n_rep),\n  coverage = c(covA, covB),\n  proportion = c(rbinom(n_rep, covA, 0.3) / covA,\n                 rbinom(n_rep, covB, 0.5) / covB)\n)\n\n# 正态性检验: 每组分别检验\nnormality &lt;- df %&gt;%\n  group_by(group) %&gt;%\n  shapiro_test(proportion)\n\n# 方差齐性检验: 两组一起检验\nhomogeneity &lt;- df %&gt;% levene_test(proportion ~ group)\n\nnormality %&gt;%\n  gt() %&gt;%\n  tab_header(title = \"正态性检验 (Shapiro-Wilk)\") %&gt;%\n  fmt_number(columns = c(statistic, p), decimals = 4)\nhomogeneity %&gt;%\n  gt() %&gt;%\n  tab_header(title = \"方差齐性检验 (Levene)\") %&gt;%\n  fmt_number(columns = c(statistic, p), decimals = 4)\n\n\n\n\nTable 13.2: t检验前提条件检查: 正态性(Shapiro-Wilk)和方差齐性(Levene)\n\n\n\n\n\n\n\n\n\n正态性检验 (Shapiro-Wilk)\n\n\ngroup\nvariable\nstatistic\np\n\n\n\n\nA\nproportion\n0.9026\n0.3896\n\n\nB\nproportion\n0.8495\n0.1561\n\n\n\n\n\n\n\n\n\n\n\n\n\n方差齐性检验 (Levene)\n\n\ndf1\ndf2\nstatistic\np\n\n\n\n\n1\n10\n1.2132\n0.2965\n\n\n\n\n\n\n\n\n\n\n\n\nCode\n# 前提条件都满足(p&gt;0.05)时,才用标准两样本t检验(方差齐性满足,不需要Welch校正)\nres &lt;- df %&gt;% t_test(proportion ~ group, detailed = TRUE, var.equal = TRUE)\nres\n\n\n# A tibble: 1 × 15\n  estimate estimate1 estimate2 .y.   group1 group2    n1    n2 statistic       p\n*    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;\n1   -0.402     0.252     0.654 prop… A      B          6     6     -3.88 0.00307\n# ℹ 5 more variables: df &lt;dbl&gt;, conf.low &lt;dbl&gt;, conf.high &lt;dbl&gt;, method &lt;chr&gt;,\n#   alternative &lt;chr&gt;\n\n\nCode\nggplot(df, aes(x = group, y = proportion)) +\n  geom_boxplot(outlier.shape = NA, alpha = 0.3, width = 0.4) +\n  geom_jitter(aes(size = coverage, color = group), width = 0.08, alpha = 0.7) +\n  scale_color_manual(values = c(\"A\" = \"#1D3557\", \"B\" = \"#B5432B\")) +\n  scale_size_continuous(range = c(2, 10)) +\n  labs(title = paste0(\"t-test (rstatix)\\n\",\n                       \"t = \", round(res$statistic, 2),\n                       \", df = \", round(res$df, 1),\n                       \", p = \", format(res$p, digits = 3)),\n       x = NULL, y = \"Methylation proportion (M/(M+U))\",\n       size = \"Coverage\") +\n  theme_minimal(base_size = 12)\n\n\n\n\n\n\n\n\nFigure 13.5: 完整流程: 前提检验通过后再进行t检验并画图",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>基础内容</span>"
     ]
   }
 ]

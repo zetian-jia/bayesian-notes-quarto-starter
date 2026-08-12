@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; 第 13 章 贝叶斯网络 – 贝叶斯数据分析笔记</title>
+<title>10&nbsp; 第 13 章 贝叶斯网络 – 贝叶斯数据分析笔记</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../chapters/14-HMM.html" rel="next">
-<link href="../chapters/10-lm-bayes.html" rel="prev">
+<link href="../chapters/12-naive-bayes.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/13-bayes-net.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/13-bayes-net.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -268,14 +268,49 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapters/11-survival.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">11-survival.html</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-naive-bayes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">第 12 章 朴素贝叶斯</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapters/13-bayes-net.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">第五部分：举例子</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/21-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">DNA甲基化 DMR 检测工具方法论综述</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/22-basic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">基础内容</span></span></a>
   </div>
 </li>
       </ul>
@@ -290,11 +325,11 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#概述" id="toc-概述" class="nav-link active" data-scroll-target="#概述"><span class="header-section-number">8.1</span> 13.1 概述</a>
+  <li><a href="#概述" id="toc-概述" class="nav-link active" data-scroll-target="#概述"><span class="header-section-number">10.1</span> 13.1 概述</a>
   <ul class="collapse">
-  <li><a href="#基本概念" id="toc-基本概念" class="nav-link" data-scroll-target="#基本概念"><span class="header-section-number">8.1.1</span> 13.1.1 基本概念</a></li>
-  <li><a href="#贝叶斯网络的难点及优缺点" id="toc-贝叶斯网络的难点及优缺点" class="nav-link" data-scroll-target="#贝叶斯网络的难点及优缺点"><span class="header-section-number">8.1.2</span> 13.1.2 贝叶斯网络的难点及优缺点</a></li>
-  <li><a href="#贝叶斯网络的一个简单例子" id="toc-贝叶斯网络的一个简单例子" class="nav-link" data-scroll-target="#贝叶斯网络的一个简单例子"><span class="header-section-number">8.1.3</span> 13.1.3 贝叶斯网络的一个简单例子</a></li>
+  <li><a href="#基本概念" id="toc-基本概念" class="nav-link" data-scroll-target="#基本概念"><span class="header-section-number">10.1.1</span> 13.1.1 基本概念</a></li>
+  <li><a href="#贝叶斯网络的难点及优缺点" id="toc-贝叶斯网络的难点及优缺点" class="nav-link" data-scroll-target="#贝叶斯网络的难点及优缺点"><span class="header-section-number">10.1.2</span> 13.1.2 贝叶斯网络的难点及优缺点</a></li>
+  <li><a href="#贝叶斯网络的一个简单例子" id="toc-贝叶斯网络的一个简单例子" class="nav-link" data-scroll-target="#贝叶斯网络的一个简单例子"><span class="header-section-number">10.1.3</span> 13.1.3 贝叶斯网络的一个简单例子</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/13-bayes-net.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -302,9 +337,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/13-bayes-net.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/13-bayes-net.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -322,10 +357,10 @@ window.Quarto = {
 
 
 <p>本章的主要内容来自吴喜之所著的教材《复杂数据统计方法——基于R的应用》（第三版）（中国人民大学出版社，2015）的第12章。</p>
-<section id="概述" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="概述"><span class="header-section-number">8.1</span> 13.1 概述</h2>
-<section id="基本概念" class="level3" data-number="8.1.1">
-<h3 data-number="8.1.1" class="anchored" data-anchor-id="基本概念"><span class="header-section-number">8.1.1</span> 13.1.1 基本概念</h3>
+<section id="概述" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="概述"><span class="header-section-number">10.1</span> 13.1 概述</h2>
+<section id="基本概念" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="基本概念"><span class="header-section-number">10.1.1</span> 13.1.1 基本概念</h3>
 <p>属于概率图形（probabilistic graphical models, GM）族的网络模型<strong>贝叶斯网络</strong>（Bayesian networks, BN）包括图理论、概率论、计算机科学及统计的概念，是多变量概率分布的一种概率图模型。</p>
 <p>贝叶斯网络包含<strong>有向无回路图</strong>（directed acyclic graph, DAG）。DAG 是由<strong>节点</strong>（node）或<strong>顶点</strong>（vertex）和<strong>有向边</strong>或<strong>有向弧</strong>组成的。无回路意味着没有节点是它自己的祖先或后代，也就是顺着箭头不会经过已经走过的节点。DAG 的每个节点都对应于一个变量，箭头代表变量之间的相依关系。每个箭头的终点称为”子节点”（child），起点称为”父节点”（parent）。和图模型类似，没有父节点的节点称为<strong>根节点</strong>（root node），没有子节点的节点称为<strong>叶节点</strong>（leaf node），其他节点称为<strong>中间节点</strong>（intermediate node）。每个变量都附有给定其父节点的（条件）局部概率，因此贝叶斯网络也称为概率有向无回路图模型（probabilistic directed acyclic graphical model），这就区别于其他具有DAG的图模型。</p>
 <p>贝叶斯网络的每个变量 <span class="math inline">\(x_i\)</span> 在一个有向无回路图中表示为节点（或称顶点）；概率分布 <span class="math inline">\(p(x_1,x_2,\ldots,x_N)\)</span> 以因子分解的形式表示如下：</p>
@@ -342,11 +377,11 @@ p(x_1,x_2,\ldots,x_N) = \prod_{i=1}^{M} p(\boldsymbol{x}_i\mid\Pi_{x_i}) \tag{13
 <p>贝叶斯网络广泛应用于统计、机器学习、人工智能等领域。贝叶斯网络在数学上严格而且易于理解。虽然箭头代表变量间直接的因果关系，但推理能够作用于任何方向（无论有没有箭头）。</p>
 <p>贝叶斯网络不像完全主观建造而又很难更新或修改的结构方程模型，它根据数据中变量之间的相关性来构建图中的变量联系，同时也可以加上主观的介入。因此，贝叶斯网络从某种意义上来说比图模型更加客观，与数据所反映的现实世界的关系也更加密切。</p>
 </section>
-<section id="贝叶斯网络的难点及优缺点" class="level3" data-number="8.1.2">
-<h3 data-number="8.1.2" class="anchored" data-anchor-id="贝叶斯网络的难点及优缺点"><span class="header-section-number">8.1.2</span> 13.1.2 贝叶斯网络的难点及优缺点</h3>
+<section id="贝叶斯网络的难点及优缺点" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="贝叶斯网络的难点及优缺点"><span class="header-section-number">10.1.2</span> 13.1.2 贝叶斯网络的难点及优缺点</h3>
 <p>贝叶斯网络中有哪些变量（节点）、它们之间的关系（那些有向边或有向弧）以及有关的条件概率表（CPT）实际上是很难事先知道的，这些必须根据数据来获得，这就是贝叶斯网络最核心也是充斥着难点的地方。</p>
-<section id="优点" class="level4" data-number="8.1.2.1">
-<h4 data-number="8.1.2.1" class="anchored" data-anchor-id="优点"><span class="header-section-number">8.1.2.1</span> 1. 优点</h4>
+<section id="优点" class="level4" data-number="10.1.2.1">
+<h4 data-number="10.1.2.1" class="anchored" data-anchor-id="优点"><span class="header-section-number">10.1.2.1</span> 1. 优点</h4>
 <ul>
 <li>适用于较小的和不完全的数据集</li>
 <li>能够通过数据学习网络结构和各种条件概率</li>
@@ -355,8 +390,8 @@ p(x_1,x_2,\ldots,x_N) = \prod_{i=1}^{M} p(\boldsymbol{x}_i\mid\Pi_{x_i}) \tag{13
 <li>所有结构都以解析的形式描述，一旦结构的学习过程完成，可以很快得到想要的结论</li>
 </ul>
 </section>
-<section id="缺点" class="level4" data-number="8.1.2.2">
-<h4 data-number="8.1.2.2" class="anchored" data-anchor-id="缺点"><span class="header-section-number">8.1.2.2</span> 2. 缺点</h4>
+<section id="缺点" class="level4" data-number="10.1.2.2">
+<h4 data-number="10.1.2.2" class="anchored" data-anchor-id="缺点"><span class="header-section-number">10.1.2.2</span> 2. 缺点</h4>
 <ul>
 <li>选择先验分布不很容易</li>
 <li>对于连续变量有困难，通常需要离散化，这有利有弊</li>
@@ -368,8 +403,8 @@ p(x_1,x_2,\ldots,x_N) = \prod_{i=1}^{M} p(\boldsymbol{x}_i\mid\Pi_{x_i}) \tag{13
 </ul>
 </section>
 </section>
-<section id="贝叶斯网络的一个简单例子" class="level3" data-number="8.1.3">
-<h3 data-number="8.1.3" class="anchored" data-anchor-id="贝叶斯网络的一个简单例子"><span class="header-section-number">8.1.3</span> 13.1.3 贝叶斯网络的一个简单例子</h3>
+<section id="贝叶斯网络的一个简单例子" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="贝叶斯网络的一个简单例子"><span class="header-section-number">10.1.3</span> 13.1.3 贝叶斯网络的一个简单例子</h3>
 <p><strong>例 13.1</strong> 图13.1.1是一个简单的贝叶斯网络例子。<span class="math inline">\(C\)</span> 表示通常的感冒，<span class="math inline">\(R\)</span> 表示流鼻涕，<span class="math inline">\(H\)</span> 表示头疼，<span class="math inline">\(B\)</span> 表示接触过有禽流感的家禽，<span class="math inline">\(A\)</span> 是禽流感，<span class="math inline">\(N\)</span> 是一般抗生素无效。左图为贝叶斯网络，右图为每个变量为真（T，用哑元1代表）及为伪（F，哑元0代表）的概率及条件概率。</p>
 
 
@@ -996,13 +1031,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/10-lm-bayes.html" class="pagination-link" aria-label="第 10 章 贝叶斯广义线性模型">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span>
+      <a href="../chapters/12-naive-bayes.html" class="pagination-link" aria-label="第 12 章 朴素贝叶斯">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">第 12 章 朴素贝叶斯</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../chapters/14-HMM.html" class="pagination-link" aria-label="隐马尔可夫模型">
-        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">

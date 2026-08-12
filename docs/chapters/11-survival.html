@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>11&nbsp; 隐马尔可夫模型 – 贝叶斯数据分析笔记</title>
+<title>survival – 贝叶斯数据分析笔记</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/21-intro.html" rel="next">
-<link href="../chapters/13-bayes-net.html" rel="prev">
+<link href="../chapters/12-naive-bayes.html" rel="next">
+<link href="../chapters/10-lm-bayes.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -105,35 +105,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -147,7 +118,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/14-HMM.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/11-survival.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">11-survival.html</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -268,7 +239,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/11-survival.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/11-survival.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">11-survival.html</span></span></a>
   </div>
 </li>
@@ -286,7 +257,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link active">
+  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
   </div>
 </li>
@@ -320,183 +291,19 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#概述" id="toc-概述" class="nav-link active" data-scroll-target="#概述"><span class="header-section-number">11.1</span> 14.1 概述</a></li>
-  <li><a href="#hmm-的三个主要问题" id="toc-hmm-的三个主要问题" class="nav-link" data-scroll-target="#hmm-的三个主要问题"><span class="header-section-number">11.2</span> 14.2 HMM 的三个主要问题</a>
-  <ul class="collapse">
-  <li><a href="#评估问题" id="toc-评估问题" class="nav-link" data-scroll-target="#评估问题"><span class="header-section-number">11.2.1</span> 14.2.1 评估问题</a></li>
-  </ul></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/14-HMM.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/14-HMM.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></a></li></ol></nav>
-<div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-</div>
+<main class="content" id="quarto-document-content"><div class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/11-survival.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">11-survival.html</span></a></li></ol></nav><div class="quarto-title-tools-only"><h1></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="概述" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="概述"><span class="header-section-number">11.1</span> 14.1 概述</h2>
-<p><strong>隐马尔可夫模型</strong>（hidden Markov model, HMM）是具有不可观察（即隐藏）状态的马尔可夫模型。它可以表示为最简单的动态贝叶斯网络。HMM 背后的数学最初是由 Baum and Petrie (1966) 提出的。HMM 与早期 Stratonovich (1960) 关于最优非线性滤波问题的研究密切相关。</p>
-<p>在更简单的马尔可夫模型（如马尔可夫链）中，状态对于观察者是直接可见的，因此状态转移概率是唯一的参数，而在隐马尔可夫模型中，可观测的仅仅是取决于不可观测状态的显示。这些显示的数据给出了关于状态的信息而不是状态本身。</p>
-<p>隐马尔可夫模型可以认为是混合模型的推广，这里控制混合分量的隐变量不是独立的而是由马尔可夫模型联系的，也称为<strong>依赖混合模型</strong>（dependent mixture model）。HMM 强化学习和瞬时模式识别等在诸如心理学、经济学、遗传学及各种社会科学领域中有广泛的应用。</p>
-<p>举例来说，我们可以看见下雨（Rain）、阴天（Cloudy）和不下雨（Dry），这是可观测的状况，相应的高空气压有高（High）、低（Low）之分，这是人们不可观测的状态。假定高空状态是个马尔可夫链，有状态转移概率矩阵：</p>
-<p><span class="math display">\[
-\boldsymbol{A} = \begin{bmatrix} 0.7 &amp; 0.3 \\ 0.2 &amp; 0.8 \end{bmatrix}
-\]</span></p>
-<p>或者</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>High</th>
-<th>Low</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>High</strong></td>
-<td><span class="math inline">\(P(\text{High}\mid\text{High})=0.70\)</span></td>
-<td><span class="math inline">\(P(\text{Low}\mid\text{High})=0.30\)</span></td>
-</tr>
-<tr class="even">
-<td><strong>Low</strong></td>
-<td><span class="math inline">\(P(\text{High}\mid\text{Low})=0.20\)</span></td>
-<td><span class="math inline">\(P(\text{Low}\mid\text{Low})=0.80\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>对于这个马尔可夫链，可假定有一个初始概率：</p>
-<p><span class="math display">\[
-\boldsymbol{\pi} = \begin{bmatrix} 0.6 \\ 0.4 \end{bmatrix}
-\]</span></p>
-<p>或者</p>
-<p><span class="math display">\[
-P(\text{High})=0.6;\quad P(\text{Low})=0.4
-\]</span></p>
-<p>这样，通过 <span class="math inline">\(n\)</span> 次转移之后的各个状态的概率为 <span class="math inline">\(\boldsymbol{A}^n\boldsymbol{\pi}\)</span>。</p>
-<p>从不可见的状态到可观测的状态会有一个<strong>发送</strong>（emission）概率转移矩阵：</p>
-<p><span class="math display">\[
-\boldsymbol{B} = \begin{bmatrix} 0.6 &amp; 0.3 &amp; 0.1 \\ 0.2 &amp; 0.2 &amp; 0.6 \end{bmatrix}
-\]</span></p>
-<p>或者</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>Dry</th>
-<th>Cloudy</th>
-<th>Rain</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>High</strong></td>
-<td><span class="math inline">\(P(\text{Dry}\mid\text{High})=0.60\)</span></td>
-<td><span class="math inline">\(P(\text{Cloudy}\mid\text{High})=0.30\)</span></td>
-<td><span class="math inline">\(P(\text{Rain}\mid\text{High})=0.10\)</span></td>
-</tr>
-<tr class="even">
-<td><strong>Low</strong></td>
-<td><span class="math inline">\(P(\text{Dry}\mid\text{Low})=0.20\)</span></td>
-<td><span class="math inline">\(P(\text{Cloudy}\mid\text{Low})=0.20\)</span></td>
-<td><span class="math inline">\(P(\text{Rain}\mid\text{Low})=0.60\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>这时，如果 <span class="math inline">\(\boldsymbol{\pi},\boldsymbol{A},\boldsymbol{B}\)</span> 都已知，那么在 <span class="math inline">\(n\)</span> 次转移之后的可观测状态的概率为 <span class="math inline">\(\boldsymbol{B}^\top\boldsymbol{A}^n\boldsymbol{\pi}\)</span>。<strong>当然，在现实世界，这些概率并不一定都是已知的。</strong> 图14.1.1为马尔可夫链的隐状态 <span class="math inline">\(\{S_t\}\)</span>、可观测状态 <span class="math inline">\(\{O_t\}\)</span>（<span class="math inline">\(t=1,2,\ldots,T\)</span>）通过转移概率矩阵 <span class="math inline">\(\boldsymbol{A}\)</span> 及 <span class="math inline">\(\boldsymbol{B}\)</span> 导出的关系示意图。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="in">flowchart LR</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="in">    S1((S1)) --&gt;|A| S2((S2)) --&gt;|A| S3((...)) --&gt;|A| ST((ST))</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="in">    S1 --&gt;|B| O1[O1]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="in">    S2 --&gt;|B| O2[O2]</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="in">    S3 --&gt;|B| O3[...]</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="in">    ST --&gt;|B| OT[OT]</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>图 14.1.1 隐状态 <span class="math inline">\(\{S_t\}\)</span>、可观测状态 <span class="math inline">\(\{O_t\}\)</span>（<span class="math inline">\(t=1,2,\ldots,T\)</span>）通过转移概率矩阵 <span class="math inline">\(\boldsymbol{A}\)</span> 及 <span class="math inline">\(\boldsymbol{B}\)</span> 导出的关系示意图</p>
-<p>下面定义一些符号：</p>
-<ul>
-<li><p><span class="math inline">\(\boldsymbol{S}=\{S_t\}\ (t=1,2,\ldots,T)\)</span>：隐马尔可夫过程</p></li>
-<li><p><span class="math inline">\(T\)</span>：观测序列长度</p></li>
-<li><p><span class="math inline">\(n\)</span>：模型中状态个数</p></li>
-<li><p><span class="math inline">\(m\)</span>：可观测的值的个数</p></li>
-<li><p><span class="math inline">\(\boldsymbol{s}=\{s_i\}\)</span>：有 <span class="math inline">\(n\)</span> 个元素的状态空间，即隐马尔可夫过程的不同的状态</p></li>
-<li><p><span class="math inline">\(\boldsymbol{V}=\{v_1,v_2,\ldots,v_m\}\)</span>：可能观测到的值的集合</p></li>
-<li><p><span class="math inline">\(\boldsymbol{A}=\{a_{ij}\}\)</span>：<span class="math inline">\((n\times n)\)</span> 状态转移概率矩阵，有可能是某协变量 <span class="math inline">\(\boldsymbol{z}_t\)</span> 的函数 <span class="math inline">\(a_{ij}(\boldsymbol{z}_t)\)</span></p></li>
-<li><p><span class="math inline">\(\boldsymbol{B}\)</span>：<span class="math inline">\((n\times m)\)</span> 发送转移概率矩阵，其元素有时记为 <span class="math inline">\(\{b_{S_i}(O_j)\}\)</span>。它有可能是某协变量 <span class="math inline">\(\boldsymbol{z}_t\)</span> 的函数</p></li>
-<li><p><span class="math inline">\(\boldsymbol{\pi}=\{\pi_i\}\)</span>：状态的初始分布的 <span class="math inline">\((n)\)</span> 维向量，有可能是某协变量 <span class="math inline">\(\boldsymbol{z}_t\)</span> 的函数 <span class="math inline">\(\pi_i(\boldsymbol{z}_t)\)</span></p></li>
-<li><p><span class="math inline">\(\boldsymbol{O}=\{O_t\}\)</span>：观测值序列</p></li>
-</ul>
-<p>对于前面天气和气压的例子，如果我们的观测值为</p>
-<p><span class="math display">\[
-\boldsymbol{O} = (\text{Rain}, \text{Rain}, \text{Cloudy}, \text{Dry})
-\]</span></p>
-<p>除了前面给出的 <span class="math inline">\(\boldsymbol{\pi},\boldsymbol{A},\boldsymbol{B}\)</span> 之外，对于该例有</p>
-<p><span class="math display">\[
-T=4,\quad n=2,\quad \boldsymbol{s}=\{\text{High},\text{Low}\},\quad m=3,\quad \boldsymbol{V}=\{\text{Rain},\text{Cloudy},\text{Dry}\}
-\]</span></p>
-<p>对于任意状态序列 <span class="math inline">\(s_i\in\boldsymbol{s}\)</span>（<span class="math inline">\(i=1,\ldots,n\)</span>），不可观测状态的马尔可夫性定义为</p>
-<p><span class="math display">\[
-P(S_n=s_n\mid S_1=s_1,\ldots,S_{n-1}=s_{n-1}) = P(S_n=s_n\mid S_{n-1}=s_{n-1})
-\]</span></p>
-<p>隐马尔可夫模型（HMM）由三个概率表示为</p>
-<p><span class="math display">\[
-M = (\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})
-\]</span></p>
-</section>
-<section id="hmm-的三个主要问题" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="hmm-的三个主要问题"><span class="header-section-number">11.2</span> 14.2 HMM 的三个主要问题</h2>
-<p><strong>(1) 评估问题</strong>：对于 HMM 问题 <span class="math inline">\(M=(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})\)</span> 和观测序列 <span class="math inline">\(\boldsymbol{O}=\{O_i\}\)</span>，找到产生 <span class="math inline">\(\{O_i\}\)</span> 序列的概率 <span class="math inline">\(P(\boldsymbol{O}\mid M)\)</span>。方法是得到 <span class="math inline">\(\boldsymbol{O}\)</span> 相对于给定模型 <span class="math inline">\(M\)</span> 的得分。</p>
-<p><strong>(2) 解码问题</strong>：对于 HMM 问题 <span class="math inline">\(M=(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})\)</span> 和观测序列 <span class="math inline">\(\boldsymbol{O}=\{O_i\}\)</span>，找到隐马尔可夫过程的最佳状态序列，也就是最可能产生 <span class="math inline">\(\boldsymbol{O}\)</span> 的隐马尔可夫过程。</p>
-<p><strong>(3) 学习问题</strong>：给定观察序列 <span class="math inline">\(\boldsymbol{O}\)</span> 与维度 <span class="math inline">\(n\)</span> 和 <span class="math inline">\(m\)</span>，找到最可能产生 <span class="math inline">\(\boldsymbol{O}\)</span> 的概率模型 <span class="math inline">\(M=(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})\)</span>，即训练模型以最佳地拟合观察到的数据。这也可视为在参数 <span class="math inline">\(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi}\)</span> 的（离散）空间上的登山法。</p>
-<p>下面对这三个问题作出说明。</p>
-<section id="评估问题" class="level3" data-number="11.2.1">
-<h3 data-number="11.2.1" class="anchored" data-anchor-id="评估问题"><span class="header-section-number">11.2.1</span> 14.2.1 评估问题</h3>
-<p>观测序列 <span class="math inline">\(\boldsymbol{O}=\{O_i\}\)</span>，找到产生 <span class="math inline">\(\{O_i\}\)</span> 序列的概率 <span class="math inline">\(P(\boldsymbol{O}\mid M)\)</span>。我们有</p>
-<p><span class="math display">\[
-P(\boldsymbol{O}\mid M) = \sum_{S\in\boldsymbol{s}} P(\boldsymbol{O}\mid S,M)P(S\mid M)
-\]</span></p>
-<p><span class="math display">\[
-= \sum_{S\in\boldsymbol{s}} \pi_{S_1}b_{S_1}(O_1)\cdot a_{S_1,S_2}b_{S_2}(O_2)\cdot a_{S_2,S_3}b_{S_3}(O_3)\cdots a_{S_{T-1},S_T}b_{S_T}(O_T) \tag{14.2.1}
-\]</span></p>
-<p>然而，这种直接计算通常是不可行的，因为它需要乘大约 <span class="math inline">\(2\times T\times n^T\)</span> 次。但存在能够达到同样结果的更加有效的算法。下面介绍具体的算法。</p>
 
 
 <!-- -->
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1116,141 +923,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/13-bayes-net.html" class="pagination-link" aria-label="第 13 章 贝叶斯网络">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span>
+      <a href="../chapters/10-lm-bayes.html" class="pagination-link" aria-label="第 10 章 贝叶斯广义线性模型">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/21-intro.html" class="pagination-link" aria-label="DNA甲基化 DMR 检测工具方法论综述">
-        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">DNA甲基化 DMR 检测工具方法论综述</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/12-naive-bayes.html" class="pagination-link" aria-label="第 12 章 朴素贝叶斯">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">第 12 章 朴素贝叶斯</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 隐马尔可夫模型</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 14.1 概述</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>**隐马尔可夫模型**（hidden Markov model, HMM）是具有不可观察（即隐藏）状态的马尔可夫模型。它可以表示为最简单的动态贝叶斯网络。HMM 背后的数学最初是由 Baum and Petrie (1966) 提出的。HMM 与早期 Stratonovich (1960) 关于最优非线性滤波问题的研究密切相关。</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>在更简单的马尔可夫模型（如马尔可夫链）中，状态对于观察者是直接可见的，因此状态转移概率是唯一的参数，而在隐马尔可夫模型中，可观测的仅仅是取决于不可观测状态的显示。这些显示的数据给出了关于状态的信息而不是状态本身。</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>隐马尔可夫模型可以认为是混合模型的推广，这里控制混合分量的隐变量不是独立的而是由马尔可夫模型联系的，也称为**依赖混合模型**（dependent mixture model）。HMM 强化学习和瞬时模式识别等在诸如心理学、经济学、遗传学及各种社会科学领域中有广泛的应用。</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>举例来说，我们可以看见下雨（Rain）、阴天（Cloudy）和不下雨（Dry），这是可观测的状况，相应的高空气压有高（High）、低（Low）之分，这是人们不可观测的状态。假定高空状态是个马尔可夫链，有状态转移概率矩阵：</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>\boldsymbol{A} = \begin{bmatrix} 0.7 &amp; 0.3 <span class="sc">\\</span> 0.2 &amp; 0.8 \end{bmatrix}</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>或者</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>|  | High | Low |</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>| **High** | $P(\text{High}\mid\text{High})=0.70$ | $P(\text{Low}\mid\text{High})=0.30$ |</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>| **Low** | $P(\text{High}\mid\text{Low})=0.20$ | $P(\text{Low}\mid\text{Low})=0.80$ |</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>对于这个马尔可夫链，可假定有一个初始概率：</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>\boldsymbol{\pi} = \begin{bmatrix} 0.6 <span class="sc">\\</span> 0.4 \end{bmatrix}</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>或者</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>P(\text{High})=0.6;\quad P(\text{Low})=0.4</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>这样，通过 $n$ 次转移之后的各个状态的概率为 $\boldsymbol{A}^n\boldsymbol{\pi}$。</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>从不可见的状态到可观测的状态会有一个**发送**（emission）概率转移矩阵：</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>\boldsymbol{B} = \begin{bmatrix} 0.6 &amp; 0.3 &amp; 0.1 <span class="sc">\\</span> 0.2 &amp; 0.2 &amp; 0.6 \end{bmatrix}</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>或者</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>|  | Dry | Cloudy | Rain |</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>| **High** | $P(\text{Dry}\mid\text{High})=0.60$ | $P(\text{Cloudy}\mid\text{High})=0.30$ | $P(\text{Rain}\mid\text{High})=0.10$ |</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>| **Low** | $P(\text{Dry}\mid\text{Low})=0.20$ | $P(\text{Cloudy}\mid\text{Low})=0.20$ | $P(\text{Rain}\mid\text{Low})=0.60$ |</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>这时，如果 $\boldsymbol{\pi},\boldsymbol{A},\boldsymbol{B}$ 都已知，那么在 $n$ 次转移之后的可观测状态的概率为 $\boldsymbol{B}^\top\boldsymbol{A}^n\boldsymbol{\pi}$。**当然，在现实世界，这些概率并不一定都是已知的。** 图14.1.1为马尔可夫链的隐状态 $<span class="sc">\{</span>S_t<span class="sc">\}</span>$、可观测状态 $<span class="sc">\{</span>O_t<span class="sc">\}</span>$（$t=1,2,\ldots,T$）通过转移概率矩阵 $\boldsymbol{A}$ 及 $\boldsymbol{B}$ 导出的关系示意图。</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="in">flowchart LR</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="in">    S1((S1)) --&gt;|A| S2((S2)) --&gt;|A| S3((...)) --&gt;|A| ST((ST))</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="in">    S1 --&gt;|B| O1[O1]</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="in">    S2 --&gt;|B| O2[O2]</span></span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="in">    S3 --&gt;|B| O3[...]</span></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="in">    ST --&gt;|B| OT[OT]</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>图 14.1.1 隐状态 $<span class="sc">\{</span>S_t<span class="sc">\}</span>$、可观测状态 $<span class="sc">\{</span>O_t<span class="sc">\}</span>$（$t=1,2,\ldots,T$）通过转移概率矩阵 $\boldsymbol{A}$ 及 $\boldsymbol{B}$ 导出的关系示意图</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>下面定义一些符号：</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{S}=<span class="sc">\{</span>S_t<span class="sc">\}</span>\ (t=1,2,\ldots,T)$：隐马尔可夫过程</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$T$：观测序列长度</span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$n$：模型中状态个数</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$m$：可观测的值的个数</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{s}=<span class="sc">\{</span>s_i<span class="sc">\}</span>$：有 $n$ 个元素的状态空间，即隐马尔可夫过程的不同的状态</span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{V}=<span class="sc">\{</span>v_1,v_2,\ldots,v_m<span class="sc">\}</span>$：可能观测到的值的集合</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{A}=<span class="sc">\{</span>a_{ij}\}$：$(n\times n)$ 状态转移概率矩阵，有可能是某协变量 $\boldsymbol{z}_t$ 的函数 $a_{ij}(\boldsymbol{z}_t)$</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{B}$：$(n\times m)$ 发送转移概率矩阵，其元素有时记为 $<span class="sc">\{</span>b_{S_i}(O_j)<span class="sc">\}</span>$。它有可能是某协变量 $\boldsymbol{z}_t$ 的函数</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{\pi}=<span class="sc">\{</span>\pi_i<span class="sc">\}</span>$：状态的初始分布的 $(n)$ 维向量，有可能是某协变量 $\boldsymbol{z}_t$ 的函数 $\pi_i(\boldsymbol{z}_t)$</span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\boldsymbol{O}=<span class="sc">\{</span>O_t<span class="sc">\}</span>$：观测值序列</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>对于前面天气和气压的例子，如果我们的观测值为</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>\boldsymbol{O} = (\text{Rain}, \text{Rain}, \text{Cloudy}, \text{Dry})</span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>除了前面给出的 $\boldsymbol{\pi},\boldsymbol{A},\boldsymbol{B}$ 之外，对于该例有</span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>T=4,\quad n=2,\quad \boldsymbol{s}=<span class="sc">\{</span>\text{High},\text{Low}<span class="sc">\}</span>,\quad m=3,\quad \boldsymbol{V}=<span class="sc">\{</span>\text{Rain},\text{Cloudy},\text{Dry}<span class="sc">\}</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>对于任意状态序列 $s_i\in\boldsymbol{s}$（$i=1,\ldots,n$），不可观测状态的马尔可夫性定义为</span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>P(S_n=s_n\mid S_1=s_1,\ldots,S_{n-1}=s_{n-1}) = P(S_n=s_n\mid S_{n-1}=s_{n-1})</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>隐马尔可夫模型（HMM）由三个概率表示为</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>M = (\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## 14.2 HMM 的三个主要问题</span></span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>**(1) 评估问题**：对于 HMM 问题 $M=(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})$ 和观测序列 $\boldsymbol{O}=<span class="sc">\{</span>O_i<span class="sc">\}</span>$，找到产生 $<span class="sc">\{</span>O_i<span class="sc">\}</span>$ 序列的概率 $P(\boldsymbol{O}\mid M)$。方法是得到 $\boldsymbol{O}$ 相对于给定模型 $M$ 的得分。</span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>**(2) 解码问题**：对于 HMM 问题 $M=(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})$ 和观测序列 $\boldsymbol{O}=<span class="sc">\{</span>O_i<span class="sc">\}</span>$，找到隐马尔可夫过程的最佳状态序列，也就是最可能产生 $\boldsymbol{O}$ 的隐马尔可夫过程。</span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>**(3) 学习问题**：给定观察序列 $\boldsymbol{O}$ 与维度 $n$ 和 $m$，找到最可能产生 $\boldsymbol{O}$ 的概率模型 $M=(\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi})$，即训练模型以最佳地拟合观察到的数据。这也可视为在参数 $\boldsymbol{A},\boldsymbol{B},\boldsymbol{\pi}$ 的（离散）空间上的登山法。</span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>下面对这三个问题作出说明。</span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.2.1 评估问题</span></span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>观测序列 $\boldsymbol{O}=<span class="sc">\{</span>O_i<span class="sc">\}</span>$，找到产生 $<span class="sc">\{</span>O_i<span class="sc">\}</span>$ 序列的概率 $P(\boldsymbol{O}\mid M)$。我们有</span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>P(\boldsymbol{O}\mid M) = \sum_{S\in\boldsymbol{s}} P(\boldsymbol{O}\mid S,M)P(S\mid M)</span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>= \sum_{S\in\boldsymbol{s}} \pi_{S_1}b_{S_1}(O_1)\cdot a_{S_1,S_2}b_{S_2}(O_2)\cdot a_{S_2,S_3}b_{S_3}(O_3)\cdots a_{S_{T-1},S_T}b_{S_T}(O_T) \tag{14.2.1}</span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>然而，这种直接计算通常是不可行的，因为它需要乘大约 $2\times T\times n^T$ 次。但存在能够达到同样结果的更加有效的算法。下面介绍具体的算法。</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -1260,7 +943,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/14-HMM.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/11-survival.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>本站由 Quarto 构建</p>
 </div>

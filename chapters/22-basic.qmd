@@ -1,0 +1,380 @@
+# 基础内容
+
+## Fisher 精确检验
+
+### 什么是 Fisher 精确检验
+
+Fisher精确检验回答的问题：**给定一个 $2\times2$ 列联表，两组之间的比例差异，是不是纯属偶然？**
+
+跟卡方检验不同，Fisher精确检验**不依赖大样本近似**，直接计算超几何分布（对，就是你之前学过的超几何分布！）下观测到当前这张表或更极端情况的**精确概率**——这也是它名字里"精确"（exact）的来历，小样本下比卡方检验更可靠。
+
+对应到甲基化场景：一个CpG位点，两组样本（比如处理组vs对照组）的"甲基化/非甲基化"read计数，摆成一张 $2\times2$ 表：
+
+|  | Methylated | Unmethylated |
+|---|---|---|
+| Group A | 45 | 15 |
+| Group B | 20 | 40 |
+
+检验的原假设：两组的甲基化比例相同。
+
+### Fisher 精确检验使用的前提条件
+
+**1. 数据必须是分类变量的计数**（不是连续数值）——处理的是"落在每个格子里有多少个"这种计数数据，不能直接用在连续的甲基化比例（$M/(M+U)$）上。
+
+**2. 样本之间必须相互独立**——同一条read不能同时算进两个组。
+
+**3. 每个观测只能属于一个类别组合（互斥）**——一条read要么甲基化要么不甲基化，不能同时是两者。
+
+**4. 边际总数应固定或在此条件下检验有意义**——这是检验基于超几何分布计算精确概率的数学前提，通常自动满足。
+
+**样本量小或某格子期望频数过低时**（经验规则：小于5）优先用 Fisher 检验而非卡方检验，因为它不依赖大样本近似。
+
+::: {.callout-warning title="最容易被违反的前提：独立性假设"}
+
+Fisher检验假设表格里每一个计数都是**独立同分布**的观测。如果把多个**生物学重复**的read**直接加总**成一张表，各重复间本身存在的生物学变异就被忽略了——相当于假装"多个重复完全等同，纯粹是同一过程反复抽样"，但真实情况是重复之间本身就有个体差异。
+
+**这正是 DSS 用 Beta-Binomial 模型取代 Fisher 检验的根本原因**：Beta-Binomial 显式用 Q3（先验分布）建模"重复/位点间本身存在变异"，Fisher检验没有这层机制。一旦独立性假设被违反，Fisher检验的 p 值会偏乐观（更容易误判为显著）。
+
+**结论**：单样本/无重复/纯技术重复 → Fisher检验合适；多个生物学重复 → 应改用 Beta-Binomial（DSS）或 GLMM 这类能建模组间变异的方法。
+
+:::
+
+```{r}
+#| label: fig-fisher-test
+#| fig-cap: "Fisher精确检验：两组甲基化比例对比,标题显示p值和优势比(OR)"
+#| fig-alt: "分组条形图,展示Group A和Group B各自甲基化与非甲基化的比例,标题标注Fisher检验的p值和优势比"
+
+# 构造2x2列联表: 两组(处理/对照) x 甲基化状态
+tab <- matrix(c(45, 15,
+                20, 40),
+              nrow = 2, byrow = TRUE,
+              dimnames = list(Group = c("A","B"), Status = c("Methylated","Unmethylated")))
+
+# fisher.test() 是base R自带函数,不需要额外装包
+result <- fisher.test(tab)
+
+# 画图: 每组按比例对比甲基化/非甲基化
+prop <- prop.table(tab, margin = 1)
+barplot(t(prop), beside = TRUE,
+        col = c("#1D3557", "#B5432B"),
+        names.arg = c("Group A", "Group B"),
+        ylab = "Proportion", ylim = c(0, 1),
+        main = paste0("Fisher's Exact Test\np = ", format(result$p.value, digits = 3),
+                       ", OR = ", round(result$estimate, 2)))
+legend("topright", legend = c("Methylated", "Unmethylated"),
+       fill = c("#1D3557", "#B5432B"), bty = "n")
+```
+
+**代码里的两个关键量：**
+
+- **`p.value`**：这里 $p=8.26\times10^{-6}$，极小，说明两组比例差异不太可能是偶然产生的
+- **`estimate`（优势比 Odds Ratio，OR）**：这里 $\text{OR}=5.9$，意思是Group A"甲基化 vs 非甲基化"这个比值，是Group B的约5.9倍——OR是Fisher检验独有的效应量，$t$检验、卡方检验都不直接给你这个数字
+
+**回到你之前学的那段引文，这里能具体演示"合并计数丢信息"是什么意思**：如果你有3个生物学重复，正确做法应该是**每个重复单独检验**（或者用DSS那种Beta-Binomial模型统一处理），而不是像上面这样把3个重复的read数**直接加总**成一张表——加总会让Fisher检验完全看不到"重复1和重复2的甲基化比例其实不一样"这个变异信息，这正是引文批评的"隐含假设数据来自同一分布"。
+
+```{r}
+#| label: tbl-fisher-gt
+#| tbl-cap: "Fisher精确检验结果汇总表(rstatix, detailed=TRUE)"
+#| message: false
+#| warning: false
+
+library(rstatix)
+library(tidyverse)
+library(gt)
+
+df <- tibble(
+  group = rep(c("A","B"), each = 60),
+  status = c(rep("Methylated", 45), rep("Unmethylated", 15),
+             rep("Methylated", 20), rep("Unmethylated", 40))
+)
+
+tab <- table(df$group, df$status)
+
+tab
+
+tab %>% as.data.frame() %>% gt()
+
+res <- tab %>% fisher_test(detailed = TRUE)
+
+res %>%
+  select(n, estimate, conf.low, conf.high, p, p.signif) %>%
+  gt() %>%
+  tab_header(title = "Fisher's Exact Test", subtitle = "Group A vs Group B methylation status") %>%
+  cols_label(
+    n = "Total N",
+    estimate = "Odds Ratio",
+    conf.low = "95% CI Lower",
+    conf.high = "95% CI Upper",
+    p = "P-value",
+    p.signif = "Sig."
+  ) %>%
+  fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 2) %>%
+  fmt_scientific(columns = p, decimals = 2) %>%
+  tab_options(table.width = pct(80))
+```
+
+```{r}
+#| label: fig-fisher-rstatix
+#| fig-cap: "rstatix版本: detailed=TRUE一次调用同时获得p值、优势比、置信区间"
+#| fig-alt: "分组条形图展示两组甲基化比例对比,标题显示p值和优势比及其95%置信区间"
+#| message: false
+#| warning: false
+
+library(rstatix)
+library(tidyverse)
+
+df <- tibble(
+  group = rep(c("A","B"), each = 60),
+  status = c(rep("Methylated", 45), rep("Unmethylated", 15),
+             rep("Methylated", 20), rep("Unmethylated", 40))
+)
+
+tab <- table(df$group, df$status)
+
+res <- tab %>% fisher_test(detailed = TRUE)
+
+plot_df <- df %>%
+  count(group, status) %>%
+  group_by(group) %>%
+  mutate(prop = n / sum(n))
+
+ggplot(plot_df, aes(x = group, y = prop, fill = status)) +
+  geom_col(position = "dodge", width = 0.6) +
+  scale_fill_manual(values = c("Methylated" = "#1D3557", "Unmethylated" = "#B5432B")) +
+  labs(title = paste0("Fisher's Exact Test (rstatix)\n",
+                       "p = ", format(res$p, digits = 3),
+                       ", OR = ", round(res$estimate, 2),
+                       " [", round(res$conf.low, 2), ", ", round(res$conf.high, 2), "]"),
+       x = NULL, y = "Proportion") +
+  theme_minimal(base_size = 12)
+```
+
+**跟 base R 版本的三点区别，帮你判断什么时候该用哪个：**
+
+| | base R `fisher.test()` | rstatix `fisher_test()` |
+|---|---|---|
+| **输入格式** | 宽格式（2×2矩阵） | 长格式/整洁数据（一行一观测），更符合真实数据从数据库/文件读进来的样子 |
+| **输出格式** | `list`（要手动取 `$p.value`） | `tibble`（列名规整，直接能接 `dplyr` 管道） |
+| **批量检验场景** | 需要写 `for` 循环或 `sapply` | 配合 `group_by()` + `fisher_test()` 天然支持**成千上万个位点一次性批量检验** |
+
+**最后一行对你实际最有用**——你的甲基化项目不是只做一次Fisher检验，是要对**成千上万个CpG位点**各自做一次。`rstatix` 这套"整洁数据+管道"的风格，天生适合这种场景：
+
+```r
+# 伪代码示意: 对每个位点分别做Fisher检验,一行代码搞定成千上万次检验
+results <- df_all_sites %>%
+  group_by(site_id) %>%
+  fisher_test(status ~ group)
+```
+
+base R 的 `fisher.test()` 要做到同样的事，得手写循环、手动拼接结果——这也是为什么之前建议你深入学 `tidybayes`/`rstatix` 这类整洁数据工具的原因，不是"为了赶时髦用新包"，是因为你的实际数据规模决定了这类工具能帮你省下大量重复劳动。
+
+
+## 卡方检验：细胞类型与甲基化状态是否独立
+
+### 什么是卡方检验
+
+卡方检验回答的问题：**给定一张列联表，行变量和列变量是不是相互独立（两组的比例分布是不是一样）？**
+
+跟Fisher精确检验不同，卡方检验**依赖大样本近似**——它假设检验统计量在样本量足够大时**近似**服从卡方分布，样本量小或某个格子的期望频数太低时，这个近似会失真（这也是为什么有"$n\geq40$ 且 $T\geq5$"这条使用前提，不满足就该退回 Fisher 精确检验）。
+
+$$
+\chi^2 = \sum_{i,j} \frac{(O_{ij}-E_{ij})^2}{E_{ij}}
+$$
+
+$O_{ij}$ 是实际观测到的格子频数，$E_{ij}$ 是"如果两组真的没差异"理论上应有的期望频数——观测和期望差得越远，$\chi^2$ 值越大，越支持"两组确实不同"。
+
+对应到甲基化场景：某基因区域的甲基化状态（高/低），跟细胞类型（神经元/胶质细胞）之间摆成一张 $2\times2$ 表：
+
+|  | 高甲基化 | 低甲基化 |
+|---|---|---|
+| 神经元 | 80 | 20 |
+| 胶质细胞 | 30 | 70 |
+
+检验的原假设：细胞类型和甲基化状态相互独立（两种细胞的高/低甲基化比例应该差不多）。
+
+### 具体问题
+
+**问题**：某基因区域的甲基化状态（高/低），是不是跟细胞类型（神经元/胶质细胞）有关？
+
+|  | 高甲基化 | 低甲基化 |
+|---|---|---|
+| 神经元 | 80 | 20 |
+| 胶质细胞 | 30 | 70 |
+
+$$
+\chi^2 = \sum_{i,j} \frac{(O_{ij}-E_{ij})^2}{E_{ij}}
+$$
+
+$O_{ij}$ 是实际观测频数，$E_{ij}$ 是"两组真的没差异"时理论上应有的期望频数——观测与期望差得越远，越支持"两组确实不同"。
+
+**使用前提**：$n\geq40$ 且所有格子期望频数 $T\geq5$，才能用（未校正）卡方检验；不满足则应改用 Fisher 精确检验。
+
+```{r}
+#| label: fig-chisq-rstatix
+#| fig-cap: "卡方检验(rstatix): 细胞类型与甲基化状态的关联性检验"
+#| fig-alt: "分组条形图展示神经元和胶质细胞两种细胞类型下高低甲基化的比例对比,标题标注卡方值和p值"
+#| message: false
+#| warning: false
+
+library(rstatix)
+library(tidyverse)
+
+df <- tibble(
+  cell_type = rep(c("Neuron","Glia"), each = 100),
+  status = c(rep("High", 80), rep("Low", 20),
+             rep("High", 30), rep("Low", 70))
+)
+
+tab <- table(df$cell_type, df$status)
+
+# 先检查是否满足使用前提: n>=40 且所有期望频数T>=5
+expected <- chisq.test(tab, correct = FALSE)$expected
+cat("总样本量 n =", sum(tab), "\n")
+cat("最小期望频数 T =", min(expected), "\n")
+
+# rstatix::chisq_test() 同样遵循 detailed=TRUE 才给完整信息的惯例
+res <- tab %>% chisq_test()
+res
+
+plot_df <- df %>%
+  count(cell_type, status) %>%
+  group_by(cell_type) %>%
+  mutate(prop = n / sum(n))
+
+ggplot(plot_df, aes(x = cell_type, y = prop, fill = status)) +
+  geom_col(position = "dodge", width = 0.6) +
+  scale_fill_manual(values = c("High" = "#1D3557", "Low" = "#B5432B")) +
+  labs(title = paste0("Chi-squared Test (rstatix)\n",
+                       "\u03c7\u00b2 = ", round(res$statistic, 2),
+                       ", df = ", res$df,
+                       ", p = ", format(res$p, digits = 3)),
+       x = NULL, y = "Proportion") +
+  theme_minimal(base_size = 12)
+```
+
+
+```{r}
+#| label: fig-chisq-critical-values
+#| fig-cap: "左图: 不同自由度下卡方分布的形状对比; 右图: df=1时临界值(拒绝域,红色阴影)与观测统计量的对比"
+#| fig-alt: "左图展示自由度1、2、3、5、10对应的卡方分布密度曲线,自由度越大分布越平缓且峰值右移;右图展示自由度1时0.05显著性水平的临界值3.84及对应的红色拒绝域阴影,并标注神经元例子中观测到的统计量50.505远超临界值"
+#| fig-width: 10
+#| fig-height: 5
+
+par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1))
+
+# 左图: 不同自由度下卡方分布的形状对比
+x <- seq(0.01, 30, length.out = 500)
+dfs <- c(1, 2, 3, 5, 10)
+colors <- colorRampPalette(c("#1D3557", "#B5432B"))(length(dfs))
+
+plot(x, dchisq(x, df = dfs[1]), type = "l", col = colors[1], lwd = 2, ylim = c(0, 0.5),
+     xlab = expression(chi^2), ylab = "density", main = "不同自由度下的卡方分布形状")
+for (i in 2:length(dfs)) lines(x, dchisq(x, df = dfs[i]), col = colors[i], lwd = 2)
+legend("topright", legend = paste0("df=", dfs), col = colors, lwd = 2, bty = "n")
+
+# 右图: df=1的临界值与实际统计量对比
+x2 <- seq(0.01, 60, length.out = 2000)
+y2 <- dchisq(x2, df = 1)
+plot(x2, y2, type = "l", col = "#1D3557", lwd = 2, ylim = c(0, 0.05),
+     xlab = expression(chi^2), ylab = "density", main = "df=1: 临界值 vs 观测统计量")
+
+crit_05 <- qchisq(0.95, df = 1)
+polygon(c(x2[x2 >= crit_05], rev(x2[x2 >= crit_05])),
+        c(y2[x2 >= crit_05], rep(0, sum(x2 >= crit_05))),
+        col = adjustcolor("#B5432B", 0.4), border = NA)
+abline(v = crit_05, col = "#B5432B", lty = 2, lwd = 1.5)
+text(crit_05 + 1, 0.04, paste0("临界值(alpha=0.05)\n=", round(crit_05, 2)),
+     col = "#B5432B", cex = 0.8, pos = 4)
+
+obs_stat <- 50.505
+abline(v = obs_stat, col = "#1D3557", lty = 1, lwd = 2)
+text(obs_stat, 0.02, paste0("观测统计量\n=", obs_stat), col = "#1D3557", cex = 0.8, pos = 2)
+```
+
+
+## 什么是 $t$ 检验
+
+$t$ 检验回答的问题：**两组数据的均值，是不是真的不一样（还是只是抽样误差造成的偶然差异）？**
+
+$$
+t = \frac{\bar{x}_1-\bar{x}_2}{\text{SE}(\bar{x}_1-\bar{x}_2)}
+$$
+
+分子是"两组均值实际差多少"，分母是"这个差值本身的标准误"——$t$ 值本质上是在问"这个差异，相对于抽样带来的噪声，算大还是算小"。
+
+对应到甲基化场景：每个生物学重复算一个甲基化比例 $M/(M+U)$，两组各有若干个这样的比例值，直接对这些比例值做 $t$ 检验。
+
+### 使用前提条件
+
+1. **数据（或组内误差）近似服从正态分布**——小样本下尤其重要，样本量大时因中心极限定理可适当放松
+2. **两组方差齐性**（标准两样本 $t$ 检验）——方差差异大时应改用不假设方差相等的 **Welch's $t$ 检验**
+3. **观测值相互独立**——组内、组间都要独立
+4. **数据是连续变量**——这正是甲基化场景里最容易踩的坑：$t$ 检验假设喂给它的是"连续测量值"，而 $M/(M+U)$ 这种比例本质上是从离散计数（$M$次甲基化，$U$次未甲基化）算出来的**衍生统计量**，它自带的不确定性（覆盖度越低，比例估计得越不准）在转成"一个连续数字"喂给 $t$ 检验的那一刻就丢失了
+
+```{r}
+#| label: tbl-assumptions-check
+#| tbl-cap: "t检验前提条件检查: 正态性(Shapiro-Wilk)和方差齐性(Levene)"
+#| message: false
+#| warning: false
+
+library(rstatix)
+library(tidyverse)
+library(gt)
+
+set.seed(42)
+n_rep <- 6
+covA <- sample(c(3,5,300,250,4,280), n_rep)
+covB <- sample(c(300,4,270,3,290,5), n_rep)
+
+df <- tibble(
+  group = rep(c("A","B"), each = n_rep),
+  coverage = c(covA, covB),
+  proportion = c(rbinom(n_rep, covA, 0.3) / covA,
+                 rbinom(n_rep, covB, 0.5) / covB)
+)
+
+# 正态性检验: 每组分别检验
+normality <- df %>%
+  group_by(group) %>%
+  shapiro_test(proportion)
+
+# 方差齐性检验: 两组一起检验
+homogeneity <- df %>% levene_test(proportion ~ group)
+
+normality %>%
+  gt() %>%
+  tab_header(title = "正态性检验 (Shapiro-Wilk)") %>%
+  fmt_number(columns = c(statistic, p), decimals = 4)
+
+homogeneity %>%
+  gt() %>%
+  tab_header(title = "方差齐性检验 (Levene)") %>%
+  fmt_number(columns = c(statistic, p), decimals = 4)
+```
+
+```{r}
+#| label: fig-ttest-rstatix-full
+#| fig-cap: "完整流程: 前提检验通过后再进行t检验并画图"
+#| fig-alt: "散点箱线图组合,展示两组各6个生物学重复的甲基化比例分布,点的大小对应测序覆盖度,标题标注t检验的t值、自由度和p值"
+#| message: false
+#| warning: false
+
+# 前提条件都满足(p>0.05)时,才用标准两样本t检验(方差齐性满足,不需要Welch校正)
+res <- df %>% t_test(proportion ~ group, detailed = TRUE, var.equal = TRUE)
+res
+
+ggplot(df, aes(x = group, y = proportion)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.3, width = 0.4) +
+  geom_jitter(aes(size = coverage, color = group), width = 0.08, alpha = 0.7) +
+  scale_color_manual(values = c("A" = "#1D3557", "B" = "#B5432B")) +
+  scale_size_continuous(range = c(2, 10)) +
+  labs(title = paste0("t-test (rstatix)\n",
+                       "t = ", round(res$statistic, 2),
+                       ", df = ", round(res$df, 1),
+                       ", p = ", format(res$p, digits = 3)),
+       x = NULL, y = "Methylation proportion (M/(M+U))",
+       size = "Coverage") +
+  theme_minimal(base_size = 12)
+```
+
+

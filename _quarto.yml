@@ -29,8 +29,14 @@ book:
     - part: "第四部分：更多的贝叶斯模型"
       chapters:
         - chapters/10-lm-bayes.qmd
+        - chapters/11-survival.qmd
+        - chapters/12-naive-bayes.qmd
         - chapters/13-bayes-net.qmd
         - chapters/14-HMM.qmd
+    - part: "第五部分：举例子"
+      chapters:
+        - chapters/21-intro.qmd
+        - chapters/22-basic.qmd
   page-navigation: true
   search: true
   sidebar:
