@@ -1,3 +1,0 @@
-# 贝叶斯推断中的一些算法
-
-> 待整理：Metropolis / Metropolis-Hastings / Gibbs / Hamiltonian Monte Carlo —— 都是 Q4 的不同实现，不改变 Q1-Q3。

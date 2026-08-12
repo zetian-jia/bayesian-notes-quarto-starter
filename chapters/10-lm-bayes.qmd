@@ -1,0 +1,185 @@
+# 第 10 章 贝叶斯广义线性模型
+
+## 10.1 可能性和最大似然原理
+
+似然理论是贝叶斯推理的一个重要部分：它显示数据是如何进入模型的。其基础是 Fisher 原则：未知参数的值应该为"最有可能"生成观测数据的值。
+
+假定 $\boldsymbol{y}$ 为观测值向量，而 $\boldsymbol{\theta}\in\Theta$ 为待估计未知参数向量，后验分布
+
+$$
+p(\boldsymbol{\theta}\mid\boldsymbol{y}) = \frac{p(\boldsymbol{y}\mid\boldsymbol{\theta})p(\boldsymbol{\theta})}{p(\boldsymbol{y})} \propto p(\boldsymbol{y}\mid\boldsymbol{\theta})p(\boldsymbol{\theta}), \quad \text{这里 } p(\boldsymbol{y})=\int p(\boldsymbol{\theta})p(\boldsymbol{y}\mid\boldsymbol{\theta})\,d\boldsymbol{\theta}
+$$
+
+已经有数据 $\boldsymbol{y}$ 之后，似然函数
+
+$$
+L(\boldsymbol{\theta}\mid\boldsymbol{y}) = \prod_{i=1}^n p(\boldsymbol{y}_i\mid\boldsymbol{\theta})
+$$
+
+不再是一个概率度量，而是 $\boldsymbol{\theta}$ 的函数。我们的目标是寻找使似然函数最大的 $\boldsymbol{\theta}$ 值，即 $\boldsymbol{\theta}$ 的**最大似然估计**（maximum likelihood estimate）：
+
+$$
+\hat{\boldsymbol{\theta}} = \arg\max_{\boldsymbol{\theta}} L(\boldsymbol{\theta}\mid\boldsymbol{y}), \quad \text{或者} \quad \hat{\boldsymbol{\theta}}: L(\hat{\boldsymbol{\theta}}\mid\boldsymbol{y})\geq L(\boldsymbol{\theta}\mid\boldsymbol{y})\ \forall\boldsymbol{\theta}\in\Theta
+$$
+
+当然，在实际计算中，使用对数似然更方便：
+
+$$
+\ell(\boldsymbol{\theta}\mid\boldsymbol{y}) \equiv \log L(\boldsymbol{\theta}\mid\boldsymbol{y})
+$$
+
+通常称对数似然关于 $\boldsymbol{\theta}$ 的一阶偏导数
+
+$$
+\dot{\ell}(\boldsymbol{\theta}\mid\boldsymbol{y}) = \frac{\partial}{\partial\boldsymbol{\theta}}\log L(\boldsymbol{\theta}\mid\boldsymbol{y})
+$$
+
+为**记分函数**（score function）。显然，使得记分函数等于0的 $\boldsymbol{\theta}$ 为其最大似然估计。
+
+## 10.2 指数分布族和广义线性模型
+
+用概率密度函数（或概率质量函数）来表示的指数族分布有下面的形式：
+
+$$
+f(z\mid\zeta) = \exp[t(z)u(\zeta)]r(z)s(\zeta) = \exp[t(z)u(\zeta)+\log r(z)+\log s(\zeta)] \tag{10.2.1}
+$$
+
+这里，$r$ 和 $t$ 为 $z$ 不依赖 $\zeta$ 的实数值函数，而 $s$ 和 $u$ 为不依赖 $z$ 的实数值函数，而且 $r(z)>0,s(\zeta)>0,\forall z,\zeta$。
+
+### 10.2.1 指数分布族的正则形式
+
+在式(10.2.1)中，考虑变换 $y=t(z)$ 及 $\theta=u(\zeta)$，则称 $\theta$ 为**正则参数**（canonical parameter）。这个变换产生指数族分布的**正则形式**（canonical form）
+
+$$
+f(y\mid\theta) = \exp[y\theta-b(\theta)+c(y)] \tag{10.2.2}
+$$
+
+指数族常常包含一个**尺度参数**（scale parameter）：
+
+$$
+f(y\mid\theta) = \exp\left[\frac{y\theta-b(\theta)}{\Phi}+c(y,\Phi)\right] \tag{10.2.3}
+$$
+
+对于独立样本 $\boldsymbol{y}=(y_1,y_2,\ldots,y_n)^\top$ 指数族形式仍然保持：
+
+$$
+f(\boldsymbol{y}\mid\theta) = \exp\left[\sum_{i=1}^n y_i\theta-nb(\theta)+\sum_{i=1}^n c(y_i)\right]
+$$
+
+或
+
+$$
+f(\boldsymbol{y}\mid\theta) = \exp\left[\frac{\sum_{i=1}^n y_i\theta-nb(\theta)}{\Phi}+\sum_{i=1}^n c(y_i,\Phi)\right]
+$$
+
+**例 10.1** 作为指数族的正态分布。
+
+$$
+f(y\mid\mu,\Sigma^2) = (2\pi\Sigma^2)^{-1/2}\exp\left[-\frac{1}{2\Sigma^2}(y-\mu)^2\right] = \exp\left[-\frac{1}{2}\log(2\pi\Sigma^2)-\frac{1}{2\Sigma^2}(y-\mu)^2\right]
+$$
+
+$$
+= \exp\left\{\left(y\mu-\frac{\mu^2}{2}\right)\Big/\Sigma^2+\frac{-1}{2}\left[\frac{y^2}{\Sigma^2}+\log(2\pi\Sigma^2)\right]\right\}
+$$
+
+做变换
+
+$$
+\theta=\mu,\quad b(\theta)=\theta^2/2,\quad \Phi=\Sigma^2,\quad c(y,\Phi)=\frac{-1}{2}\left(\frac{y^2}{\Phi}+\log(2\pi\Phi)\right)
+$$
+
+正态分布密度则有式(10.2.3)的形式：
+
+$$
+f(y\mid\mu,\Sigma^2) = \exp\left[\frac{y\theta-b(\theta)}{\Phi}+c(y,\Phi)\right]
+$$
+
+**例 10.2** 作为指数族的二项分布（$n$ 已知）。
+
+$$
+f(y\mid p) = \binom{n}{y}p^y(1-p)^{n-y} = \exp\left[\log\binom{n}{y}+y\log\left(\frac{p}{1-p}\right)+n\log(1-p)\right]
+$$
+
+做变换
+
+$$
+\theta = \log\left(\frac{p}{1-p}\right),\quad b(\theta)=n\log(1+e^\theta),\quad c(y,\Phi)=\log\binom{n}{y},\quad \Phi=1
+$$
+
+二项分布密度则有式(10.2.3)的形式：
+
+$$
+f(y\mid p) = \exp\left[\frac{y\theta-b(\theta)}{\Phi}+c(y,\Phi)\right]
+$$
+
+一般来说，比较式(10.2.3)对在正则参数 $\theta$ 状态下的若干指数族分布有下面性质：
+
+- **Poisson 分布**：$y\sim P(\lambda)$。其密度函数为
+$$
+e^{-\lambda}\frac{\lambda^y}{y!} = \exp[y\log(\lambda)-\lambda-\log(y!)]
+$$
+可导出 $\theta=\log(\lambda)$，$b(\theta)=e^\theta$，$\Phi=1$，$c(y,\Phi)=-\log(y!)$。
+
+- **Gamma 分布**：$y\sim\Gamma(\alpha,\beta)$。其密度函数为
+$$
+\frac{y^{\alpha-1}}{\Gamma(\alpha)\beta^\alpha}e^{-\beta y} = \exp\{\alpha\log(y)-\alpha\log(\beta)-\log[\Gamma(\alpha)]-\log(y)-\beta^{-1}y\}
+$$
+当 $\alpha$ 已知时，可导出 $\theta=-\beta^{-1}$，$b(\theta)=\alpha\log(\beta)$，$\Phi=1$，$c(y,\Phi)=(\alpha-1)\log(y)-\log(\Gamma(\alpha))$。
+
+- **负二项分布**：$y\sim NB(k,p)$。其密度函数（对于 $y=k,k+1,\ldots$）为
+$$
+\binom{y-1}{k-1}p^k(1-p)^{y-k} = \exp\left[y\log(1-p)+k\log\frac{p}{1-p}+\log\binom{y-1}{k-1}\right]
+$$
+可导出 $\theta=\log(1-p)$，$\kappa(\theta)=-k\log[(1-e^\theta)/e^\theta]$，$\Phi=1$，$a(\Phi)=1$，$c(y_i,\Phi)=\log\binom{y-1}{k-1}$。
+
+正则指数族形式、正则参数与下面要介绍的广义线性模型有着重要的关系，使得各种分析很方便。
+
+### 10.2.2 广义线性模型和连接函数
+
+**广义线性模型**（generalized linear model, GLM）是简单线性回归模型的推广（Nelder and Wedderburn, 1972）。广义线性模型把属于指数分布族的因变量的均值与自变量的线性表示联系起来。下面介绍广义线性模型的基本概念，对于广义线性模型的基本内容，请参看 McCullagh and Nelder (1989)。
+
+记因变量观测值为
+
+$$
+\boldsymbol{y} = (y_1,y_2,\ldots,y_n)^\top
+$$
+
+自变量观测值为由 $\boldsymbol{x}_i^\top=(x_{i1},x_{i2},\ldots,x_{ip})$（$i=1,2,\ldots,n$）作为行向量形成的 $n\times p$ 矩阵
+
+$$
+\boldsymbol{x} = \begin{bmatrix} x_{11} & x_{12} & \cdots & x_{1p} \\ x_{21} & x_{22} & \cdots & x_{2p} \\ \vdots & \vdots & & \vdots \\ x_{n1} & x_{n2} & \cdots & x_{np} \end{bmatrix} = \begin{bmatrix} \boldsymbol{x}_1^\top \\ \boldsymbol{x}_1^\top \\ \vdots \\ \boldsymbol{x}_n^\top \end{bmatrix} = [\boldsymbol{x}_1,\boldsymbol{x}_1,\ldots,\boldsymbol{x}_n]^\top
+$$
+
+记自变量的线性表达式为 $\eta_i=\boldsymbol{x}_i^\top\boldsymbol{\beta}=\beta_1x_{i1}+\beta_2x_{i2}+\cdots+\beta_px_{ip}$，这里 $\boldsymbol{\beta}=(\beta_1,\beta_2,\ldots,\beta_p)^\top$，通常 $\boldsymbol{x}_1$ 可以是代表常数项的元素皆为1的向量。
+
+首先回顾经典统计中的线性模型
+
+$$
+\boldsymbol{y}=\boldsymbol{\eta}+\boldsymbol{\epsilon}=\boldsymbol{x}\boldsymbol{\beta}+\boldsymbol{\epsilon} \quad \text{或者} \quad y_i=\eta_i+\epsilon_i=\boldsymbol{x}_i^\top\boldsymbol{\beta}+\epsilon_i,\ i=1,2,\ldots,n \tag{10.2.4}
+$$
+
+这里 $\boldsymbol{\epsilon}$ 假定是由独立同正态分布（$N(0,\Sigma^2)$）元素组成的零均值向量，即 $\boldsymbol{\epsilon}\sim N(\boldsymbol{0},\Sigma)$，这里 $\Sigma=\boldsymbol{I}\Sigma^2$。因此有
+
+$$
+\boldsymbol{y} \sim N(\boldsymbol{x}\boldsymbol{\beta},\Sigma\mid\boldsymbol{x},\Sigma^2)
+$$
+
+在传统统计中可以通过最大似然法得到参数 $\boldsymbol{\beta}$ 及 $\Sigma$ 的估计，而且这个估计在 $\boldsymbol{y}$ 的正态假定下等价于最小二乘估计。对 $\boldsymbol{y}$ 取期望，得到
+
+$$
+\boldsymbol{\mu}=E(\boldsymbol{y})=\boldsymbol{x}\boldsymbol{\beta}=\boldsymbol{\eta}, \quad \text{或者} \quad \boldsymbol{\mu}=\boldsymbol{\eta} \tag{10.2.5}
+$$
+
+注意方程(10.2.5)等号的左边是一个参数而不是变量，右边是一个数学表达式，没有诸如 $\boldsymbol{\epsilon}$ 那样的随机变量，不要把它和模型表达式(10.2.4)混淆。
+
+模型(10.2.5)只对正态分布的 $\boldsymbol{y}$ 适用，但如果 $\boldsymbol{y}$ 有其他限制，比如 $\boldsymbol{y}$ 为频数或者二元响应，如果方差依赖均值，则模型(10.2.5)可能就不合适了。为了适应更加广泛的不同分布的变量，需要推广模型(10.2.5)（注意，不是推广表达式(10.2.4)！）。广义线性模型把 $\boldsymbol{\mu}$ 和 $\boldsymbol{\eta}$ 之间用一个函数 $g(\cdot)$ 连接起来，即
+
+$$
+g(\boldsymbol{\mu})=\boldsymbol{x}\boldsymbol{\beta}=\boldsymbol{\eta}, \quad \text{或者} \quad g(\boldsymbol{\mu})=\boldsymbol{\eta} \tag{10.2.6}
+$$
+
+这就是广义线性模型，这里，作用在均值 $\boldsymbol{\mu}$ 上的变换函数 $g(\cdot)$ 称为**连接函数**（link function），而其逆函数 $m(\cdot)$ 称为均值函数。对于指数族来说，方便的连接函数 $\theta=\eta$ 称为**正则连接函数**，比如：
+
+- 对于正态分布，$g(\mu)=\theta=\mu$
+- 对于二项分布，$g(p)=\theta=\log\left(\dfrac{p}{1-p}\right)$
+- 对于 Poisson 分布，$g(\lambda)=\theta=\log(\lambda)$

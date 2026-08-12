@@ -24,8 +24,13 @@ book:
         - chapters/05-normal.qmd
     - part: "第三部分：算法与概率编程"
       chapters:
-        - chapters/06-mcmc-algorithms.qmd
-        - chapters/07-stan-pymc.qmd
+        - chapters/07-mcmc-algorithms.qmd
+        - chapters/08-stan-pymc.qmd
+    - part: "第四部分：更多的贝叶斯模型"
+      chapters:
+        - chapters/10-lm-bayes.qmd
+        - chapters/13-bayes-net.qmd
+        - chapters/14-HMM.qmd
   page-navigation: true
   search: true
   sidebar:

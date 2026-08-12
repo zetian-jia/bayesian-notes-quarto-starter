@@ -239,14 +239,43 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/06-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/07-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/07-stan-pymc.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/08-stan-pymc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">第四部分：更多的贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-lm-bayes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-bayes-net.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
   </div>
 </li>
       </ul>
@@ -263,7 +292,9 @@ window.Quarto = {
   <ul>
   <li><a href="#采用简单共轭先验分布" id="toc-采用简单共轭先验分布" class="nav-link active" data-scroll-target="#采用简单共轭先验分布"><span class="header-section-number">3.1</span> 4.1 采用简单共轭先验分布</a>
   <ul class="collapse">
-  <li><a href="#例-4.1关于-theta-的最高密度区域的-r-代码计算" id="toc-例-4.1关于-theta-的最高密度区域的-r-代码计算" class="nav-link" data-scroll-target="#例-4.1关于-theta-的最高密度区域的-r-代码计算"><span class="header-section-number">3.1.1</span> 例 4.1：关于 <span class="math inline">\(\theta\)</span> 的最高密度区域的 R 代码计算</a></li>
+  <li><a href="#例-4.1" id="toc-例-4.1" class="nav-link" data-scroll-target="#例-4.1"><span class="header-section-number">3.1.1</span> 例 4.1</a></li>
+  <li><a href="#例4.1的关于-theta-的后验分布及其最高密度区域" id="toc-例4.1的关于-theta-的后验分布及其最高密度区域" class="nav-link" data-scroll-target="#例4.1的关于-theta-的后验分布及其最高密度区域"><span class="header-section-number">3.1.2</span> 4.1.1 例4.1的关于 <span class="math inline">\(\theta\)</span> 的后验分布及其最高密度区域</a></li>
+  <li><a href="#例-4.1关于-theta-的最高密度区域的-r-代码计算" id="toc-例-4.1关于-theta-的最高密度区域的-r-代码计算" class="nav-link" data-scroll-target="#例-4.1关于-theta-的最高密度区域的-r-代码计算"><span class="header-section-number">3.1.3</span> 例 4.1：关于 <span class="math inline">\(\theta\)</span> 的最高密度区域的 R 代码计算</a></li>
   </ul></li>
   <li><a href="#q1q4-拆解" id="toc-q1q4-拆解" class="nav-link" data-scroll-target="#q1q4-拆解"><span class="header-section-number">3.2</span> Q1–Q4 拆解</a></li>
   <li><a href="#代码先验敏感性" id="toc-代码先验敏感性" class="nav-link" data-scroll-target="#代码先验敏感性"><span class="header-section-number">3.3</span> 代码：先验敏感性</a></li>
@@ -296,8 +327,10 @@ window.Quarto = {
 <section id="采用简单共轭先验分布" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="采用简单共轭先验分布"><span class="header-section-number">3.1</span> 4.1 采用简单共轭先验分布</h2>
 <p>取 <span class="math inline">\(\theta\)</span> 的先验分布 <span class="math inline">\(p(\theta)\)</span> 为共轭先验分布 <span class="math inline">\(\text{Beta}(\alpha,\beta)\)</span>，则 <span class="math inline">\(s=x_1+x_2+\cdots+x_n\)</span> 为一个充分统计量。后验分布</p>
-<p>$$ p() () = <sup>s(1-)</sup>{n-s}<sup>{}(1-)</sup>{}</p>
-<p>\ <sup>{s+}(1-)</sup>{n-s+}, $$</p>
+<p><span class="math display">\[
+p(\theta\mid \boldsymbol{x}) \propto \ell(\theta\mid\boldsymbol{x}) = \theta^s(1-\theta)^{n-s}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}
+\propto \theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}, \quad 0\leq\theta\leq 1
+\]</span></p>
 <div class="callout callout-style-default callout-tip callout-titled" title="逐项拆解:Beta-Binomial 后验推导">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -497,21 +530,68 @@ Figure&nbsp;3.1: d/p/q/r 四个函数在Beta(2,5)分布上的统一展示：dens
 </div>
 </div>
 </div>
-<section id="例-4.1关于-theta-的最高密度区域的-r-代码计算" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="例-4.1关于-theta-的最高密度区域的-r-代码计算"><span class="header-section-number">3.1.1</span> 例 4.1：关于 <span class="math inline">\(\theta\)</span> 的最高密度区域的 R 代码计算</h3>
+<section id="例-4.1" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="例-4.1"><span class="header-section-number">3.1.1</span> 例 4.1</h3>
+<p>假定一个医院某手术的感染率为 <span class="math inline">\(\theta\)</span>。实际上，这个医院9次手术其中0次感染。在其他医院，感染率从2%到23%不等，平均起来，感染率大约为10%。我们能够得到关于 <span class="math inline">\(\theta\)</span> 的什么信息？</p>
+<p>这是一个 Bernoulli 试验的模型，假定 <span class="math inline">\(n\)</span> 次手术的数据为 <span class="math inline">\(\boldsymbol{x}=(x_1,x_2,\ldots,x_n)\)</span>，每个 <span class="math inline">\(x_i\)</span> 取值为1表示感染，取值为0表示没有感染。</p>
+</section>
+<section id="例4.1的关于-theta-的后验分布及其最高密度区域" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="例4.1的关于-theta-的后验分布及其最高密度区域"><span class="header-section-number">3.1.2</span> 4.1.1 例4.1的关于 <span class="math inline">\(\theta\)</span> 的后验分布及其最高密度区域</h3>
+<p>对于这个例子，似然函数为</p>
+<p><span class="math display">\[
+p(\boldsymbol{x}\mid\theta) = \theta^{\sum x_i}(1-\theta)^{n-\sum x_i}
+\]</span></p>
+<p>选择<strong>共轭先验分布</strong> <span class="math inline">\(\text{Beta}(\alpha,\beta)\)</span>：</p>
+<p><span class="math display">\[
+p(\theta) \propto \theta^{\alpha-1}(1-\theta)^{\beta-1}
+\]</span></p>
+<p><strong>后验分布</strong>为 <span class="math inline">\(\text{Beta}\left(\sum x_i+\alpha,\ \ n-\sum x_i+\beta\right)\)</span>。但是，如何选择先验分布的参数 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 呢？根据先验知识，均值为0.1，也就是说，<span class="math inline">\(\alpha/(\alpha+\beta)\approx 0.1\)</span>。根据这个条件及手术感染率的范围，我们取 <span class="math inline">\(\alpha=2,\beta=18\)</span>（可以很容易编一个小程序得到这个结果，留给读者去做），这使得</p>
+<p><span class="math display">\[
+p(0.02&lt;\theta&lt;0.23)\approx 0.9
+\]</span></p>
+<p>由于 <span class="math inline">\(\sum x_i=0,\ n=9\)</span>，后验分布为 <span class="math inline">\(\text{Beta}(0+2,\ 9-0+18)=\text{Beta}(2,27)\)</span>。因此后验均值为 <span class="math inline">\(2/(2+27)\approx 0.06897\)</span>，我们知道，对于平方损失函数，这个后验均值就是 <span class="math inline">\(\theta\)</span> 的贝叶斯估计。显然，这个贝叶斯估计比经典统计作为无偏点估计的样本均值 <span class="math inline">\(\bar{x}=\sum x_i/n=0\)</span> 要合理得多。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="这个例子的似然函数是怎么得到的">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+这个例子的似然函数是怎么得到的
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>回到之前学过的东西，一步步搭上去，会发现这个似然函数不是新知识，是老公式换了个写法。</p>
+<p><strong>第一步：回到单次 Bernoulli 试验</strong></p>
+<p>单次试验的概率质量函数是：</p>
+<p><span class="math display">\[
+f(x_i\mid\theta) = \theta^{x_i}(1-\theta)^{1-x_i}
+\]</span></p>
+<p>代入检验一下：如果 <span class="math inline">\(x_i=1\)</span>（感染），<span class="math inline">\(\theta^1(1-\theta)^0=\theta\)</span>；如果 <span class="math inline">\(x_i=0\)</span>（没感染），<span class="math inline">\(\theta^0(1-\theta)^1=1-\theta\)</span>——正好对应最早学的 Bernoulli 分段定义 <span class="math inline">\(f(k\mid p)=\{p,\ k=1;\ 1-p,\ k=0\}\)</span>，只是写成了一个统一的幂次形式，不用分段。</p>
+<p><strong>第二步：<span class="math inline">\(n\)</span> 次独立试验，概率要连乘</strong></p>
+<p><span class="math display">\[
+p(\boldsymbol{x}\mid\theta) = \prod_{i=1}^n f(x_i\mid\theta) = \prod_{i=1}^n \theta^{x_i}(1-\theta)^{1-x_i}
+\]</span></p>
+<p>这一步用的是<strong>独立事件概率相乘</strong>这条最基础的规则——9次手术互不影响，每一次的”是否感染”是独立的，所以联合概率就是把9个单独的概率乘起来。</p>
+<p><strong>第三步：连乘展开，同类项合并</strong></p>
+<p>所有 <span class="math inline">\(\theta\)</span> 的指数加在一起：<span class="math inline">\(x_1+x_2+\cdots+x_n=\sum_{i=1}^n x_i\)</span></p>
+<p>所有 <span class="math inline">\((1-\theta)\)</span> 的指数加在一起：<span class="math inline">\((1-x_1)+\cdots+(1-x_n)=n-\sum_{i=1}^n x_i\)</span>（<span class="math inline">\(n\)</span> 个1相加是 <span class="math inline">\(n\)</span>，减去 <span class="math inline">\(\sum x_i\)</span>）</p>
+<p>合并完得到：</p>
+<p><span class="math display">\[
+p(\boldsymbol{x}\mid\theta) = \theta^{\sum x_i}(1-\theta)^{n-\sum x_i}
+\]</span></p>
+<p><strong>一句话理解</strong>：似然函数不是凭空写出来的新公式，是把”<span class="math inline">\(n\)</span> 个独立 Bernoulli 试验各自的概率连乘起来，再把同底数的幂合并”这个纯代数操作走一遍的结果。</p>
+</div>
+</div>
+</section>
+<section id="例-4.1关于-theta-的最高密度区域的-r-代码计算" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="例-4.1关于-theta-的最高密度区域的-r-代码计算"><span class="header-section-number">3.1.3</span> 例 4.1：关于 <span class="math inline">\(\theta\)</span> 的最高密度区域的 R 代码计算</h3>
 <p>为了得到最高密度区域，有很多现成的程序包，比如利用 <code>hdrcde</code> 包，可以得到各种最高密度区域，下面是得到默认的 99%、95%、50% 最高密度区域并且产生相应的图（见图4.1.2）的代码：</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdrcde)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>This is hdrcde 3.5.0</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">100000</span>, <span class="dv">2</span>, <span class="dv">27</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hdr.den</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdrcde)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">100000</span>, <span class="dv">2</span>, <span class="dv">27</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hdr.den</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -533,44 +613,44 @@ Mode: 0.03488</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hdrcde 需要联网从CRAN安装；这里手写一个等价的HDR计算函数，</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 不依赖额外包，原理相同：把密度曲线从高到低"切一刀"，</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 使刀线以上覆盖的面积恰好等于目标概率</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>compute_hdr_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(dens_fun, prob, lower, upper, <span class="at">n_grid =</span> <span class="dv">3000</span>) {</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">length.out =</span> n_grid)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  dens <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(grid)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  ord <span class="ot">&lt;-</span> <span class="fu">order</span>(dens, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  dx <span class="ot">&lt;-</span> <span class="fu">diff</span>(grid)[<span class="dv">1</span>]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  cum_area <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(dens[ord] <span class="sc">*</span> dx)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  cutoff_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(cum_area <span class="sc">&gt;=</span> prob)[<span class="dv">1</span>]</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  dens[ord][cutoff_idx]</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>dens_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(theta) <span class="fu">dbeta</span>(theta, <span class="dv">2</span>, <span class="dv">27</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="at">length.out =</span> <span class="dv">3000</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(x_grid)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>t50 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.50</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>t95 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.95</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>t99 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.99</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_grid, y, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"density"</span>,</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Beta(2,27) 的最高密度区域: 99% / 95% / 50%"</span>)</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t99], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t99])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t99], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t99))),</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t95], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t95])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t95], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t95))),</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t50], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t50])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t50], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t50))),</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"99% HDR"</span>, <span class="st">"95% HDR"</span>, <span class="st">"50% HDR"</span>),</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>),</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>),</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>)),</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hdrcde 需要联网从CRAN安装；这里手写一个等价的HDR计算函数，</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 不依赖额外包，原理相同：把密度曲线从高到低"切一刀"，</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 使刀线以上覆盖的面积恰好等于目标概率</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>compute_hdr_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(dens_fun, prob, lower, upper, <span class="at">n_grid =</span> <span class="dv">3000</span>) {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">length.out =</span> n_grid)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  dens <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(grid)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ord <span class="ot">&lt;-</span> <span class="fu">order</span>(dens, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  dx <span class="ot">&lt;-</span> <span class="fu">diff</span>(grid)[<span class="dv">1</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  cum_area <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(dens[ord] <span class="sc">*</span> dx)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  cutoff_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(cum_area <span class="sc">&gt;=</span> prob)[<span class="dv">1</span>]</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  dens[ord][cutoff_idx]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>dens_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(theta) <span class="fu">dbeta</span>(theta, <span class="dv">2</span>, <span class="dv">27</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="at">length.out =</span> <span class="dv">3000</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(x_grid)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>t50 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.50</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>t95 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.95</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>t99 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.99</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_grid, y, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"density"</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Beta(2,27) 的最高密度区域: 99% / 95% / 50%"</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t99], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t99])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t99], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t99))),</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t95], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t95])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t95], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t95))),</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t50], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t50])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t50], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t50))),</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"99% HDR"</span>, <span class="st">"95% HDR"</span>, <span class="st">"50% HDR"</span>),</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>),</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>),</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>)),</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-hdr-beta" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Beta(2,27)密度曲线,曲线下方用三层不同深浅的阴影标出99%、95%、50%最高密度区域,区域以密度峰值为中心向两侧扩展但不对称">
@@ -586,12 +666,12 @@ Figure&nbsp;3.2: Beta(2,27) 的最高密度区域(HDR):99%/95%/50%三层嵌套�
 </div>
 </div>
 <p>例 4.2：三合一图（triplot）</p>
-<p>利用程序包 <code>LearnBayes</code> 的函数 <code>triplot</code>，可以基于 <span class="math inline">\(\text{Beta}(2,18)\)</span> 先验分布及数据（0次感染，9次无感染）画出先验密度、似然函数及后验密度图（见图4.1.3）：</p>
+<p>利用程序包 <code>LearnBayes</code> 的函数 <code>triplot</code>，可以基于 <span class="math inline">\(\text{Beta}(2,18)\)</span> 先验分布及数据（0次感染，9次无感染）画出先验密度、似然函数及后验密度图：</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LearnBayes)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">9</span>), <span class="at">where=</span><span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LearnBayes)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">9</span>), <span class="at">where=</span><span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -623,31 +703,31 @@ Figure&nbsp;3.2: Beta(2,27) 的最高密度区域(HDR):99%/95%/50%三层嵌套�
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LearnBayes 需要联网从CRAN安装；这里手写一个等价的triplot函数，</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 逻辑完全相同：同时画出先验、(标准化)似然、后验三条密度曲线</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>my_triplot <span class="ot">&lt;-</span> <span class="cf">function</span>(prior, data, <span class="at">xmax =</span> <span class="fl">0.5</span>) {</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> prior[<span class="dv">1</span>]; b <span class="ot">&lt;-</span> prior[<span class="dv">2</span>]   <span class="co"># 先验超参数(alpha, beta)</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[<span class="dv">1</span>];  f <span class="ot">&lt;-</span> data[<span class="dv">2</span>]    <span class="co"># 观测: s次成功, f次失败</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, xmax, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  prior_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a, b)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 似然本身不是概率密度(不积分为1),这里标准化一下方便跟先验/后验同尺度比较形状</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  lik_raw <span class="ot">&lt;-</span> theta<span class="sc">^</span>s <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta)<span class="sc">^</span>f</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  lik_d <span class="ot">&lt;-</span> lik_raw <span class="sc">/</span> <span class="fu">sum</span>(lik_raw) <span class="sc">/</span> <span class="fu">diff</span>(theta)[<span class="dv">1</span>]</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  post_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a <span class="sc">+</span> s, b <span class="sc">+</span> f)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  ymax <span class="ot">&lt;-</span> <span class="fu">max</span>(prior_d, lik_d, post_d)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(theta, post_d, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, ymax <span class="sc">*</span> <span class="fl">1.1</span>),</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"密度"</span>,</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"先验Beta("</span>, a, <span class="st">","</span>, b, <span class="st">") + 数据(s="</span>, s, <span class="st">",f="</span>, f, <span class="st">") → 后验"</span>))</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, prior_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#6C757D"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, lik_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"后验 posterior"</span>, <span class="st">"先验 prior"</span>, <span class="st">"似然 likelihood(标准化)"</span>),</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#1D3557"</span>, <span class="st">"#6C757D"</span>, <span class="st">"#B5432B"</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="fu">my_triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">9</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LearnBayes 需要联网从CRAN安装；这里手写一个等价的triplot函数，</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 逻辑完全相同：同时画出先验、(标准化)似然、后验三条密度曲线</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>my_triplot <span class="ot">&lt;-</span> <span class="cf">function</span>(prior, data, <span class="at">xmax =</span> <span class="fl">0.5</span>) {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> prior[<span class="dv">1</span>]; b <span class="ot">&lt;-</span> prior[<span class="dv">2</span>]   <span class="co"># 先验超参数(alpha, beta)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[<span class="dv">1</span>];  f <span class="ot">&lt;-</span> data[<span class="dv">2</span>]    <span class="co"># 观测: s次成功, f次失败</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, xmax, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  prior_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a, b)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 似然本身不是概率密度(不积分为1),这里标准化一下方便跟先验/后验同尺度比较形状</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  lik_raw <span class="ot">&lt;-</span> theta<span class="sc">^</span>s <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta)<span class="sc">^</span>f</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  lik_d <span class="ot">&lt;-</span> lik_raw <span class="sc">/</span> <span class="fu">sum</span>(lik_raw) <span class="sc">/</span> <span class="fu">diff</span>(theta)[<span class="dv">1</span>]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  post_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a <span class="sc">+</span> s, b <span class="sc">+</span> f)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  ymax <span class="ot">&lt;-</span> <span class="fu">max</span>(prior_d, lik_d, post_d)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(theta, post_d, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, ymax <span class="sc">*</span> <span class="fl">1.1</span>),</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"密度"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"先验Beta("</span>, a, <span class="st">","</span>, b, <span class="st">") + 数据(s="</span>, s, <span class="st">",f="</span>, f, <span class="st">") → 后验"</span>))</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, prior_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#6C757D"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, lik_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"后验 posterior"</span>, <span class="st">"先验 prior"</span>, <span class="st">"似然 likelihood(标准化)"</span>),</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#1D3557"</span>, <span class="st">"#6C757D"</span>, <span class="st">"#B5432B"</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="fu">my_triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">9</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-triplot" class="quarto-float quarto-figure quarto-figure-center anchored" alt="叠加线图,展示先验密度曲线Beta(2,18)、标准化似然曲线、后验密度曲线Beta(2,27)三者的相对位置,后验因数据全为失败而比先验更偏向theta接近0的一侧">
@@ -1300,274 +1380,340 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 比例的推断：Bernoulli 试验</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>考虑只有"成功"和"失败"的独立试验，如果每次成功概率为 $\theta$，则称这些试验为有参数 $\theta$ 的 Bernoulli 试验，而试验结果是"成功"还是"失败"的分布为 $\text{Bernoulli}(\theta)$ 分布。如果在 $n$ 次 Bernoulli 试验中，有 $s$ 次成功（那么一定有 $f=n-s$ 次失败），则成功的次数称为服从有参数 $(n,\theta)$ 的二项分布。Bernoulli 分布是二项分布在 $n=1$ 时的特例。人们一般希望用试验中成功个数或者比例来对参数 $\theta$ 做推断。形式上，记观测值 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为参数 $\theta$ 的 Bernoulli 试验的结果，对应于"成功"或"失败"，每个 $x_i$ 取值为 1 或 0。</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 采用简单共轭先验分布</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>取 $\theta$ 的先验分布 $p(\theta)$ 为共轭先验分布 $\text{Beta}(\alpha,\beta)$，则 $s=x_1+x_2+\cdots+x_n$ 为一个充分统计量。后验分布</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>p(\theta\mid \boldsymbol{x}) \propto \ell(\theta\mid\boldsymbol{x}) = \theta^s(1-\theta)^{n-s}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="sc">\\</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>\propto \theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}, \quad 0\leq\theta\leq 1</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="逐项拆解:Beta-Binomial 后验推导"}</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$p(\theta\mid\boldsymbol{x})$**：后验分布——看到数据 $\boldsymbol{x}$ 之后，$\theta$ 的分布</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\propto$**：正比于——右边扔掉了一个不含 $\theta$ 的常数（这里是分母 $p(\boldsymbol{x})$），只保留跟 $\theta$ 有关的部分</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\ell(\theta\mid\boldsymbol{x})$**：先验 × 似然——这是"后验正比于先验乘似然"这条核心公式的具体展开</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\theta^s(1-\theta)^{n-s}$**：**似然部分**——$n$ 次 Bernoulli 试验里 $s$ 次成功、$n-s$ 次失败的概率（二项分布概率质量函数去掉了组合数 $\binom{n}{s}$，因为它不含 $\theta$，本来就该被 $\propto$ 吸收掉）</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}$**：**先验部分**——$\text{Beta}(\alpha,\beta)$ 的概率密度函数，前面那一大截 Gamma 函数分式是归一化常数，同样不含 $\theta$</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**第二行 $\theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}$**：把第一行两个"$\theta$ 的幂"和两个"$(1-\theta)$ 的幂"分别合并——$\theta^s \times \theta^{\alpha-1} = \theta^{s+\alpha-1}$，$(1-\theta)^{n-s}\times(1-\theta)^{\beta-1}=(1-\theta)^{n-s+\beta-1}$；同时把所有不含 $\theta$ 的常数（包括 Gamma 函数那一串）全部并入 $\propto$ 省略掉</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**为什么能一眼看出这是 Beta 分布**：$\theta^{a-1}(1-\theta)^{b-1}$ 正是 Beta 分布密度函数的核心形式（对比你之前学的 $f(x\mid\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$）——所以只要把指数对上号，就能直接读出后验是 $\text{Beta}(s+\alpha,\ n-s+\beta)$，不需要真的去算那个复杂的归一化常数</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>而后验分布为 $\text{Beta}(s+\alpha,\ n-s+\beta)$。如果用二次损失函数来估计 $\theta$，则</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>\hat\theta(\boldsymbol{x}) = E(\theta\mid\boldsymbol{x}) = \frac{s+\alpha}{n+\alpha+\beta}</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>常用的"无信息先验分布"为 $\alpha=\beta=1$，则 $\text{Beta}(1,1)$ 为在 $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$ 区间上的均匀分布 $U(0,1)$，这时，</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>\hat\theta(\boldsymbol{x}) = \frac{s+1}{n+2}</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>上面的模型形式上可以用下面的公式和图描述。</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-posterior-family</span></span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "n=8 时,不同成功次数 s=0,1,...,8 对应的后验分布族(无信息先验 α=β=1)"</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "九条Beta后验密度曲线叠加图,从s=0(左侧陡峭偏向0)到s=8(右侧陡峭偏向1)平滑过渡,中间s=4附近曲线较为平缓"</span></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">8</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#1D3557"</span>, <span class="st">"#B5432B"</span>))(n <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span>n) {</span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">curve</span>(<span class="fu">dbeta</span>(x, s <span class="sc">+</span> <span class="dv">1</span>, n <span class="sc">-</span> s <span class="sc">+</span> <span class="dv">1</span>), <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">add =</span> (s <span class="sc">!=</span> <span class="dv">0</span>),</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> colors[s <span class="sc">+</span> <span class="dv">1</span>], <span class="at">lwd =</span> <span class="dv">2</span>,</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"后验密度"</span>,</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"n="</span>, n, <span class="st">" 时不同 s 对应的后验分布族"</span>))</span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"top"</span>, <span class="at">legend =</span> <span class="fu">paste0</span>(<span class="st">"s="</span>, <span class="dv">0</span><span class="sc">:</span>n), <span class="at">col =</span> colors, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="必须掌握（这些会直接出现在你的代码里）"}</span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**共轭结构本身**：$\text{Beta}(\alpha,\beta)$ 先验 + Binomial 似然 → $\text{Beta}(s+\alpha,\ n-s+\beta)$ 后验——这不是这本书随便举的一个例子，**这就是单细胞甲基化数据建模的标准范式本身**。你自己在最早那份框架文档里写的 $k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})$，配 $\theta_{ij}\sim\text{Beta}$ 先验，就是这条公式的原样应用。DSS、methylKit 这些真实的甲基化差异分析工具，内核都是这个（或它的经验贝叶斯变体）。</span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})</span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 读作： k sub i j **服从**，二项分布，参数是 n sub i j, $\theta$ sub i j</span></span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$k$ 观测到的甲基化 read 数（真正测到的数字，比如"5个甲基化read"）</span>
-<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$n$ 该位点的总覆盖 read 数（总共测了几条read，比如"总共10条read"）</span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\theta$ 真实甲基化倾向（你想知道但看不见的那个概率，取值在0到1之间）</span>
-<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$i$ 第几个细胞的编号（比如细胞1、细胞2……）</span>
-<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$j$ 第几个位点的编号（比如基因组上第1个CpG位点、第2个……）</span>
-<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$k_{ij}$ "细胞 i 在位点 j 处"测到的甲基化read数——两个下标锁定了具体是哪个细胞、哪个位点 </span>
-<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$n_{ij}$  "细胞 i 在位点 j 处"的总覆盖read数 </span>
-<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\theta$  "细胞 i 在位点 j 处"的真实甲基化倾向 </span>
-<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a><span class="ss">-  </span>$\alpha \beta$ Beta先验的两个超参数（前面学过，控制先验形状/强度）</span>
-<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**后验均值公式** $\hat\theta = \dfrac{s+\alpha}{n+\alpha+\beta}$——这是你以后写代码时**真正会敲进去的那一行**。理解它的直觉比理解推导过程更重要：</span>
-<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>\hat\theta = \frac{s+\alpha}{n+\alpha+\beta} = \frac{\text{真实成功次数} + \text{先验"虚拟成功次数"}}{\text{真实总次数} + \text{先验"虚拟总次数"}}</span>
-<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>$\alpha,\beta$ 本质上是"先验帮你偷偷加的伪计数"——这个直觉在你处理**低覆盖度位点**（$n_{ij}$ 很小）时特别关键：伪计数占比重，估计会被先验拉着走；覆盖度足够大时，伪计数占比可以忽略，估计几乎完全由数据决定。这正是你项目文档里提到的"经验贝叶斯收缩"的数学根源。</span>
-<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="r语言 beta分布函数"}</span>
-<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>| 前缀 | 全称 | 回答的问题 | 输入 | 输出 |</span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|---|</span>
-<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>| **d** | density | "这一点的概率密度是多少" | 一个 $\theta$ 值 | 密度高度 |</span>
-<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>| **p** | probability | "小于等于这一点的累积概率是多少" | 一个 $\theta$ 值 | 一个概率（0~1） |</span>
-<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>| **q** | quantile | "要达到这个累积概率，$\theta$ 得取多少"（p 的反函数） | 一个概率（0~1） | 一个 $\theta$ 值 |</span>
-<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a>| **r** | random | "真的从这个分布里随机抽一个样本出来" | 抽样个数 | 一串随机数 |</span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>: 四个前缀的统一逻辑（不止 Beta，所有分布通用）</span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-dpqr-beta</span></span>
-<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "d/p/q/r 四个函数在Beta(2,5)分布上的统一展示：density、CDF、分位数函数(CDF的反函数)、随机抽样"</span></span>
-<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "四宫格图,依次展示Beta分布的概率密度函数dbeta、累积分布函数pbeta、分位数函数qbeta、随机抽样直方图rbeta,并标注三者在theta=0.3处的对应关系"</span></span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="dv">2</span>; beta <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">300</span>)</span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. dbeta: 密度函数 —— "这一点的密度有多高"</span></span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">dbeta</span>(x, alpha, beta), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"dbeta: 概率密度函数"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"密度"</span>)</span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fl">0.3</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>)</span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. pbeta: 累积分布函数 —— "小于等于这一点的概率"</span></span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">pbeta</span>(x, alpha, beta), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"pbeta: 累积分布函数(CDF)"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"累积概率"</span>)</span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fl">0.3</span>, <span class="at">h =</span> <span class="fu">pbeta</span>(<span class="fl">0.3</span>, alpha, beta), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>)</span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. qbeta: 分位数函数 —— pbeta的反函数,"给定概率倒推theta"</span></span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>p_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">300</span>)</span>
-<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p_seq, <span class="fu">qbeta</span>(p_seq, alpha, beta), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
-<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"qbeta: 分位数函数(pbeta的反函数)"</span>, <span class="at">xlab =</span> <span class="st">"概率"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(theta))</span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fl">0.3</span>, <span class="at">v =</span> <span class="fu">pbeta</span>(<span class="fl">0.3</span>, alpha, beta), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>)</span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. rbeta: 随机抽样 —— 抽样直方图应贴合dbeta密度曲线</span></span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">2000</span>, alpha, beta)</span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(samples, <span class="at">breaks =</span> <span class="dv">40</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="st">"#6C757D"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"rbeta: 随机抽样(直方图逼近密度曲线)"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(theta))</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">dbeta</span>(x, alpha, beta), <span class="at">col =</span> <span class="st">"#1D3557"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a><span class="fu">### 例 4.1：关于 $\theta$ 的最高密度区域的 R 代码计算</span></span>
-<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>为了得到最高密度区域，有很多现成的程序包，比如利用 <span class="in">`hdrcde`</span> 包，可以得到各种最高密度区域，下面是得到默认的 99%、95%、50% 最高密度区域并且产生相应的图（见图4.1.2）的代码：</span>
-<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdrcde)</span>
-<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">100000</span>, <span class="dv">2</span>, <span class="dv">27</span>)</span>
-<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a><span class="fu">hdr.den</span>(x)</span>
-<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-hdr-beta</span></span>
-<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Beta(2,27) 的最高密度区域(HDR):99%/95%/50%三层嵌套区间"</span></span>
-<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Beta(2,27)密度曲线,曲线下方用三层不同深浅的阴影标出99%、95%、50%最高密度区域,区域以密度峰值为中心向两侧扩展但不对称"</span></span>
-<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
-<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a><span class="co"># hdrcde 需要联网从CRAN安装；这里手写一个等价的HDR计算函数，</span></span>
-<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a><span class="co"># 不依赖额外包，原理相同：把密度曲线从高到低"切一刀"，</span></span>
-<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a><span class="co"># 使刀线以上覆盖的面积恰好等于目标概率</span></span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>compute_hdr_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(dens_fun, prob, lower, upper, <span class="at">n_grid =</span> <span class="dv">3000</span>) {</span>
-<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>  grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">length.out =</span> n_grid)</span>
-<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>  dens <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(grid)</span>
-<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>  ord <span class="ot">&lt;-</span> <span class="fu">order</span>(dens, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a>  dx <span class="ot">&lt;-</span> <span class="fu">diff</span>(grid)[<span class="dv">1</span>]</span>
-<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a>  cum_area <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(dens[ord] <span class="sc">*</span> dx)</span>
-<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a>  cutoff_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(cum_area <span class="sc">&gt;=</span> prob)[<span class="dv">1</span>]</span>
-<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a>  dens[ord][cutoff_idx]</span>
-<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a>dens_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(theta) <span class="fu">dbeta</span>(theta, <span class="dv">2</span>, <span class="dv">27</span>)</span>
-<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="at">length.out =</span> <span class="dv">3000</span>)</span>
-<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(x_grid)</span>
-<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a>t50 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.50</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a>t95 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.95</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a>t99 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.99</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
-<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_grid, y, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
-<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"density"</span>,</span>
-<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Beta(2,27) 的最高密度区域: 99% / 95% / 50%"</span>)</span>
-<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t99], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t99])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t99], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t99))),</span>
-<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
-<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t95], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t95])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t95], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t95))),</span>
-<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
-<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t50], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t50])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t50], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t50))),</span>
-<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
-<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"99% HDR"</span>, <span class="st">"95% HDR"</span>, <span class="st">"50% HDR"</span>),</span>
-<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>),</span>
-<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>),</span>
-<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>)),</span>
-<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>)</span>
-<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a>例 4.2：三合一图（triplot）</span>
-<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a>利用程序包 <span class="in">`LearnBayes`</span> 的函数 <span class="in">`triplot`</span>，可以基于 $\text{Beta}(2,18)$ 先验分布及数据（0次感染，9次无感染）画出先验密度、似然函数及后验密度图（见图4.1.3）：</span>
-<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LearnBayes)</span>
-<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a><span class="fu">triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">9</span>), <span class="at">where=</span><span class="st">"top"</span>)</span>
-<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a><span class="in">`triplot`</span> 的两个参数分别是：</span>
-<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`c(2,18)`**：先验超参数 $(\alpha,\beta)$，即 $\text{Beta}(2,18)$</span>
-<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`c(0,9)`**：观测数据 $(s,f)$，即 $s=0$ 次成功（感染）、$f=9$ 次失败（无感染），共 $n=9$ 次试验</span>
-<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q4 拆解</span></span>
-<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q1**：$\theta$ = 某个事件发生的真实概率</span>
-<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q2**：$k \sim \text{Binomial}(n, \theta)$</span>
-<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q3**：共轭先验 $\theta \sim \text{Beta}(a, b)$</span>
-<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q4**：闭式解 —— 后验仍是 Beta 分布</span>
-<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a>\theta \mid k \;\sim\; \text{Beta}(a+k,\; b+n-k)</span>
-<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a>这是整本书里最干净的一个"闭式解"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。</span>
-<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-triplot</span></span>
-<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "先验、似然、后验三合一图：Beta(2,18)先验 + 数据(s=0,f=9) → 后验Beta(2,27)"</span></span>
-<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "叠加线图,展示先验密度曲线Beta(2,18)、标准化似然曲线、后验密度曲线Beta(2,27)三者的相对位置,后验因数据全为失败而比先验更偏向theta接近0的一侧"</span></span>
-<span id="cb10-245"><a href="#cb10-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
-<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a><span class="co"># LearnBayes 需要联网从CRAN安装；这里手写一个等价的triplot函数，</span></span>
-<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a><span class="co"># 逻辑完全相同：同时画出先验、(标准化)似然、后验三条密度曲线</span></span>
-<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a>my_triplot <span class="ot">&lt;-</span> <span class="cf">function</span>(prior, data, <span class="at">xmax =</span> <span class="fl">0.5</span>) {</span>
-<span id="cb10-251"><a href="#cb10-251" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> prior[<span class="dv">1</span>]; b <span class="ot">&lt;-</span> prior[<span class="dv">2</span>]   <span class="co"># 先验超参数(alpha, beta)</span></span>
-<span id="cb10-252"><a href="#cb10-252" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[<span class="dv">1</span>];  f <span class="ot">&lt;-</span> data[<span class="dv">2</span>]    <span class="co"># 观测: s次成功, f次失败</span></span>
-<span id="cb10-253"><a href="#cb10-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-254"><a href="#cb10-254" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, xmax, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
-<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-256"><a href="#cb10-256" aria-hidden="true" tabindex="-1"></a>  prior_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a, b)</span>
-<span id="cb10-257"><a href="#cb10-257" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 似然本身不是概率密度(不积分为1),这里标准化一下方便跟先验/后验同尺度比较形状</span></span>
-<span id="cb10-258"><a href="#cb10-258" aria-hidden="true" tabindex="-1"></a>  lik_raw <span class="ot">&lt;-</span> theta<span class="sc">^</span>s <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta)<span class="sc">^</span>f</span>
-<span id="cb10-259"><a href="#cb10-259" aria-hidden="true" tabindex="-1"></a>  lik_d <span class="ot">&lt;-</span> lik_raw <span class="sc">/</span> <span class="fu">sum</span>(lik_raw) <span class="sc">/</span> <span class="fu">diff</span>(theta)[<span class="dv">1</span>]</span>
-<span id="cb10-260"><a href="#cb10-260" aria-hidden="true" tabindex="-1"></a>  post_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a <span class="sc">+</span> s, b <span class="sc">+</span> f)</span>
-<span id="cb10-261"><a href="#cb10-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-262"><a href="#cb10-262" aria-hidden="true" tabindex="-1"></a>  ymax <span class="ot">&lt;-</span> <span class="fu">max</span>(prior_d, lik_d, post_d)</span>
-<span id="cb10-263"><a href="#cb10-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(theta, post_d, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, ymax <span class="sc">*</span> <span class="fl">1.1</span>),</span>
-<span id="cb10-264"><a href="#cb10-264" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"密度"</span>,</span>
-<span id="cb10-265"><a href="#cb10-265" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"先验Beta("</span>, a, <span class="st">","</span>, b, <span class="st">") + 数据(s="</span>, s, <span class="st">",f="</span>, f, <span class="st">") → 后验"</span>))</span>
-<span id="cb10-266"><a href="#cb10-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, prior_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#6C757D"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
-<span id="cb10-267"><a href="#cb10-267" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, lik_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
-<span id="cb10-268"><a href="#cb10-268" aria-hidden="true" tabindex="-1"></a>  <span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"后验 posterior"</span>, <span class="st">"先验 prior"</span>, <span class="st">"似然 likelihood(标准化)"</span>),</span>
-<span id="cb10-269"><a href="#cb10-269" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#1D3557"</span>, <span class="st">"#6C757D"</span>, <span class="st">"#B5432B"</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
-<span id="cb10-270"><a href="#cb10-270" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-271"><a href="#cb10-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-272"><a href="#cb10-272" aria-hidden="true" tabindex="-1"></a><span class="fu">my_triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">9</span>))</span>
-<span id="cb10-273"><a href="#cb10-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-274"><a href="#cb10-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-275"><a href="#cb10-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-276"><a href="#cb10-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## 代码：先验敏感性</span></span>
-<span id="cb10-277"><a href="#cb10-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-278"><a href="#cb10-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-279"><a href="#cb10-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-280"><a href="#cb10-280" aria-hidden="true" tabindex="-1"></a>**观察**：当数据量 $n=20$ 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：**数据量足够大时，先验的影响会被似然"淹没"**。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。</span>
+<div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 比例的推断：Bernoulli 试验</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>考虑只有"成功"和"失败"的独立试验，如果每次成功概率为 $\theta$，则称这些试验为有参数 $\theta$ 的 Bernoulli 试验，而试验结果是"成功"还是"失败"的分布为 $\text{Bernoulli}(\theta)$ 分布。如果在 $n$ 次 Bernoulli 试验中，有 $s$ 次成功（那么一定有 $f=n-s$ 次失败），则成功的次数称为服从有参数 $(n,\theta)$ 的二项分布。Bernoulli 分布是二项分布在 $n=1$ 时的特例。人们一般希望用试验中成功个数或者比例来对参数 $\theta$ 做推断。形式上，记观测值 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为参数 $\theta$ 的 Bernoulli 试验的结果，对应于"成功"或"失败"，每个 $x_i$ 取值为 1 或 0。</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 采用简单共轭先验分布</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>取 $\theta$ 的先验分布 $p(\theta)$ 为共轭先验分布 $\text{Beta}(\alpha,\beta)$，则 $s=x_1+x_2+\cdots+x_n$ 为一个充分统计量。后验分布</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>p(\theta\mid \boldsymbol{x}) \propto \ell(\theta\mid\boldsymbol{x}) = \theta^s(1-\theta)^{n-s}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>\propto \theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}, \quad 0\leq\theta\leq 1</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="逐项拆解:Beta-Binomial 后验推导"}</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$p(\theta\mid\boldsymbol{x})$**：后验分布——看到数据 $\boldsymbol{x}$ 之后，$\theta$ 的分布</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\propto$**：正比于——右边扔掉了一个不含 $\theta$ 的常数（这里是分母 $p(\boldsymbol{x})$），只保留跟 $\theta$ 有关的部分</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\ell(\theta\mid\boldsymbol{x})$**：先验 × 似然——这是"后验正比于先验乘似然"这条核心公式的具体展开</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\theta^s(1-\theta)^{n-s}$**：**似然部分**——$n$ 次 Bernoulli 试验里 $s$ 次成功、$n-s$ 次失败的概率（二项分布概率质量函数去掉了组合数 $\binom{n}{s}$，因为它不含 $\theta$，本来就该被 $\propto$ 吸收掉）</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}$**：**先验部分**——$\text{Beta}(\alpha,\beta)$ 的概率密度函数，前面那一大截 Gamma 函数分式是归一化常数，同样不含 $\theta$</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**第二行 $\theta^{s+\alpha-1}(1-\theta)^{n-s+\beta-1}$**：把第一行两个"$\theta$ 的幂"和两个"$(1-\theta)$ 的幂"分别合并——$\theta^s \times \theta^{\alpha-1} = \theta^{s+\alpha-1}$，$(1-\theta)^{n-s}\times(1-\theta)^{\beta-1}=(1-\theta)^{n-s+\beta-1}$；同时把所有不含 $\theta$ 的常数（包括 Gamma 函数那一串）全部并入 $\propto$ 省略掉</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**为什么能一眼看出这是 Beta 分布**：$\theta^{a-1}(1-\theta)^{b-1}$ 正是 Beta 分布密度函数的核心形式（对比你之前学的 $f(x\mid\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$）——所以只要把指数对上号，就能直接读出后验是 $\text{Beta}(s+\alpha,\ n-s+\beta)$，不需要真的去算那个复杂的归一化常数</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>而后验分布为 $\text{Beta}(s+\alpha,\ n-s+\beta)$。如果用二次损失函数来估计 $\theta$，则</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>\hat\theta(\boldsymbol{x}) = E(\theta\mid\boldsymbol{x}) = \frac{s+\alpha}{n+\alpha+\beta}</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>常用的"无信息先验分布"为 $\alpha=\beta=1$，则 $\text{Beta}(1,1)$ 为在 $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$ 区间上的均匀分布 $U(0,1)$，这时，</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>\hat\theta(\boldsymbol{x}) = \frac{s+1}{n+2}</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>上面的模型形式上可以用下面的公式和图描述。</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-posterior-family</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "n=8 时,不同成功次数 s=0,1,...,8 对应的后验分布族(无信息先验 α=β=1)"</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "九条Beta后验密度曲线叠加图,从s=0(左侧陡峭偏向0)到s=8(右侧陡峭偏向1)平滑过渡,中间s=4附近曲线较为平缓"</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#1D3557"</span>, <span class="st">"#B5432B"</span>))(n <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span>n) {</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">curve</span>(<span class="fu">dbeta</span>(x, s <span class="sc">+</span> <span class="dv">1</span>, n <span class="sc">-</span> s <span class="sc">+</span> <span class="dv">1</span>), <span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">add =</span> (s <span class="sc">!=</span> <span class="dv">0</span>),</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> colors[s <span class="sc">+</span> <span class="dv">1</span>], <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"后验密度"</span>,</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"n="</span>, n, <span class="st">" 时不同 s 对应的后验分布族"</span>))</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"top"</span>, <span class="at">legend =</span> <span class="fu">paste0</span>(<span class="st">"s="</span>, <span class="dv">0</span><span class="sc">:</span>n), <span class="at">col =</span> colors, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>       <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="必须掌握（这些会直接出现在你的代码里）"}</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**共轭结构本身**：$\text{Beta}(\alpha,\beta)$ 先验 + Binomial 似然 → $\text{Beta}(s+\alpha,\ n-s+\beta)$ 后验——这不是这本书随便举的一个例子，**这就是单细胞甲基化数据建模的标准范式本身**。你自己在最早那份框架文档里写的 $k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})$，配 $\theta_{ij}\sim\text{Beta}$ 先验，就是这条公式的原样应用。DSS、methylKit 这些真实的甲基化差异分析工具，内核都是这个（或它的经验贝叶斯变体）。</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>k_{ij}\sim\text{Binomial}(n_{ij},\theta_{ij})</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 读作： k sub i j **服从**，二项分布，参数是 n sub i j, $\theta$ sub i j</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$k$ 观测到的甲基化 read 数（真正测到的数字，比如"5个甲基化read"）</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$n$ 该位点的总覆盖 read 数（总共测了几条read，比如"总共10条read"）</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\theta$ 真实甲基化倾向（你想知道但看不见的那个概率，取值在0到1之间）</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$i$ 第几个细胞的编号（比如细胞1、细胞2……）</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$j$ 第几个位点的编号（比如基因组上第1个CpG位点、第2个……）</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$k_{ij}$ "细胞 i 在位点 j 处"测到的甲基化read数——两个下标锁定了具体是哪个细胞、哪个位点 </span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$n_{ij}$  "细胞 i 在位点 j 处"的总覆盖read数 </span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\theta$  "细胞 i 在位点 j 处"的真实甲基化倾向 </span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a><span class="ss">-  </span>$\alpha \beta$ Beta先验的两个超参数（前面学过，控制先验形状/强度）</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**后验均值公式** $\hat\theta = \dfrac{s+\alpha}{n+\alpha+\beta}$——这是你以后写代码时**真正会敲进去的那一行**。理解它的直觉比理解推导过程更重要：</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>\hat\theta = \frac{s+\alpha}{n+\alpha+\beta} = \frac{\text{真实成功次数} + \text{先验"虚拟成功次数"}}{\text{真实总次数} + \text{先验"虚拟总次数"}}</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>$\alpha,\beta$ 本质上是"先验帮你偷偷加的伪计数"——这个直觉在你处理**低覆盖度位点**（$n_{ij}$ 很小）时特别关键：伪计数占比重，估计会被先验拉着走；覆盖度足够大时，伪计数占比可以忽略，估计几乎完全由数据决定。这正是你项目文档里提到的"经验贝叶斯收缩"的数学根源。</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="r语言 beta分布函数"}</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>| 前缀 | 全称 | 回答的问题 | 输入 | 输出 |</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|---|</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>| **d** | density | "这一点的概率密度是多少" | 一个 $\theta$ 值 | 密度高度 |</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>| **p** | probability | "小于等于这一点的累积概率是多少" | 一个 $\theta$ 值 | 一个概率（0~1） |</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>| **q** | quantile | "要达到这个累积概率，$\theta$ 得取多少"（p 的反函数） | 一个概率（0~1） | 一个 $\theta$ 值 |</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>| **r** | random | "真的从这个分布里随机抽一个样本出来" | 抽样个数 | 一串随机数 |</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>: 四个前缀的统一逻辑（不止 Beta，所有分布通用）</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-dpqr-beta</span></span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "d/p/q/r 四个函数在Beta(2,5)分布上的统一展示：density、CDF、分位数函数(CDF的反函数)、随机抽样"</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "四宫格图,依次展示Beta分布的概率密度函数dbeta、累积分布函数pbeta、分位数函数qbeta、随机抽样直方图rbeta,并标注三者在theta=0.3处的对应关系"</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="dv">2</span>; beta <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">300</span>)</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. dbeta: 密度函数 —— "这一点的密度有多高"</span></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">dbeta</span>(x, alpha, beta), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"dbeta: 概率密度函数"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"密度"</span>)</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fl">0.3</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>)</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. pbeta: 累积分布函数 —— "小于等于这一点的概率"</span></span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">pbeta</span>(x, alpha, beta), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"pbeta: 累积分布函数(CDF)"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"累积概率"</span>)</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fl">0.3</span>, <span class="at">h =</span> <span class="fu">pbeta</span>(<span class="fl">0.3</span>, alpha, beta), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>)</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. qbeta: 分位数函数 —— pbeta的反函数,"给定概率倒推theta"</span></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>p_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">300</span>)</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p_seq, <span class="fu">qbeta</span>(p_seq, alpha, beta), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"qbeta: 分位数函数(pbeta的反函数)"</span>, <span class="at">xlab =</span> <span class="st">"概率"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(theta))</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fl">0.3</span>, <span class="at">v =</span> <span class="fu">pbeta</span>(<span class="fl">0.3</span>, alpha, beta), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>)</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. rbeta: 随机抽样 —— 抽样直方图应贴合dbeta密度曲线</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">2000</span>, alpha, beta)</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(samples, <span class="at">breaks =</span> <span class="dv">40</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="st">"#6C757D"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"rbeta: 随机抽样(直方图逼近密度曲线)"</span>, <span class="at">xlab =</span> <span class="fu">expression</span>(theta))</span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">dbeta</span>(x, alpha, beta), <span class="at">col =</span> <span class="st">"#1D3557"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### 例 4.1</span></span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>假定一个医院某手术的感染率为 $\theta$。实际上，这个医院9次手术其中0次感染。在其他医院，感染率从2%到23%不等，平均起来，感染率大约为10%。我们能够得到关于 $\theta$ 的什么信息？</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>这是一个 Bernoulli 试验的模型，假定 $n$ 次手术的数据为 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，每个 $x_i$ 取值为1表示感染，取值为0表示没有感染。</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4.1.1 例4.1的关于 $\theta$ 的后验分布及其最高密度区域</span></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>对于这个例子，似然函数为</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{x}\mid\theta) = \theta^{\sum x_i}(1-\theta)^{n-\sum x_i}</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>选择**共轭先验分布** $\text{Beta}(\alpha,\beta)$：</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>p(\theta) \propto \theta^{\alpha-1}(1-\theta)^{\beta-1}</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>**后验分布**为 $\text{Beta}\left(\sum x_i+\alpha,\ \ n-\sum x_i+\beta\right)$。但是，如何选择先验分布的参数 $\alpha$ 和 $\beta$ 呢？根据先验知识，均值为0.1，也就是说，$\alpha/(\alpha+\beta)\approx 0.1$。根据这个条件及手术感染率的范围，我们取 $\alpha=2,\beta=18$（可以很容易编一个小程序得到这个结果，留给读者去做），这使得</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>p(0.02&lt;\theta&lt;0.23)\approx 0.9</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>由于 $\sum x_i=0,\ n=9$，后验分布为 $\text{Beta}(0+2,\ 9-0+18)=\text{Beta}(2,27)$。因此后验均值为 $2/(2+27)\approx 0.06897$，我们知道，对于平方损失函数，这个后验均值就是 $\theta$ 的贝叶斯估计。显然，这个贝叶斯估计比经典统计作为无偏点估计的样本均值 $\bar{x}=\sum x_i/n=0$ 要合理得多。</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="这个例子的似然函数是怎么得到的"}</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>回到之前学过的东西，一步步搭上去，会发现这个似然函数不是新知识，是老公式换了个写法。</span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>**第一步：回到单次 Bernoulli 试验**</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>单次试验的概率质量函数是：</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>f(x_i\mid\theta) = \theta^{x_i}(1-\theta)^{1-x_i}</span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>代入检验一下：如果 $x_i=1$（感染），$\theta^1(1-\theta)^0=\theta$；如果 $x_i=0$（没感染），$\theta^0(1-\theta)^1=1-\theta$——正好对应最早学的 Bernoulli 分段定义 $f(k\mid p)=<span class="sc">\{</span>p,\ k=1;\ 1-p,\ k=0<span class="sc">\}</span>$，只是写成了一个统一的幂次形式，不用分段。</span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>**第二步：$n$ 次独立试验，概率要连乘**</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{x}\mid\theta) = \prod_{i=1}^n f(x_i\mid\theta) = \prod_{i=1}^n \theta^{x_i}(1-\theta)^{1-x_i}</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>这一步用的是**独立事件概率相乘**这条最基础的规则——9次手术互不影响，每一次的"是否感染"是独立的，所以联合概率就是把9个单独的概率乘起来。</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>**第三步：连乘展开，同类项合并**</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>所有 $\theta$ 的指数加在一起：$x_1+x_2+\cdots+x_n=\sum_{i=1}^n x_i$</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>所有 $(1-\theta)$ 的指数加在一起：$(1-x_1)+\cdots+(1-x_n)=n-\sum_{i=1}^n x_i$（$n$ 个1相加是 $n$，减去 $\sum x_i$）</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>合并完得到：</span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{x}\mid\theta) = \theta^{\sum x_i}(1-\theta)^{n-\sum x_i}</span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>**一句话理解**：似然函数不是凭空写出来的新公式，是把"$n$ 个独立 Bernoulli 试验各自的概率连乘起来，再把同底数的幂合并"这个纯代数操作走一遍的结果。</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a><span class="fu">### 例 4.1：关于 $\theta$ 的最高密度区域的 R 代码计算</span></span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>为了得到最高密度区域，有很多现成的程序包，比如利用 <span class="in">`hdrcde`</span> 包，可以得到各种最高密度区域，下面是得到默认的 99%、95%、50% 最高密度区域并且产生相应的图（见图4.1.2）的代码：</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdrcde)</span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">100000</span>, <span class="dv">2</span>, <span class="dv">27</span>)</span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a><span class="fu">hdr.den</span>(x)</span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-hdr-beta</span></span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Beta(2,27) 的最高密度区域(HDR):99%/95%/50%三层嵌套区间"</span></span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Beta(2,27)密度曲线,曲线下方用三层不同深浅的阴影标出99%、95%、50%最高密度区域,区域以密度峰值为中心向两侧扩展但不对称"</span></span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a><span class="co"># hdrcde 需要联网从CRAN安装；这里手写一个等价的HDR计算函数，</span></span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a><span class="co"># 不依赖额外包，原理相同：把密度曲线从高到低"切一刀"，</span></span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a><span class="co"># 使刀线以上覆盖的面积恰好等于目标概率</span></span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>compute_hdr_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(dens_fun, prob, lower, upper, <span class="at">n_grid =</span> <span class="dv">3000</span>) {</span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>  grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(lower, upper, <span class="at">length.out =</span> n_grid)</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>  dens <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(grid)</span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>  ord <span class="ot">&lt;-</span> <span class="fu">order</span>(dens, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>  dx <span class="ot">&lt;-</span> <span class="fu">diff</span>(grid)[<span class="dv">1</span>]</span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>  cum_area <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(dens[ord] <span class="sc">*</span> dx)</span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a>  cutoff_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(cum_area <span class="sc">&gt;=</span> prob)[<span class="dv">1</span>]</span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>  dens[ord][cutoff_idx]</span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a>dens_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(theta) <span class="fu">dbeta</span>(theta, <span class="dv">2</span>, <span class="dv">27</span>)</span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="at">length.out =</span> <span class="dv">3000</span>)</span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">dens_fun</span>(x_grid)</span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a>t50 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.50</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a>t95 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.95</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a>t99 <span class="ot">&lt;-</span> <span class="fu">compute_hdr_threshold</span>(dens_fun, <span class="fl">0.99</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_grid, y, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>,</span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"density"</span>,</span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Beta(2,27) 的最高密度区域: 99% / 95% / 50%"</span>)</span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t99], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t99])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t99], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t99))),</span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t95], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t95])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t95], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t95))),</span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid[y<span class="sc">&gt;=</span>t50], <span class="fu">rev</span>(x_grid[y<span class="sc">&gt;=</span>t50])), <span class="fu">c</span>(y[y<span class="sc">&gt;=</span>t50], <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">sum</span>(y<span class="sc">&gt;=</span>t50))),</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"99% HDR"</span>, <span class="st">"95% HDR"</span>, <span class="st">"50% HDR"</span>),</span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.2</span>),</span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.3</span>),</span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>                <span class="fu">adjustcolor</span>(<span class="st">"#B5432B"</span>, <span class="fl">0.5</span>)),</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>例 4.2：三合一图（triplot）</span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a>利用程序包 <span class="in">`LearnBayes`</span> 的函数 <span class="in">`triplot`</span>，可以基于 $\text{Beta}(2,18)$ 先验分布及数据（0次感染，9次无感染）画出先验密度、似然函数及后验密度图：</span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LearnBayes)</span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a><span class="fu">triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">9</span>), <span class="at">where=</span><span class="st">"top"</span>)</span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a><span class="in">`triplot`</span> 的两个参数分别是：</span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`c(2,18)`**：先验超参数 $(\alpha,\beta)$，即 $\text{Beta}(2,18)$</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`c(0,9)`**：观测数据 $(s,f)$，即 $s=0$ 次成功（感染）、$f=9$ 次失败（无感染），共 $n=9$ 次试验</span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q1--Q4 拆解</span></span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q1**：$\theta$ = 某个事件发生的真实概率</span>
+<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q2**：$k \sim \text{Binomial}(n, \theta)$</span>
+<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q3**：共轭先验 $\theta \sim \text{Beta}(a, b)$</span>
+<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Q4**：闭式解 —— 后验仍是 Beta 分布</span>
+<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a>\theta \mid k \;\sim\; \text{Beta}(a+k,\; b+n-k)</span>
+<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>这是整本书里最干净的一个"闭式解"案例：先验、似然、后验全部停留在同一个分布族里，不需要 MCMC。</span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-triplot</span></span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "先验、似然、后验三合一图：Beta(2,18)先验 + 数据(s=0,f=9) → 后验Beta(2,27)"</span></span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "叠加线图,展示先验密度曲线Beta(2,18)、标准化似然曲线、后验密度曲线Beta(2,27)三者的相对位置,后验因数据全为失败而比先验更偏向theta接近0的一侧"</span></span>
+<span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a><span class="co"># LearnBayes 需要联网从CRAN安装；这里手写一个等价的triplot函数，</span></span>
+<span id="cb8-315"><a href="#cb8-315" aria-hidden="true" tabindex="-1"></a><span class="co"># 逻辑完全相同：同时画出先验、(标准化)似然、后验三条密度曲线</span></span>
+<span id="cb8-316"><a href="#cb8-316" aria-hidden="true" tabindex="-1"></a>my_triplot <span class="ot">&lt;-</span> <span class="cf">function</span>(prior, data, <span class="at">xmax =</span> <span class="fl">0.5</span>) {</span>
+<span id="cb8-317"><a href="#cb8-317" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> prior[<span class="dv">1</span>]; b <span class="ot">&lt;-</span> prior[<span class="dv">2</span>]   <span class="co"># 先验超参数(alpha, beta)</span></span>
+<span id="cb8-318"><a href="#cb8-318" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[<span class="dv">1</span>];  f <span class="ot">&lt;-</span> data[<span class="dv">2</span>]    <span class="co"># 观测: s次成功, f次失败</span></span>
+<span id="cb8-319"><a href="#cb8-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-320"><a href="#cb8-320" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, xmax, <span class="at">length.out =</span> <span class="dv">500</span>)</span>
+<span id="cb8-321"><a href="#cb8-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-322"><a href="#cb8-322" aria-hidden="true" tabindex="-1"></a>  prior_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a, b)</span>
+<span id="cb8-323"><a href="#cb8-323" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 似然本身不是概率密度(不积分为1),这里标准化一下方便跟先验/后验同尺度比较形状</span></span>
+<span id="cb8-324"><a href="#cb8-324" aria-hidden="true" tabindex="-1"></a>  lik_raw <span class="ot">&lt;-</span> theta<span class="sc">^</span>s <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> theta)<span class="sc">^</span>f</span>
+<span id="cb8-325"><a href="#cb8-325" aria-hidden="true" tabindex="-1"></a>  lik_d <span class="ot">&lt;-</span> lik_raw <span class="sc">/</span> <span class="fu">sum</span>(lik_raw) <span class="sc">/</span> <span class="fu">diff</span>(theta)[<span class="dv">1</span>]</span>
+<span id="cb8-326"><a href="#cb8-326" aria-hidden="true" tabindex="-1"></a>  post_d <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, a <span class="sc">+</span> s, b <span class="sc">+</span> f)</span>
+<span id="cb8-327"><a href="#cb8-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-328"><a href="#cb8-328" aria-hidden="true" tabindex="-1"></a>  ymax <span class="ot">&lt;-</span> <span class="fu">max</span>(prior_d, lik_d, post_d)</span>
+<span id="cb8-329"><a href="#cb8-329" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(theta, post_d, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#1D3557"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, ymax <span class="sc">*</span> <span class="fl">1.1</span>),</span>
+<span id="cb8-330"><a href="#cb8-330" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"密度"</span>,</span>
+<span id="cb8-331"><a href="#cb8-331" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"先验Beta("</span>, a, <span class="st">","</span>, b, <span class="st">") + 数据(s="</span>, s, <span class="st">",f="</span>, f, <span class="st">") → 后验"</span>))</span>
+<span id="cb8-332"><a href="#cb8-332" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, prior_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#6C757D"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb8-333"><a href="#cb8-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(theta, lik_d, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#B5432B"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb8-334"><a href="#cb8-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"后验 posterior"</span>, <span class="st">"先验 prior"</span>, <span class="st">"似然 likelihood(标准化)"</span>),</span>
+<span id="cb8-335"><a href="#cb8-335" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#1D3557"</span>, <span class="st">"#6C757D"</span>, <span class="st">"#B5432B"</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb8-336"><a href="#cb8-336" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-337"><a href="#cb8-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-338"><a href="#cb8-338" aria-hidden="true" tabindex="-1"></a><span class="fu">my_triplot</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">9</span>))</span>
+<span id="cb8-339"><a href="#cb8-339" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-340"><a href="#cb8-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-341"><a href="#cb8-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-342"><a href="#cb8-342" aria-hidden="true" tabindex="-1"></a><span class="fu">## 代码：先验敏感性</span></span>
+<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-345"><a href="#cb8-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-346"><a href="#cb8-346" aria-hidden="true" tabindex="-1"></a>**观察**：当数据量 $n=20$ 足够时，三种先验给出的后验差异已经不大——这是贝叶斯方法的一个重要性质：**数据量足够大时，先验的影响会被似然"淹没"**。这也是经验贝叶斯（从数据估计先验）在大样本场景下依然稳健的原因之一。</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

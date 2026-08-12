@@ -95,7 +95,7 @@ $$
 
 > 1 整体，这是一个比例，H 成立且发生D，占所有 D 中的多大份额
 
-> 这就是 后验概率 $ p(H \mid D) $ 的真实含义，**用数据把不符合的可能行过滤掉，剩下的里面再看 $H$ 占多少**
+> 这就是 后验概率 $p(H \mid D)$ 的真实含义，**用数据把不符合的可能行过滤掉，剩下的里面再看 $H$ 占多少**
 
 ::: {.callout-note title="思考题：为什么贝叶斯公式是乘法规则变体？" collapse="false"}
 
@@ -149,7 +149,7 @@ $$
 
 这里的比例常数能够由 $p(\theta\mid x)$ 关于 $\theta$ 的和（或积分）为 1 而得到。显然，上式是**贝叶斯定理的另一种形式**。
 
-> $ \propto $： 正比于（proportional to）
+> $\propto$： 正比于（proportional to）
 
 > 意思是：左边和右边只相差一个常数倍数，因此省略那个常数
 
@@ -244,11 +244,11 @@ $$
 
 4. 似然原理
 
-5. 后验概率 $ p(\theta \mid x) $ 给出了 $ \theta $ 的完全推断
+5. 后验概率 $p(\theta \mid x)$ 给出了 $\theta$ 的完全推断
 
 6. 贝叶斯统计证据度量与经典统计比较
 
-（传统统计用 $ p$ 作为证据的度量）
+（传统统计用 $p$ 作为证据的度量）
 
 | 序号 | 误解（Misconception） |
 |:---:|---|
@@ -265,7 +265,7 @@ $$
 | 11 | 当你不关心某个方向上的结果、或者该方向上的差异不可能发生时，应该用单侧 $P$ 值。 |
 | 12 | 科学结论或治疗方案应该基于 $P$ 值是否显著来决定。 |
 
-: Goodman 指出 p 值的 12 个误导
+: Goodman 指出 p 值的 12 个误导 {tbl-colwidths="[20,80]"}
 
 ## 决策的基本概念
 
@@ -387,7 +387,7 @@ $$
 
 ## 共轭先验分布族
 
-前面多次涉及共轭分布的概念，它是数学上最方便的先验分布族。如果后验分布 $p(\theta\mid x)$ 与先验概率分布 $p(\theta)$ 属相同的概率分布族，则先验和后验被称为共轭分布，并且先验被称为似然函数的**共轭先验分布**。
+前面多次涉及共轭分布的概念，它是数学上最方便的先验分布族。如果后验分布 $p(\theta\mid x)$ 与先验概率分布 $p(\theta)$ 属相同的概率分布族，则先验和后验被称为**共轭分布**，并且先验被称为似然函数的**共轭先验分布**。
 
 形式上，共轭分布族定义如下：假定 $\mathcal{F} = \{f(x\mid\theta)\}\ (x\in\mathcal{X})$ 是以参数 $\theta$ 识别的分布族。一个先验分布族类 $\Pi$ 称为对于 $\mathcal{F}$ 是共轭的，如果对所有的 $f\in\mathcal{F}$，所有 $\Pi$ 中的先验分布及所有的 $x\in\mathcal{X}$，后验分布均属于 $\Pi$。
 
@@ -396,12 +396,16 @@ $$
 $$
 f(x\mid\theta) = h(x)\exp\left[\theta x - \Psi(\theta)\right]
 $$
-- **$x$**：观测到的数据
-- **$\theta$**：分布的参数（比如二项分布里的 $p$、正态分布里的均值 $\mu$）——这里 $\theta$ 被称为**自然参数**（natural parameter），是这个参数的一种特殊写法，不一定是你平时最熟悉的那个参数本身
-- **$h(x)$**：只跟数据 $x$ 有关、跟参数 $\theta$ 完全无关的一个函数——起"基础权重"的作用，负责数据本身的形状，不参与"调节参数"这件事
-- **$\theta x$**：参数和数据**相乘**后放进指数里——这是整个指数族公式的核心特征：不管什么分布，只要能写成"参数和数据线性相乘、再放进指数"这个形式，就属于指数族
-- **$\Psi(\theta)$**：只跟参数 $\theta$ 有关、跟数据 $x$ 无关的一个函数，叫**对数配分函数**（log-partition function）——它的唯一作用是**归一化**，负责把整个式子调整到积分（或求和）等于1，本身不携带"信息"，纯粹是数学上的配平项。读作 psi，中文读作普西或帕西
-- **$\exp[\cdot]$**：把"$\theta x - \Psi(\theta)$"这一整块放进指数函数——这一步是为什么运算会变简单的关键：指数把"乘法"变成了"加法"（对数尺度下 $\theta x$ 和 $\Psi(\theta)$ 是相加减的关系，不是纠缠在一起的复杂函数）
+-  **$x$**：观测到的数据
+
+-  **$\theta$**：分布的参数（比如二项分布里的 $p$、正态分布里的均值 $\mu$）——这里 $\theta$ 被称为**自然参数**（natural parameter），是这个参数的一种特殊写法，不一定是你平时最熟悉的那个参数本身
+
+-  **$h(x)$**：只跟数据 $x$ 有关、跟参数 $\theta$ 完全无关的一个函数——起"基础权重"的作用，负责数据本身的形状，不参与"调节参数"这件事
+
+-  **$\theta x$**：参数和数据**相乘**后放进指数里——这是整个指数族公式的核心特征：不管什么分布，只要能写成"参数和数据线性相乘、再放进指数"这个形式，就属于指数族
+-  **$\Psi(\theta)$**：只跟参数 $\theta$ 有关、跟数据 $x$ 无关的一个函数，叫**对数配分函数**（log-partition function）——它的唯一作用是**归一化**，负责把整个式子调整到积分（或求和）等于1，本身不携带"信息"，纯粹是数学上的配平项。读作 psi，中文读作普西或帕西
+
+-  **$\exp[\cdot]$**：把"$\theta x - \Psi(\theta)$"这一整块放进指数函数——这一步是为什么运算会变简单的关键：指数把"乘法"变成了"加法"（对数尺度下 $\theta x$ 和 $\Psi(\theta)$ 是相加减的关系，不是纠缠在一起的复杂函数）
 
 **为什么这个形式重要**：几乎你已经学过的所有分布——二项分布、正态分布、泊松分布——都能整理成这个样子（只是 $h(x)$、$\theta$、$\Psi(\theta)$ 具体长什么样不一样）。正因为它们共享同一个"骨架"，才使得"共轭先验"这套理论可以**一次性对所有这些分布通用**，不需要每换一个分布就重新推导一遍——这也是为什么你之前学的 Beta-Binomial、Gamma-Poisson、Normal-Normal 这些共轭对，背后其实是同一条数学逻辑在不同分布上的具体实现。
 
@@ -411,7 +415,7 @@ $$
 \pi(\theta\mid\mu,\Lambda) = K(\mu,\Lambda)\exp\left[\theta\mu - \Lambda\Psi(\theta)\right]
 $$
 
-- $ \Lambda $ 读作 lambda（中文读"拉姆达"）,是先验分布的一个超参数
+- $\Lambda$ 读作 lambda（中文读"拉姆达"）,是先验分布的一个超参数
 
 而相应的后验分布形为
 
@@ -453,6 +457,68 @@ barplot(probs, names.arg = c("k=0 (失败)", "k=1 (成功)"),
         ylab = "概率")
 text(x = c(0.7, 1.9), y = probs + 0.03, labels = round(probs, 2))
 ```
+
+::: {.callout-tip title="拿到超参数 (α_post, β_post) 之后能做的三件事"}
+
+后验分布 $\text{Beta}(\alpha_{\text{post}},\beta_{\text{post}})$ 拿到手之后，超参数不是算完就扔的中间结果，它们**就是**后验分布的身份证——手里有这两个数字，就等于手里有了整条后验分布：
+
+1. **画出整条后验分布本身**——这是"你对 $p$ 的完整认知"，不是一个数，是一整条曲线
+```r
+   curve(dbeta(x, alpha_post, beta_post), 0, 1)
+```
+
+2. **算点估计（后验均值）**
+   $$
+   \hat{p} = \frac{\alpha_{\text{post}}}{\alpha_{\text{post}}+\beta_{\text{post}}}
+   $$
+```r
+   p_hat <- alpha_post / (alpha_post + beta_post)
+```
+
+3. **算可信区间**
+```r
+   qbeta(c(0.025, 0.975), alpha_post, beta_post)
+```
+
+```{r}
+#| label: fig-posterior-three-uses
+#| fig-cap: "拿到后验超参数 Beta(8,4) 之后的三种典型用法：完整分布、点估计、可信区间"
+#| fig-alt: "三宫格图,依次展示Beta(8,4)后验分布的完整密度曲线、标注点估计位置的曲线、以及标注95%可信区间阴影范围的曲线"
+#| fig-width: 10
+#| fig-height: 4
+
+alpha_post <- 8; beta_post <- 4
+x <- seq(0, 1, length.out = 300)
+
+par(mfrow = c(1, 3), mar = c(4.5, 4.5, 3, 1))
+
+# 1. 完整后验分布
+plot(x, dbeta(x, alpha_post, beta_post), type = "l", lwd = 2, col = "#1D3557",
+     main = "1. 完整后验分布\nBeta(8,4)", xlab = "p", ylab = "密度")
+polygon(c(x, rev(x)), c(dbeta(x, alpha_post, beta_post), rep(0, length(x))),
+        col = adjustcolor("#1D3557", 0.15), border = NA)
+
+# 2. 点估计(后验均值)
+p_hat <- alpha_post / (alpha_post + beta_post)
+plot(x, dbeta(x, alpha_post, beta_post), type = "l", lwd = 2, col = "#1D3557",
+     main = paste0("2. 点估计\np_hat=", round(p_hat, 3)), xlab = "p", ylab = "密度")
+abline(v = p_hat, col = "#B5432B", lwd = 2, lty = 2)
+points(p_hat, dbeta(p_hat, alpha_post, beta_post), col = "#B5432B", pch = 19, cex = 1.5)
+
+# 3. 95%可信区间
+ci <- qbeta(c(0.025, 0.975), alpha_post, beta_post)
+plot(x, dbeta(x, alpha_post, beta_post), type = "l", lwd = 2, col = "#1D3557",
+     main = paste0("3. 95%可信区间\n[", round(ci[1], 3), ", ", round(ci[2], 3), "]"),
+     xlab = "p", ylab = "密度")
+x_ci <- x[x >= ci[1] & x <= ci[2]]
+polygon(c(x_ci, rev(x_ci)), c(dbeta(x_ci, alpha_post, beta_post), rep(0, length(x_ci))),
+        col = adjustcolor("#B5432B", 0.3), border = NA)
+abline(v = ci, col = "#B5432B", lwd = 1.5, lty = 3)
+```
+
+> 一个小提醒，容易被忽略：图2里红点没有正好卡在曲线最高点上——因为 Beta(8,4) 是偏态分布，均值（图里标的红点）和众数（曲线真正的最高点）本来就不是同一个位置，只有对称分布（比如两者才会重合
+
+:::
 
 #### (2) 二项分布（binomial distribution）
 
@@ -660,6 +726,30 @@ p4 <- make_dirichlet_plot(c(0.3,0.3,0.3), "α=(0.3,0.3,0.3) 稀疏先验") +
 (p1 | p2) / (p3 | p4)
 ```
 
+
+::: {.callout-tip title="∏ 符号是什么意思"}
+
+$\prod$ 读作**"连乘"**（product），是 $\sum$（连加）的乘法版孪生兄弟：
+
+$$
+\sum_{i=1}^n a_i = a_1+a_2+\cdots+a_n \qquad\qquad \prod_{i=1}^n a_i = a_1\times a_2\times\cdots\times a_n
+$$
+
+拆开这个具体式子看：
+
+$$
+\prod_{i=1}^n \theta^{x_i}(1-\theta)^{1-x_i} = \underbrace{\theta^{x_1}(1-\theta)^{1-x_1}}_{i=1} \times \underbrace{\theta^{x_2}(1-\theta)^{1-x_2}}_{i=2} \times \cdots \times \underbrace{\theta^{x_n}(1-\theta)^{1-x_n}}_{i=n}
+$$
+
+- **$\prod$**：接下来要做"连续相乘"
+- **下标 $i=1$，上标 $n$**：把 $i$ 依次代入 $1,2,\ldots,n$
+- **后面的表达式**：每一次要乘的具体内容
+
+**为什么用连乘而不是连加**：多个**独立事件**同时发生的概率，等于各自概率**相乘**——9次手术互不影响，"9次结果恰好是这样"的联合概率，就是9个单独概率的连乘积。$\prod$ 只是用来紧凑地写这种"很多项相乘"的场合，不用把一长串 $\times\cdots\times$ 全部手写出来。
+
+**好记的类比**：$\sum$ 长得像 S（Sum），$\prod$ 长得像 P（Product，写成希腊字母的样子）。
+
+:::
 
 #### (6) 多项分布（multinomial distribution）
 
@@ -1183,6 +1273,26 @@ ggplot(df, aes(x = x)) +
 ### 指数 先 验分布 族 的一些结果
 
 
+## 概念汇总
+::: {.callout-tip title="概念汇总"}
+
+**MLE**（Maximum Likelihood Estimation，最大似然估计）：回答的问题：哪个 $\theta$ 让"我看到手上这份数据"这件事的可能性最大？核心特点：只看似然，不看先验——完全是频率学派的思路
+
+**MAP**（Maximum A Posteriori，最大后验估计）:回答的问题：结合"数据告诉我什么"和"我本来就相信什么"，哪个 $\theta$ 的综合可能性最大？核心特点：似然 × 先验一起考虑——是贝叶斯学派的思路（对应你框架里 Q3=显式先验），本质上是在后验分布这整条曲线上，找最高点（众数）当作答案。
+
+**拉普拉斯近似**（Laplace approximation）：MAP 估计只是找到后验分布的最大值。拉普拉斯近似更进一步，并且还计算极大值附近的局部曲率到二阶项
+
+**蒙特卡罗模拟**（Monte Carlo simulations）是一种从后验分布抽样的技术
+
+**蒙特卡罗积分**：是利用有关分布的随机抽样来近似积分的一种有力方法
+
+**众数**: 一组数据或一个分布里，出现次数最多（或者说，密度/概率最高）的那个值。
+
+**均值**(mean)：所有值的加权平均，"重心"
+
+**中位数**(median):把分布切成面积相等的左右两半的那个点
+
+:::
 
 ## Q1--Q5 速查
 

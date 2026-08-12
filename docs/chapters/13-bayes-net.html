@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; 概率编程：R/Stan 与 Python/PyMC – 贝叶斯数据分析笔记</title>
+<title>8&nbsp; 第 13 章 贝叶斯网络 – 贝叶斯数据分析笔记</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/06-mcmc-algorithms.html" rel="prev">
+<link href="../chapters/14-HMM.html" rel="next">
+<link href="../chapters/10-lm-bayes.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -104,6 +105,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -117,7 +147,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/06-mcmc-algorithms.html">第三部分：算法与概率编程</a></li><li class="breadcrumb-item"><a href="../chapters/07-stan-pymc.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/13-bayes-net.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -209,14 +239,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/06-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/07-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/07-stan-pymc.html" class="sidebar-item-text sidebar-link active">
+  <a href="../chapters/08-stan-pymc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">第四部分：更多的贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-lm-bayes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-bayes-net.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
   </div>
 </li>
       </ul>
@@ -226,15 +285,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#概述" id="toc-概述" class="nav-link active" data-scroll-target="#概述"><span class="header-section-number">8.1</span> 13.1 概述</a>
+  <ul class="collapse">
+  <li><a href="#基本概念" id="toc-基本概念" class="nav-link" data-scroll-target="#基本概念"><span class="header-section-number">8.1.1</span> 13.1.1 基本概念</a></li>
+  <li><a href="#贝叶斯网络的难点及优缺点" id="toc-贝叶斯网络的难点及优缺点" class="nav-link" data-scroll-target="#贝叶斯网络的难点及优缺点"><span class="header-section-number">8.1.2</span> 13.1.2 贝叶斯网络的难点及优缺点</a></li>
+  <li><a href="#贝叶斯网络的一个简单例子" id="toc-贝叶斯网络的一个简单例子" class="nav-link" data-scroll-target="#贝叶斯网络的一个简单例子"><span class="header-section-number">8.1.3</span> 13.1.3 贝叶斯网络的一个简单例子</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/13-bayes-net.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/06-mcmc-algorithms.html">第三部分：算法与概率编程</a></li><li class="breadcrumb-item"><a href="../chapters/07-stan-pymc.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/10-lm-bayes.html">第四部分：更多的贝叶斯模型</a></li><li class="breadcrumb-item"><a href="../chapters/13-bayes-net.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -251,13 +321,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<blockquote class="blockquote">
-<p>待整理：把前面几章的解析解模型，改用 Stan / PyMC 重新拟合一遍，验证结果一致。</p>
-</blockquote>
+<p>本章的主要内容来自吴喜之所著的教材《复杂数据统计方法——基于R的应用》（第三版）（中国人民大学出版社，2015）的第12章。</p>
+<section id="概述" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="概述"><span class="header-section-number">8.1</span> 13.1 概述</h2>
+<section id="基本概念" class="level3" data-number="8.1.1">
+<h3 data-number="8.1.1" class="anchored" data-anchor-id="基本概念"><span class="header-section-number">8.1.1</span> 13.1.1 基本概念</h3>
+<p>属于概率图形（probabilistic graphical models, GM）族的网络模型<strong>贝叶斯网络</strong>（Bayesian networks, BN）包括图理论、概率论、计算机科学及统计的概念，是多变量概率分布的一种概率图模型。</p>
+<p>贝叶斯网络包含<strong>有向无回路图</strong>（directed acyclic graph, DAG）。DAG 是由<strong>节点</strong>（node）或<strong>顶点</strong>（vertex）和<strong>有向边</strong>或<strong>有向弧</strong>组成的。无回路意味着没有节点是它自己的祖先或后代，也就是顺着箭头不会经过已经走过的节点。DAG 的每个节点都对应于一个变量，箭头代表变量之间的相依关系。每个箭头的终点称为”子节点”（child），起点称为”父节点”（parent）。和图模型类似，没有父节点的节点称为<strong>根节点</strong>（root node），没有子节点的节点称为<strong>叶节点</strong>（leaf node），其他节点称为<strong>中间节点</strong>（intermediate node）。每个变量都附有给定其父节点的（条件）局部概率，因此贝叶斯网络也称为概率有向无回路图模型（probabilistic directed acyclic graphical model），这就区别于其他具有DAG的图模型。</p>
+<p>贝叶斯网络的每个变量 <span class="math inline">\(x_i\)</span> 在一个有向无回路图中表示为节点（或称顶点）；概率分布 <span class="math inline">\(p(x_1,x_2,\ldots,x_N)\)</span> 以因子分解的形式表示如下：</p>
+<p><span class="math display">\[
+p(x_1,x_2,\ldots,x_N) = \prod_{i=1}^{M} p(\boldsymbol{x}_i\mid\Pi_{x_i}) \tag{13.1.1}
+\]</span></p>
+<p>这里 <span class="math inline">\(\Pi_{x_i}\)</span> 是图中 <span class="math inline">\(x_i\)</span> 父节点的集合。这个表达式显示了贝叶斯网络满足因果马尔可夫假定，即每个点的概率在给定其父节点时独立于其他祖先，表达式(13.1.1)还使得一个原本非常烦琐的联合分布大大简化。贝叶斯网络被下面二者完全确定：</p>
+<ol type="1">
+<li><strong>图结构</strong>，即图中的有向弧（或有向边）</li>
+<li>对每个变量 <span class="math inline">\(x_i\)</span> 的<strong>条件概率表</strong>（conditional probability table, CPT）</li>
+</ol>
+<p>当一个贝叶斯网络被确定之后，就可以通过式(13.1.1)计算想要的任何条件概率，这可以直接用手算（比如对下面例13.1的简单情况），当然，通常是用计算机软件实现。</p>
+<p>贝叶斯网络非常便于表示概率因果关系系统。一方面，通过从一个节点到另一个节点（比如图13.1.1中的 <span class="math inline">\(C\)</span> 到 <span class="math inline">\(R\)</span>）添加有向边并适当地设置概率，就可以很容易地在网络中确立”<span class="math inline">\(C\)</span> 如何经常导致 <span class="math inline">\(R\)</span>“的事实；另一方面，如果 <span class="math inline">\(C\)</span> 对 <span class="math inline">\(B\)</span> 没有因果影响，它们之间就不会有一个有向边。</p>
+<p>贝叶斯网络广泛应用于统计、机器学习、人工智能等领域。贝叶斯网络在数学上严格而且易于理解。虽然箭头代表变量间直接的因果关系，但推理能够作用于任何方向（无论有没有箭头）。</p>
+<p>贝叶斯网络不像完全主观建造而又很难更新或修改的结构方程模型，它根据数据中变量之间的相关性来构建图中的变量联系，同时也可以加上主观的介入。因此，贝叶斯网络从某种意义上来说比图模型更加客观，与数据所反映的现实世界的关系也更加密切。</p>
+</section>
+<section id="贝叶斯网络的难点及优缺点" class="level3" data-number="8.1.2">
+<h3 data-number="8.1.2" class="anchored" data-anchor-id="贝叶斯网络的难点及优缺点"><span class="header-section-number">8.1.2</span> 13.1.2 贝叶斯网络的难点及优缺点</h3>
+<p>贝叶斯网络中有哪些变量（节点）、它们之间的关系（那些有向边或有向弧）以及有关的条件概率表（CPT）实际上是很难事先知道的，这些必须根据数据来获得，这就是贝叶斯网络最核心也是充斥着难点的地方。</p>
+<section id="优点" class="level4" data-number="8.1.2.1">
+<h4 data-number="8.1.2.1" class="anchored" data-anchor-id="优点"><span class="header-section-number">8.1.2.1</span> 1. 优点</h4>
+<ul>
+<li>适用于较小的和不完全的数据集</li>
+<li>能够通过数据学习网络结构和各种条件概率</li>
+<li>可结合不同来源的信息，包括主观的、怀疑的以及证据确凿的信息</li>
+<li>明白地处理不确定性，并支持决策系统</li>
+<li>所有结构都以解析的形式描述，一旦结构的学习过程完成，可以很快得到想要的结论</li>
+</ul>
+</section>
+<section id="缺点" class="level4" data-number="8.1.2.2">
+<h4 data-number="8.1.2.2" class="anchored" data-anchor-id="缺点"><span class="header-section-number">8.1.2.2</span> 2. 缺点</h4>
+<ul>
+<li>选择先验分布不很容易</li>
+<li>对于连续变量有困难，通常需要离散化，这有利有弊</li>
+<li>把专家知识构造进贝叶斯网络有各种困难，包括概率的确定</li>
+<li>做完全的贝叶斯学习过程极其花费计算资源，即使在网络结构已知的情况下仍然不易</li>
+<li>对于高维数据贝叶斯网络表现不佳</li>
+<li>贝叶斯网络可能不易解释，特别是不同部分效果的区分</li>
+<li>对于并非不常见的循环的关系，会很困难（可能需要非指向的图模型，诸如马尔可夫随机域）</li>
+</ul>
+</section>
+</section>
+<section id="贝叶斯网络的一个简单例子" class="level3" data-number="8.1.3">
+<h3 data-number="8.1.3" class="anchored" data-anchor-id="贝叶斯网络的一个简单例子"><span class="header-section-number">8.1.3</span> 13.1.3 贝叶斯网络的一个简单例子</h3>
+<p><strong>例 13.1</strong> 图13.1.1是一个简单的贝叶斯网络例子。<span class="math inline">\(C\)</span> 表示通常的感冒，<span class="math inline">\(R\)</span> 表示流鼻涕，<span class="math inline">\(H\)</span> 表示头疼，<span class="math inline">\(B\)</span> 表示接触过有禽流感的家禽，<span class="math inline">\(A\)</span> 是禽流感，<span class="math inline">\(N\)</span> 是一般抗生素无效。左图为贝叶斯网络，右图为每个变量为真（T，用哑元1代表）及为伪（F，哑元0代表）的概率及条件概率。</p>
 
 
 <!-- -->
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -877,16 +996,72 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/06-mcmc-algorithms.html" class="pagination-link" aria-label="贝叶斯推断中的一些算法">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span>
+      <a href="../chapters/10-lm-bayes.html" class="pagination-link" aria-label="第 10 章 贝叶斯广义线性模型">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../chapters/14-HMM.html" class="pagination-link" aria-label="隐马尔可夫模型">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 概率编程：R/Stan 与 Python/PyMC</span></span>
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 第 13 章 贝叶斯网络</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待整理：把前面几章的解析解模型，改用 Stan / PyMC 重新拟合一遍，验证结果一致。</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>本章的主要内容来自吴喜之所著的教材《复杂数据统计方法——基于R的应用》（第三版）（中国人民大学出版社，2015）的第12章。</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.1 概述</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### 13.1.1 基本概念</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>属于概率图形（probabilistic graphical models, GM）族的网络模型**贝叶斯网络**（Bayesian networks, BN）包括图理论、概率论、计算机科学及统计的概念，是多变量概率分布的一种概率图模型。</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>贝叶斯网络包含**有向无回路图**（directed acyclic graph, DAG）。DAG 是由**节点**（node）或**顶点**（vertex）和**有向边**或**有向弧**组成的。无回路意味着没有节点是它自己的祖先或后代，也就是顺着箭头不会经过已经走过的节点。DAG 的每个节点都对应于一个变量，箭头代表变量之间的相依关系。每个箭头的终点称为"子节点"（child），起点称为"父节点"（parent）。和图模型类似，没有父节点的节点称为**根节点**（root node），没有子节点的节点称为**叶节点**（leaf node），其他节点称为**中间节点**（intermediate node）。每个变量都附有给定其父节点的（条件）局部概率，因此贝叶斯网络也称为概率有向无回路图模型（probabilistic directed acyclic graphical model），这就区别于其他具有DAG的图模型。</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>贝叶斯网络的每个变量 $x_i$ 在一个有向无回路图中表示为节点（或称顶点）；概率分布 $p(x_1,x_2,\ldots,x_N)$ 以因子分解的形式表示如下：</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>p(x_1,x_2,\ldots,x_N) = \prod_{i=1}^{M} p(\boldsymbol{x}_i\mid\Pi_{x_i}) \tag{13.1.1}</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>这里 $\Pi_{x_i}$ 是图中 $x_i$ 父节点的集合。这个表达式显示了贝叶斯网络满足因果马尔可夫假定，即每个点的概率在给定其父节点时独立于其他祖先，表达式(13.1.1)还使得一个原本非常烦琐的联合分布大大简化。贝叶斯网络被下面二者完全确定：</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**图结构**，即图中的有向弧（或有向边）</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>对每个变量 $x_i$ 的**条件概率表**（conditional probability table, CPT）</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>当一个贝叶斯网络被确定之后，就可以通过式(13.1.1)计算想要的任何条件概率，这可以直接用手算（比如对下面例13.1的简单情况），当然，通常是用计算机软件实现。</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>贝叶斯网络非常便于表示概率因果关系系统。一方面，通过从一个节点到另一个节点（比如图13.1.1中的 $C$ 到 $R$）添加有向边并适当地设置概率，就可以很容易地在网络中确立"$C$ 如何经常导致 $R$"的事实；另一方面，如果 $C$ 对 $B$ 没有因果影响，它们之间就不会有一个有向边。</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>贝叶斯网络广泛应用于统计、机器学习、人工智能等领域。贝叶斯网络在数学上严格而且易于理解。虽然箭头代表变量间直接的因果关系，但推理能够作用于任何方向（无论有没有箭头）。</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>贝叶斯网络不像完全主观建造而又很难更新或修改的结构方程模型，它根据数据中变量之间的相关性来构建图中的变量联系，同时也可以加上主观的介入。因此，贝叶斯网络从某种意义上来说比图模型更加客观，与数据所反映的现实世界的关系也更加密切。</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### 13.1.2 贝叶斯网络的难点及优缺点</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>贝叶斯网络中有哪些变量（节点）、它们之间的关系（那些有向边或有向弧）以及有关的条件概率表（CPT）实际上是很难事先知道的，这些必须根据数据来获得，这就是贝叶斯网络最核心也是充斥着难点的地方。</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. 优点</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>适用于较小的和不完全的数据集</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>能够通过数据学习网络结构和各种条件概率</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>可结合不同来源的信息，包括主观的、怀疑的以及证据确凿的信息</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>明白地处理不确定性，并支持决策系统</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>所有结构都以解析的形式描述，一旦结构的学习过程完成，可以很快得到想要的结论</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. 缺点</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>选择先验分布不很容易</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>对于连续变量有困难，通常需要离散化，这有利有弊</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>把专家知识构造进贝叶斯网络有各种困难，包括概率的确定</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>做完全的贝叶斯学习过程极其花费计算资源，即使在网络结构已知的情况下仍然不易</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>对于高维数据贝叶斯网络表现不佳</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>贝叶斯网络可能不易解释，特别是不同部分效果的区分</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>对于并非不常见的循环的关系，会很困难（可能需要非指向的图模型，诸如马尔可夫随机域）</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### 13.1.3 贝叶斯网络的一个简单例子</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>**例 13.1** 图13.1.1是一个简单的贝叶斯网络例子。$C$ 表示通常的感冒，$R$ 表示流鼻涕，$H$ 表示头疼，$B$ 表示接触过有禽流感的家禽，$A$ 是禽流感，$N$ 是一般抗生素无效。左图为贝叶斯网络，右图为每个变量为真（T，用哑元1代表）及为伪（F，哑元0代表）的概率及条件概率。</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -896,7 +1071,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/07-stan-pymc.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/13-bayes-net.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>本站由 Quarto 构建</p>
 </div>

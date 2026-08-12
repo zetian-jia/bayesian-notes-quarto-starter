@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; 贝叶斯推断中的一些算法 – 贝叶斯数据分析笔记</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/08-stan-pymc.html" rel="next">
+<link href="../chapters/05-normal.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07-mcmc-algorithms.html">第三部分：算法与概率编程</a></li><li class="breadcrumb-item"><a href="../chapters/07-mcmc-algorithms.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">贝叶斯数据分析笔记</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-git"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">第一部分：基础篇</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">引言</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-basic-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">基本概念</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">第二部分：初等贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bernoulli.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-normal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">正态总体的情况</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">第三部分：算法与概率编程</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-mcmc-algorithms.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stan-pymc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">第四部分：更多的贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-lm-bayes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-bayes-net.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#最大后验概率法" id="toc-最大后验概率法" class="nav-link active" data-scroll-target="#最大后验概率法"><span class="header-section-number">5.1</span> 7.1 最大后验概率法</a></li>
+  <li><a href="#拉普拉斯近似" id="toc-拉普拉斯近似" class="nav-link" data-scroll-target="#拉普拉斯近似"><span class="header-section-number">5.2</span> 7.2 拉普拉斯近似</a></li>
+  <li><a href="#马尔可夫链蒙特卡罗方法" id="toc-马尔可夫链蒙特卡罗方法" class="nav-link" data-scroll-target="#马尔可夫链蒙特卡罗方法"><span class="header-section-number">5.3</span> 7.3 马尔可夫链蒙特卡罗方法</a>
+  <ul class="collapse">
+  <li><a href="#蒙特卡罗积分" id="toc-蒙特卡罗积分" class="nav-link" data-scroll-target="#蒙特卡罗积分"><span class="header-section-number">5.3.1</span> 7.3.1 蒙特卡罗积分</a></li>
+  <li><a href="#马尔可夫链" id="toc-马尔可夫链" class="nav-link" data-scroll-target="#马尔可夫链"><span class="header-section-number">5.3.2</span> 7.3.2 马尔可夫链</a></li>
+  <li><a href="#mcmc-方法综述" id="toc-mcmc-方法综述" class="nav-link" data-scroll-target="#mcmc-方法综述"><span class="header-section-number">5.3.3</span> 7.3.3 MCMC 方法综述</a></li>
+  <li><a href="#metropolis-算法" id="toc-metropolis-算法" class="nav-link" data-scroll-target="#metropolis-算法"><span class="header-section-number">5.3.4</span> 7.3.4 Metropolis 算法</a></li>
+  </ul></li>
+  <li><a href="#em-算法" id="toc-em-算法" class="nav-link" data-scroll-target="#em-算法"><span class="header-section-number">5.4</span> 7.4 EM 算法</a></li>
+  <li><a href="#变分贝叶斯近似" id="toc-变分贝叶斯近似" class="nav-link" data-scroll-target="#变分贝叶斯近似"><span class="header-section-number">5.5</span> 7.5 变分贝叶斯近似</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/07-mcmc-algorithms.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07-mcmc-algorithms.html">第三部分：算法与概率编程</a></li><li class="breadcrumb-item"><a href="../chapters/07-mcmc-algorithms.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>我们已经讨论了贝叶斯推断的基本概念以及一些先验分布。可以看出，贝叶斯统计后验分布的数学形式很简单，其思想也不复杂，但是，以实际可用的方式计算后验分布往往是非常具有挑战性的。主要原因是在有 <span class="math inline">\(n\)</span> 个参数时，计算正规化常数涉及重积分，即使使用共轭先验分布或其他可以推导出后验分布封闭形式的先验分布，这种计算在分析上和数值上都面临极大挑战。这也是过去几十年人们不使用贝叶斯推断来进行多元建模的主要原因之一。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="核心矛盾：模型简单，计算却很难">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+核心矛盾：模型简单，计算却很难
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>贝叶斯推断的<strong>模型本身</strong>（先验 × 似然 → 后验）在数学上非常直白，真正的困难在于<strong>Q4：怎么算</strong>——具体来说，是后验分布里那个归一化常数 <span class="math inline">\(p(x)\)</span>，在参数维度 <span class="math inline">\(n\)</span> 较大时，需要算一个高维积分，这个积分往往没有闭式解，也很难用数值方法精确计算。</p>
+</div>
+</div>
+<p><strong>Gibbs 抽样</strong></p>
+<p>较早使用的算法是 Gibbs 抽样（Geman and Geman, 1984）。Gibbs 抽样理论上是马尔可夫链蒙特卡罗方法（Markov Chain Monte Carlo, MCMC）的一个例子，属于 Metropolis-Hastings 算法的一个特例——因为通过模拟具有某初始分布作为其静态分布的马尔可夫链，从该分布生成随机抽取的任何算法都是马尔可夫链蒙特卡罗算法，而这正是 Gibbs 抽样所做的。但实践中由于目前的 MCMC 概念是后来形成的，很多人没有把 Gibbs 抽样算作 MCMC 的一种。</p>
+<p>为了获得后验分布的近似值，Gibbs 抽样主要分两步：</p>
+<ol type="1">
+<li>定义马尔可夫链的稳态分布等于后验分布（Gelfand and Smith, 1990）</li>
+<li>一旦马尔可夫链达到其稳态分布，就用蒙特卡罗方法从该稳态分布抽取样本，以准确地表现后验分布</li>
+</ol>
+<p>这促进了<strong>热身（burn-in）迭代</strong>的使用和众多<strong>收敛诊断</strong>研究（Gelman and Rubin, 1992; Cowles and Carlin, 1996）。</p>
+<p><strong>Gibbs 抽样的局限性</strong></p>
+<p>在许多情况下，Gibbs 抽样没有问题，但在有许多参数的问题中，评估收敛可能是困难的。Gil (2004) 证明了 Gibbs 抽样或其他 MCMC 方法的收敛，要求<strong>所有参数</strong>都收敛，而不仅仅是特定的感兴趣参数。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="容易被忽略的收敛要求">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+容易被忽略的收敛要求
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在评估应用于复杂贝叶斯模型的 Gibbs 抽样的收敛性时，这一结果的影响特别令人失望——因为这需要检查数千个参数是否收敛，<strong>包括在抽样期间通常不存储的多余参数</strong>（Clinton, Jackman, and Rivers, 2004）。当考虑应用于大型数据集的复杂模型时，这个问题就会被放大，特别是因为 Gibbs 抽样可能会很慢地探索高维参数空间的一些组成部分。此外，对于后验分布的收敛不足以使 Gibbs 抽样提供精确的近似。</p>
+</div>
+</div>
+<p>现在的 MCMC 方法已经解决了 Gibbs 抽样方法的不足，贝叶斯编程软件也从以 Gibbs 为主转到更先进的 MCMC 方法。</p>
+<p><strong>MCMC 是什么</strong></p>
+<p>MCMC 是一种计算机驱动的采样方法（Gamerman and Lopes, 2006; Gilks et al., 1996），它允许人们在<strong>不知道所有分布的数学属性</strong>的情况下，通过从分布中随机抽样来描述分布。MCMC 的一个特殊优势在于它可用于从分布中提取样本来计算不同样本的密度。</p>
+<p>MCMC 的名称结合了两个属性：<strong>蒙特卡罗</strong>（Monte Carlo, MC）和<strong>马尔可夫链</strong>（Markov Chain, MC）。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="拆解 MCMC 这个名字">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+拆解 MCMC 这个名字
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>蒙特卡罗（Monte Carlo）</strong>：通过检查分布中的随机样本来估计分布属性的实践。例如，不是通过从分布方程直接计算来找到正态分布的均值，而是从正态分布中抽取大量随机样本，并计算其中的样本均值。</p>
+<p>蒙特卡罗方法的好处很明显：计算大数量样本的平均值，比直接从正态分布方程计算平均值要容易得多——当随机样本易于获得、而分布方程很难以其他方式得到时，这种好处最为明显。</p>
+<p><strong>马尔可夫链（Markov Chain）</strong>：随机样本由特殊的序贯过程生成，每个随机样本用作基石以生成下一个随机样本（因此形成了一条链）。马尔可夫链的一个特殊属性是：虽然每个新样本取决于它之前的样本，但新样本不依赖前一个样本之前的任何样本——这称为<strong>马尔可夫性</strong>。</p>
+</div>
+</div>
+<p><strong>常用计算方法一览</strong></p>
+<p>常用的 MCMC 和期望最大化（EM）方法（Dempster, Laird, and Rubin, 1977）在许多实质性问题中运行良好，但在应用于大型数据集或复杂模型时性能较差。在这些情况下，<strong>变分近似（Variational Approximation, VA）</strong>是最有效的。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>全称</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Gibbs 抽样</td>
+<td>Gibbs Sampling</td>
+<td>MCMC/Metropolis-Hastings的特例，早期算法</td>
+</tr>
+<tr class="even">
+<td>MCMC</td>
+<td>Markov Chain Monte Carlo</td>
+<td>更一般化的采样框架，不需要知道分布数学属性</td>
+</tr>
+<tr class="odd">
+<td>EM</td>
+<td>Expectation-Maximization</td>
+<td>适合中小规模问题，大数据/复杂模型下性能下降</td>
+</tr>
+<tr class="even">
+<td>VA</td>
+<td>Variational Approximation</td>
+<td>大型数据集/复杂模型下最有效</td>
+</tr>
+</tbody>
+</table>
+<section id="最大后验概率法" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="最大后验概率法"><span class="header-section-number">5.1</span> 7.1 最大后验概率法</h2>
+<p>在贝叶斯统计中，最大后验概率（maximum a posteriori, MAP）估计是对后验分布的模的估计。MAP 可根据经验数据获得未观测量的点估计。它与最大似然（ML）估计方法密切相关，但采用了一个包含先验分布的增强优化目标。因此，MAP 估计可以看作 ML 估计的正则化方法。对于 <span class="math inline">\(\boldsymbol{x}=x_1,x_2,\ldots,n\)</span>，ML 估计为</p>
+<p><span class="math display">\[
+\hat\theta_{\text{MLE}} = \arg\max_\theta p(\boldsymbol{x}\mid\theta) = \arg\max_\theta \prod_{i=1}^n p(x_i\mid\theta)
+\]</span></p>
+<p><span class="math display">\[
+= \arg\max_\theta \log\prod_{i=1}^n p(x_i\mid\theta) = \arg\max_\theta \sum_{i=1}^n \log p(x_i\mid\theta)
+\]</span></p>
+<p>而 MAP 估计为</p>
+<p><span class="math display">\[
+\hat\theta_{\text{MAP}} = \arg\max_\theta \frac{p(\boldsymbol{x}\mid\theta)p(\theta)}{p(\boldsymbol{x})} = \arg\max_\theta p(\boldsymbol{x}\mid\theta)p(\theta)
+\]</span></p>
+<p><span class="math display">\[
+= \arg\max_\theta \prod_{i=1}^n p(x_i\mid\theta)p(\theta) = \arg\max_\theta \sum_{i=1}^n \log p(x_i\mid\theta)p(\theta)
+\]</span></p>
+<p>显然，如果先验分布是个常数，<span class="math inline">\(\hat\theta_{\text{MLE}}\)</span> 和 <span class="math inline">\(\hat\theta_{\text{MAP}}\)</span> 相等。</p>
+<p>如果后验分布的模可以以封闭的数学形式给出（比如使用共轭先验时），则可以用分析方法得到 MAP 估计。如果不能得到封闭形式，或者太复杂，则可用共轭梯度法或牛顿法等数值优化法，这通常需要采用两阶导数。如果不用导数，可使用改进的 EM 算法，也可以使用模拟退火的蒙特卡罗方法。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="2-3句话理解和应用">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+2-3句话理解和应用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>MAP = MLE 加了一个”先验的约束”</strong>：MLE 只问”哪个 <span class="math inline">\(\theta\)</span> 让数据出现的可能性最大”，MAP 多问一句”这个 <span class="math inline">\(\theta\)</span> 本身合不合理（先验答不答应）“——两者优化目标只差一个 <span class="math inline">\(p(\theta)\)</span> 乘项，先验是常数（无信息先验）时两者答案完全一样。</p>
+<p><strong>它是后验的”简化版”</strong>：MAP 只要众数（曲线最高点）这一个数字，不像完整贝叶斯要保留整条后验分布，计算成本低很多，但代价是丢掉了”这个估计有多不确定”这个信息（对照之前学的可信区间、HDR，MAP 全都没有）。</p>
+<p><strong>对甲基化项目的实际提示</strong>：当 DMR 检测流程需要处理成千上万个位点、跑一遍完整贝叶斯（MCMC/闭式后验）太慢时，MAP 是一个常用的”快速近似”折中方案——用共轭先验凑出闭式解、或者用牛顿法/EM 数值优化，直接拿到点估计就够用，不需要每个位点都算一整条后验曲线。</p>
+</div>
+</div>
+</section>
+<section id="拉普拉斯近似" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="拉普拉斯近似"><span class="header-section-number">5.2</span> 7.2 拉普拉斯近似</h2>
+<p>MAP 估计只是找到后验分布的最大值。拉普拉斯近似（Laplace approximation）更进一步，并且还计算极大值附近的局部曲率到二阶项。这实际上等价于假定后验分布在最大值附近接近正态分布。拉普拉斯近似适用于 <span class="math inline">\(L^2\)</span> 类，即分布 <span class="math inline">\(f\)</span> 满足 <span class="math inline">\(\int f(x)^2\,dx&lt;\infty\)</span> 的情况。</p>
+<p>对于任何光滑的并且在其最大值点附近达到顶峰的概率密度函数（pdf），拉普拉斯建议用一个普通的 pdf 来近似它。这是 pdf 对数的一个简单的两项泰勒展开。用 <span class="math inline">\(\hat\theta\)</span> 表示 pdf（及其对数）的最大值点，记 pdf 的对数为 <span class="math inline">\(q(\theta)=\log f(\theta)\)</span>，则有</p>
+<p><span class="math display">\[
+q(\theta) \approx q(\hat\theta) + (\theta-\hat\theta)\dot{q}(\hat\theta) + \frac{1}{2}(\theta-\hat\theta)^2\ddot{q}(\hat\theta)
+\]</span></p>
+<p><span class="math display">\[
+= q(\hat\theta) + 0 + \frac{1}{2}(\theta-\hat\theta)^2\ddot{q}(\hat\theta)
+\]</span></p>
+<p><span class="math display">\[
+= \text{const} + \frac{1}{2}(\theta-\hat\theta)^2\ddot{q}(\hat\theta)
+\]</span></p>
+<p>注意，这一最终结果和有均值 <span class="math inline">\(\hat\theta\)</span> 及精度 <span class="math inline">\(-\ddot{q}(\hat\theta)\)</span> 的正态分布的对数概率密度函数一样。</p>
+<p>对于后验分布 <span class="math inline">\(f(\theta\mid x)\propto \ell(\theta\mid x)p(\theta)\)</span>，有 <span class="math inline">\(q(\theta)=\text{const}+\log\ell(\theta\mid x)+\log p(\theta)\)</span>。可以证明，在一些正则条件下，当样本量很大时，共轭后验分布趋于正态分布。</p>
+<p>一般来说，如果 <span class="math inline">\(\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_m)\)</span>，<span class="math inline">\(\boldsymbol{x}=(x_1,x_2,\ldots,x_n)\)</span>，当 <span class="math inline">\(n\gg m\)</span> 时，后验分布 <span class="math inline">\(p(\boldsymbol{\theta}\mid\boldsymbol{x})\)</span> 可近似为</p>
+<p><span class="math display">\[
+p(\boldsymbol{\theta}\mid\boldsymbol{x}) \approx (2\pi)^{-\frac{m}{2}}|\boldsymbol{A}|^{\frac{1}{2}}\exp\left[-\frac{1}{2}(\boldsymbol{\theta}-\hat{\boldsymbol{\theta}})^\top\boldsymbol{A}(\boldsymbol{\theta}-\hat{\boldsymbol{\theta}})\right]
+\]</span></p>
+<p>这里 <span class="math inline">\(\boldsymbol{A}=[A_{ij}]\)</span> 是 Fisher 信息阵：</p>
+<p><span class="math display">\[
+A_{ij} = -\frac{\partial}{\partial\theta_i}\frac{\partial}{\partial\theta_j}\log p(\boldsymbol{\theta}\mid\boldsymbol{x})\Big|_{\theta=\hat\theta}
+\]</span></p>
+<p>我们有</p>
+<p><span class="math display">\[
+\log p(\boldsymbol{\theta}\mid\boldsymbol{x}) \approx \log p(\hat{\boldsymbol{\theta}}) + \log p(\boldsymbol{x}\mid\boldsymbol{\theta}) + \frac{m}{2}\log 2\pi - \frac{1}{2}\log|\boldsymbol{A}|
+\]</span></p>
+<p>当样本量大的时候，</p>
+<p><span class="math display">\[
+\log p(\boldsymbol{\theta}\mid\boldsymbol{x}) \approx \log p(\boldsymbol{x}\mid\boldsymbol{\theta}) - \frac{m}{2}\log n
+\]</span></p>
+<p>其中 <span class="math inline">\(-2\log p(\boldsymbol{x}\mid\boldsymbol{\theta})+m\log n\)</span> 称为<strong>贝叶斯信息准则</strong>（Bayesian information criterion, BIC）。注意，<strong>赤池信息准则</strong>（Akaike information criterion, AIC）定义为 <span class="math inline">\(-2\log p(\boldsymbol{x}\mid\boldsymbol{\theta})+2m\)</span>。</p>
+<p>拉普拉斯近似取代了旨在将函数与最大化的积分问题。为了计算拉普拉斯近似，我们必须计算模的位置，这是一个优化问题。通常，使用易于理解的函数优化器来解决这个问题要比积分相同的函数更快。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="L² 类是什么（人话版）">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+L² 类是什么（人话版）
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(L^p\)</span> 是一整个”函数分类家族”，按”这个函数衰减得够不够快”来分类，<span class="math inline">\(p\)</span> 是那个分类编号。</p>
+<p><span class="math display">\[
+f \in L^p \iff \int |f(x)|^p\,dx &lt; \infty
+\]</span></p>
+<p>一句话：把函数自己做 <span class="math inline">\(p\)</span> 次方，再求总面积，这个面积必须是个有限数，不能是无穷大——说明这个函数不能有”甩不掉的长尾巴”。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>类别</th>
+<th>人话理解</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(L^1\)</span></td>
+<td>最基本的要求，几乎所有正常的概率密度函数天生都满足（“积分=1”本身就是这个条件）</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(L^2\)</span>（拉普拉斯近似要求的）</td>
+<td>更严格一点，要求”自己乘自己”之后还能积出有限值，尾巴要衰减得更快</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(L^\infty\)</span></td>
+<td>函数值不能冲到无穷大</td>
+</tr>
+</tbody>
+</table>
+<p><strong>你实际需要记住的</strong>：正态、Beta、Gamma 这些你天天在用的分布，基本上全部满足 <span class="math inline">\(L^2\)</span>，不用特别担心撞上这个限制——这条件更像是数学家写论文时”把话说严谨”用的，日常做统计分析基本不会真正卡在这里。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="用图理解 L² 类：尾巴粗细决定收敛还是发散">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+用图理解 L² 类：尾巴粗细决定收敛还是发散
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">500</span>, <span class="at">length.out =</span> <span class="dv">5000</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> <span class="fu">diff</span>(x)[<span class="dv">1</span>]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>f_gauss <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>x<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="dv">20</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>f_fast  <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>x)<span class="sc">^</span><span class="fl">1.2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>f_slow  <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>x)<span class="sc">^</span><span class="fl">0.6</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>f_notL2 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>x)<span class="sc">^</span><span class="fl">0.3</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df_curves <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rep</span>(x[x <span class="sc">&lt;=</span> <span class="dv">10</span>], <span class="dv">4</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(f_gauss[x <span class="sc">&lt;=</span> <span class="dv">10</span>], f_fast[x <span class="sc">&lt;=</span> <span class="dv">10</span>], f_slow[x <span class="sc">&lt;=</span> <span class="dv">10</span>], f_notL2[x <span class="sc">&lt;=</span> <span class="dv">10</span>]),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  曲线 <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"高斯(极快衰减)"</span>, <span class="st">"1/(1+x)^1.2"</span>, <span class="st">"1/(1+x)^0.6"</span>, <span class="st">"1/(1+x)^0.3 (非L2)"</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">each =</span> <span class="fu">sum</span>(x <span class="sc">&lt;=</span> <span class="dv">10</span>))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>df_cumsum <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rep</span>(x, <span class="dv">4</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">cum_integral =</span> <span class="fu">c</span>(<span class="fu">cumsum</span>(f_gauss<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx, <span class="fu">cumsum</span>(f_fast<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">cumsum</span>(f_slow<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx, <span class="fu">cumsum</span>(f_notL2<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  曲线 <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"高斯(极快衰减)"</span>, <span class="st">"1/(1+x)^1.2"</span>, <span class="st">"1/(1+x)^0.6"</span>, <span class="st">"1/(1+x)^0.3 (非L2)"</span>),</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">each =</span> <span class="fu">length</span>(x))</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_curves, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> 曲线, <span class="at">linetype =</span> 曲线)) <span class="sc">+</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"四条曲线本身(尾巴粗细不同)"</span>, <span class="at">x =</span> <span class="st">"x"</span>, <span class="at">y =</span> <span class="st">"f(x)"</span>) <span class="sc">+</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">11</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_cumsum, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> cum_integral, <span class="at">color =</span> 曲线, <span class="at">linetype =</span> 曲线)) <span class="sc">+</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"平方后累积积分: 收敛=L2, 发散=非L2"</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"积分上限"</span>, <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">integral</span>(<span class="fu">f</span>(x)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>dx))) <span class="sc">+</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">11</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-l2-space" class="quarto-float quarto-figure quarto-figure-center anchored" alt="上图展示四条不同衰减速度的函数曲线,下图展示这四条曲线平方后的累积积分,其中衰减快的三条曲线积分收敛趋于平稳,衰减最慢的一条持续增长不收敛">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-l2-space-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="07-mcmc-algorithms_files/figure-html/fig-l2-space-1.png" class="img-fluid figure-img" alt="上图展示四条不同衰减速度的函数曲线,下图展示这四条曲线平方后的累积积分,其中衰减快的三条曲线积分收敛趋于平稳,衰减最慢的一条持续增长不收敛" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-l2-space-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: 四条不同衰减速度的曲线,平方后累积积分的收敛(L2)与发散(非L2)对比
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>图怎么读</strong>：下图是核心——把每条曲线<strong>平方后</strong>做累积积分。趴平不再增长的曲线（面积锁定在有限值）<strong>属于 <span class="math inline">\(L^2\)</span></strong>；一直往上爬、永不封顶的曲线（面积发散到无穷）<strong>不属于 <span class="math inline">\(L^2\)</span></strong>——尾巴越”重”（衰减越慢），越容易掉进”非L2”这一类。</p>
+</div>
+</div>
+</section>
+<section id="马尔可夫链蒙特卡罗方法" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="马尔可夫链蒙特卡罗方法"><span class="header-section-number">5.3</span> 7.3 马尔可夫链蒙特卡罗方法</h2>
+<p>我们讨论过的 MAP 和拉普拉斯近似，当后验分布是关于最大值的一个非常尖锐的峰值函数时有用。但通常后验分布会有长尾，这时 MAP 和拉普拉斯近似都不合适。另一种方法是直接从后验分布抽样。<strong>蒙特卡罗模拟</strong>（Monte Carlo simulations）是一种从后验分布抽样的技术，是贝叶斯推断在实际应用中最重要的工具之一。本节将介绍马尔可夫链蒙特卡罗（MCMC）模拟。</p>
+<p>将概率模型应用于数据通常涉及对复杂的多维概率分布进行积分。在大多数情况下，由于维数高或者根本没有封闭表达式，这些积分是不可计算的。MCMC 是一种允许使用随机抽样来近似复杂积分的方法。该方法由马尔可夫链和蒙特卡罗积分两部分组成。</p>
+<p>蒙特卡罗积分是利用有关分布的随机抽样来近似积分的一种有力方法。但从有关概率分布中抽样很困难或者无法直接做到，因此需要马尔可夫链。马尔可夫链是一种序贯模型，它以概率的方式从一种状态转移到另一种状态，其中链所采取的下一个状态取决于以前的状态（这就是所谓的马尔可夫性）。如果马尔可夫链构造得当并运行很长时间，那么它也将从目标概率分布中提取样本的状态。我们要做的就是构造马尔可夫链从想做积分的分布中抽样，然后利用蒙特卡罗积分来近似积分。</p>
+<section id="蒙特卡罗积分" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="蒙特卡罗积分"><span class="header-section-number">5.3.1</span> 7.3.1 蒙特卡罗积分</h3>
+<p>一般来说，当 <span class="math inline">\(X\)</span> 为有分布 <span class="math inline">\(\pi\)</span> 的随机变量，想要计算函数 <span class="math inline">\(h(x)\)</span> 的期望 <span class="math inline">\(E_\pi[h(x)]\)</span> 时，需要计算积分</p>
+<p><span class="math display">\[
+E_\pi[h(x)] = \int h(x)\pi(x)\,dx
+\]</span></p>
+<p>该积分可能不容易求，特别是当 <span class="math inline">\(X\)</span> 是高维变量时更难。但可以从分布 <span class="math inline">\(\pi\)</span> 中抽样</p>
+<p><span class="math display">\[
+x^{(1)},x^{(2)},\cdots,x^{(n)} \sim \pi
+\]</span></p>
+<p>然后可以得到积分的近似</p>
+<p><span class="math display">\[
+E_\pi[h(x)] \approx \frac{1}{n}\sum_{i=1}^n h(x^{(i)})
+\]</span></p>
+<p>这就是<strong>蒙特卡罗积分</strong>（Monte Carlo integration）。根据大数定理，当 <span class="math inline">\(n\to\infty\)</span>，有下面的依概率收敛：</p>
+<p><span class="math display">\[
+\frac{1}{n}\sum_{i=1}^n h(x^{(i)}) \xrightarrow{p} E_\pi[h(x)]
+\]</span></p>
+</section>
+<section id="马尔可夫链" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="马尔可夫链"><span class="header-section-number">5.3.2</span> 7.3.2 马尔可夫链</h3>
+<p>为什么要引入马尔可夫链呢？这是因为参数可能有很多维，如 <span class="math inline">\(\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_m)\)</span>。这意味着先验分布和后验分布都是高维的。这是一种通常被描述为<strong>维度诅咒</strong>的情况，可用的数据在该空间内变得极其稀少，因此，在利用抽样计算积分时，必须按照某种章法使得我们有可能以较小的样本得到好的近似。</p>
+<p>MCMC 是一种使用马尔可夫链机制生成样本 <span class="math inline">\(x^{(i)}\)</span> 的方法，这种方法的构造是为了使链花费更多时间在最重要的地方。特别是，它的构造使样本 <span class="math inline">\(x^{(i)}\)</span> 模拟从目标分布 <span class="math inline">\(p(x)\)</span> 中提取样本。当然，用 MCMC 不能直接从 <span class="math inline">\(p(x)\)</span> 中提取样本，但可以估计 <span class="math inline">\(p(x)\)</span> 到一个标准化常数的程度。</p>
+<p>我们在有限状态空间 <span class="math inline">\(\mathcal{X}=\{x_1,x_2,\ldots,x_s\}\)</span> 上直观引入马尔可夫链，令 <span class="math inline">\(x^{(i)}\)</span> 为马尔可夫链第 <span class="math inline">\(i\)</span> 个状态，这里 <span class="math inline">\(x^{(i)}\in\mathcal{X}\)</span> 只能有 <span class="math inline">\(s\)</span> 个离散值。满足下面性质的随机过程 <span class="math inline">\(x^{(i)}\)</span> 被称为马尔可夫链：</p>
+<p><span class="math display">\[
+p\left(x^{(i)}\mid x^{(i-1)},x^{(i-2)},\ldots,x^{(1)}\right) = p\left(x^{(i)}\mid x^{(i-1)}\right), \quad \forall i
+\]</span></p>
+<p>式中的 <span class="math inline">\(p(x^{(i)}\mid x^{(i-1)})\)</span> 称为从状态 <span class="math inline">\(x^{(i-1)}\)</span> 到状态 <span class="math inline">\(x^{(i)}\)</span> 的转移概率。上式意味着随机过程处于某状态的概率仅仅依赖前一个状态，与之前的历史无关，这就是<strong>马尔可夫性</strong>。</p>
+<p>如果对于任意两个状态 <span class="math inline">\(x_i,x_j\in\mathcal{X}\)</span>，<span class="math inline">\(s\times s\)</span> 矩阵 <span class="math inline">\(\boldsymbol{P}\equiv[P_{ij}]=[p(x^{(k)}=x_j\mid x^{(k-1)}=x_i)]\)</span> 对所有 <span class="math inline">\(k\)</span> 保持不变，而且 <span class="math inline">\(\sum_i P_{ij}=1\)</span>，则称该马尔可夫链是<strong>时齐</strong>（homogeneous）的。<span class="math inline">\(\boldsymbol{P}\)</span> 称为一次转移概率矩阵。</p>
+<p>对于任意初始状态分布 <span class="math inline">\(\boldsymbol{\pi}_0=(\pi_1^{(0)},\pi_2^{(0)},\ldots,\pi_s^{(0)})\)</span>，在 <span class="math inline">\(t\)</span> 次转移之后在各个状态的概率为向量</p>
+<p><span class="math display">\[
+\boldsymbol{\pi}_0\overbrace{\boldsymbol{P}\boldsymbol{P}\cdots\boldsymbol{P}}^{t} = \boldsymbol{\pi}_0\boldsymbol{P}^t
+\]</span></p>
+<p>很容易验证，当 <span class="math inline">\(t\)</span> 很大时，概率向量 <span class="math inline">\(\boldsymbol{\pi}_0\boldsymbol{P}^t\)</span> 收敛到一个稳定的值 <span class="math inline">\(\boldsymbol{\pi}\)</span>，而且该值和初始概率 <span class="math inline">\(\boldsymbol{\pi}_0\)</span> 无关，即</p>
+<p><span class="math display">\[
+\lim_{t\to\infty}\boldsymbol{\pi}_0\boldsymbol{P}^t = \boldsymbol{\pi}
+\]</span></p>
+<p>乘积矩阵 <span class="math inline">\(\boldsymbol{P}^t\)</span> 的元素 <span class="math inline">\(P_{ij}^t\)</span> 为从状态 <span class="math inline">\(x_i\)</span> 经过 <span class="math inline">\(t\)</span> 步转移到状态 <span class="math inline">\(x_j\)</span> 的概率。显然有</p>
+<p><span class="math display">\[
+\boldsymbol{\pi} = \boldsymbol{\pi}\boldsymbol{P}
+\]</span></p>
+<p>概率 <span class="math inline">\(\boldsymbol{\pi}\)</span> 称为<strong>平稳概率</strong>（stationary distribution 或 equilibrium distribution）。这就是 <span class="math inline">\(\boldsymbol{P}^\top\)</span> 的特征值问题。</p>
+<p>下面考虑一个 <span class="math inline">\(s=3\)</span> 的例子，如果转移概率矩阵例子为</p>
+<p><span class="math display">\[
+\boldsymbol{P} = \begin{bmatrix} 0.5 &amp; 0 &amp; 0.5 \\ 0 &amp; 0.8 &amp; 0.2 \\ 0.6 &amp; 0.2 &amp; 0.2 \end{bmatrix}
+\]</span></p>
+<p>而初始概率（最初在各状态 <span class="math inline">\(x_1,x_2,x_3\)</span> 的概率）为向量 <span class="math inline">\(\boldsymbol{\pi}_0=(\pi_1^{(0)},\pi_2^{(0)},\pi_3^{(0)})=(0.3,0.1,0.6)\)</span>，得到，当 <span class="math inline">\(t\to\infty\)</span>（实际上几步就收敛了），</p>
+<p><span class="math display">\[
+\boldsymbol{\pi}_0\boldsymbol{P}^t \longrightarrow \boldsymbol{\pi} = (0.375,\ 0.3125,\ 0.3125)
+\]</span></p>
+<p>对于这个简单数值例子，可以用下面 R 代码实现：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>P <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(.<span class="dv">5</span>,<span class="dv">0</span>,.<span class="dv">5</span>,<span class="dv">0</span>,.<span class="dv">8</span>,.<span class="dv">2</span>,.<span class="dv">6</span>,.<span class="dv">2</span>,.<span class="dv">2</span>), <span class="dv">3</span>, <span class="dv">3</span>, <span class="at">b=</span>T)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">3</span>,.<span class="dv">1</span>,.<span class="dv">6</span>)  <span class="co"># 可以取任何其他的概率向量</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> p0</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">55</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  p1 <span class="ot">=</span> p1 <span class="sc">%*%</span> P</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>为保证这种与初始概率分布无关的不变性，只需要转移矩阵 <span class="math inline">\(\boldsymbol{P}\)</span> 满足两个条件：</p>
+<p><strong>(1) 不可约性</strong>（irreducibility）：从任何状态出发访问马尔可夫链的任何其他状态的概率都是正的。也就是说，矩阵 <span class="math inline">\(\boldsymbol{P}\)</span> 不能简化为分离较小的矩阵。这也说明所有状态是连接的。</p>
+<p><strong>(2) 非周期性</strong>（aperiodicity）：链不应该被困在循环中。一个状态 <span class="math inline">\(x_i\)</span>，从它开始经过 <span class="math inline">\(t\)</span> 步回到该状态的转移概率为 <span class="math inline">\(P_{ii}^t\)</span>。周期定义为</p>
+<p><span class="math display">\[
+k = \gcd\{n\mid P_{ii}^n&gt;0\}
+\]</span></p>
+<p>式中，符号 <span class="math inline">\(\gcd\)</span> 为最大公约数。如果 <span class="math inline">\(k=1\)</span>，则状态 <span class="math inline">\(x_i\)</span> 称为<strong>非周期性的</strong>（aperiodic）。如果每个状态都是非周期性的，那么马尔可夫链是非周期性的。一个不可约马尔可夫链只需要一个非周期状态就意味着所有状态都是非周期性的。</p>
+<p>事实上，如果从状态 <span class="math inline">\(x_i\)</span> 总是可以达到 <span class="math inline">\(x_j\)</span> 的概率为 <span class="math inline">\(\pi_j\)</span> 对于所有的 <span class="math inline">\(j\)</span> 成立，或当 <span class="math inline">\(n\to\infty\)</span>，</p>
+<p><span class="math display">\[
+P_{ij}^n \longrightarrow \pi_j, \quad \forall j
+\]</span></p>
+<p>那么 <span class="math inline">\(\boldsymbol{\pi}=(\pi_1,\pi_2,\ldots,\pi_s)\)</span> 为<strong>不变的</strong>（invariant）。而且，如果不可约的链有一个平稳的分布，那么该平稳分布是唯一的。</p>
+<p>如果马尔可夫链</p>
+<p><span class="math display">\[
+x^{(1)},x^{(2)},\cdots,x^{(n)} \sim \boldsymbol{\pi}
+\]</span></p>
+<p>是非周期性的和不可约的，而且 <span class="math inline">\(\boldsymbol{\pi}\)</span> 是平稳分布，那么，当 <span class="math inline">\(n\to\infty\)</span> 时，有</p>
+<p><span class="math display">\[
+\frac{1}{n}\sum_{t=1}^n h(x^{(t)}) \longrightarrow E_{\boldsymbol{\pi}}[h(X)] = \int h(\boldsymbol{x})\boldsymbol{\pi}(\boldsymbol{x})\,d\boldsymbol{x}
+\]</span></p>
+<p>这就是所谓<strong>遍历定理</strong>（ergodic theorem）。因此，我们可以通过模拟有平稳分布 <span class="math inline">\(\boldsymbol{\pi}\)</span> 的马尔可夫链，用蒙特卡罗积分来近似 <span class="math inline">\(\int h(\boldsymbol{x})\boldsymbol{\pi}(\boldsymbol{x})\,d\boldsymbol{x}\)</span>。</p>
+<p>对于连续状态空间的马尔可夫过程可以通过离散化处理。</p>
+</section>
+<section id="mcmc-方法综述" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="mcmc-方法综述"><span class="header-section-number">5.3.3</span> 7.3.3 MCMC 方法综述</h3>
+<p>对于贝叶斯推断，MCMC 模拟一个自选初始点 <span class="math inline">\(\theta^{(0)}\)</span> 的离散时间马尔可夫链，产生一串相依的随机变量 <span class="math inline">\(\{\theta^{(i)}\}_{i=1}^M\)</span>，有近似分布</p>
+<p><span class="math display">\[
+p(\theta^{(i)}) \approx p(\theta\mid\boldsymbol{x})
+\]</span></p>
+<p>由于马尔可夫性，<span class="math inline">\(\theta^{(i)}\)</span> 的分布仅仅和 <span class="math inline">\(\theta^{(i-1)}\)</span> 有关。</p>
+<p>MCMC 在状态空间 <span class="math inline">\(\theta\in\Theta\)</span> 产生了一个马尔可夫链 <span class="math inline">\(\{\theta^{(1)},\theta^{(2)},\ldots,\theta^{(M)}\}\)</span>，其每个样本都假定来自稳定分布 <span class="math inline">\(p(\theta\mid\boldsymbol{x})\)</span>，即我们感兴趣的后验分布。</p>
+<p>使用马尔可夫链从特定的目标分布中进行抽样，关键是必须设计合适的转移矩阵（算子），以便生成的链达到与目标分布相匹配的稳定分布。这就是我们后面要介绍的若干方法的要点。</p>
+<p>以互联网为例，通常把网页和链接解释为马尔可夫链的状态。显然，我们希望在网上漫游，但不想陷入循环（保持非周期性），并希望能够访问所有现有的网页（不可约性）。考虑由搜索引擎谷歌使用的流行的信息检索算法 PageRank（Page et al., 1998），它的转移矩阵由两个成分组成：<span class="math inline">\(\boldsymbol{P}=\boldsymbol{L}+\boldsymbol{E}\)</span>。其中，<span class="math inline">\(\boldsymbol{L}\)</span> 是一个大的链接矩阵，行和列对应于网页或链接，其 <span class="math inline">\(L_{ij}\)</span> 代表从网页 <span class="math inline">\(i\)</span> 到网页 <span class="math inline">\(j\)</span> 的（正则化）数目，而 <span class="math inline">\(\boldsymbol{E}\)</span> 为一个均匀随机矩阵（小的噪声），以确保不可约性和非周期性。这种附加的噪声可防止我们被困在循环中，确保总是有一些概率跳到网络上的任何地方。</p>
+<p>总之，MCMC 的基本思想是在后验分布抽样中伴随着（蒙特卡罗积分）的随机搜索与不取决于初始点（马尔可夫链方面）的智能跳跃。因此，可以说马尔可夫链蒙特卡罗方法是通过<strong>智能跳跃执行的无记忆搜索</strong>。</p>
+</section>
+<section id="metropolis-算法" class="level3" data-number="5.3.4">
+<h3 data-number="5.3.4" class="anchored" data-anchor-id="metropolis-算法"><span class="header-section-number">5.3.4</span> 7.3.4 Metropolis 算法</h3>
+<p>前面谈到直接从一些目标概率分布 <span class="math inline">\(p(x)\)</span> 中进行抽样较为困难，必须为马尔可夫链设计一个转移算子，使链的平稳分布与目标分布相匹配。Metropolis 算法（及作为其推广的 Metropolis-Hastings 算法）使用简单的启发式方法来实现这样的过渡算子。</p>
+<p>Metropolis 方法从一些随机初始状态 <span class="math inline">\(x^{(0)}\sim\pi^{(0)}\)</span> 开始，该算法首先从类似于马尔可夫链转移概率的分布 <span class="math inline">\(q(x\mid x^{(t-1)})\)</span> 中提取可能的候选样本 <span class="math inline">\(x^*\)</span>。该候选样本受到 Metropolis 方法的一个额外步骤的评估，看目标分布在其附近是否有足够大的密度，以确定是否接受其作为链的下一个状态。如果 <span class="math inline">\(p(x^*)\)</span> 的密度低于建议的状态，则它可能被拒绝。接受或拒绝候补状态的标准由以下直观方法定义：</p>
+<ol type="1">
+<li>如果 <span class="math inline">\(p(x^*)\geq p(x^{(t-1)})\)</span>，则保留候补状态 <span class="math inline">\(x^*\)</span> 作为链的下一个状态，也就是马尔可夫链的 <span class="math inline">\(p(x)\)</span> 不能减少</li>
+<li>如果 <span class="math inline">\(p(x^*)&lt;p(x^{(t-1)})\)</span>，这说明在 <span class="math inline">\(x^*\)</span> 附近密度 <span class="math inline">\(p(x)\)</span> 较小，候选状态仅仅以概率 <span class="math inline">\(p(x^*)/p(x^{(t-1)})\)</span> 保留</li>
+</ol>
+<p>为了说明，设立接受概率</p>
+<p><span class="math display">\[
+\alpha = \min\left(1,\ \frac{p(x^*)}{p(x^{(t-1)})}\right)
+\]</span></p>
+<p>有了接受概率，Metropolis 方法的转移运算符则运行如下：如果均匀随机数 <span class="math inline">\(u\)</span> 小于或等于 <span class="math inline">\(\alpha\)</span>，则接受状态 <span class="math inline">\(x^*\)</span>，否则会拒绝 <span class="math inline">\(x^*\)</span> 并建议下一个候选状态。下面是收集 <span class="math inline">\(M\)</span> 个样本的形式代码：</p>
+<section id="转移算子的可逆性" class="level4" data-number="5.3.4.1">
+<h4 data-number="5.3.4.1" class="anchored" data-anchor-id="转移算子的可逆性"><span class="header-section-number">5.3.4.1</span> 1. 转移算子的可逆性</h4>
+<p>结果表明，为了使转移算子收敛到一个平稳的分布或目标分布，马尔可夫链存在理论上的约束：<span class="math inline">\(x^{(t)}\to x^{(t+1)}\)</span> 的转移概率必须等于反向转移 <span class="math inline">\(x^{(t-1)}\to x^{(t)}\)</span> 的概率。此可逆性属性通常称为<strong>详细平衡</strong>（detailed balance）。使用 Metropolis 方法在建议的转移概率分布 <span class="math inline">\(q(x\mid x^{(t-1)})\)</span> 对称时可以确保可逆性。正态分布、Cauchy 分布、<span class="math inline">\(t\)</span> 分布和均匀分布都有这种对称性。</p>
+</section>
+<section id="一个例子" class="level4" data-number="5.3.4.2">
+<h4 data-number="5.3.4.2" class="anchored" data-anchor-id="一个例子"><span class="header-section-number">5.3.4.2</span> 2. 一个例子</h4>
+<p>从一个例子看 MCMC 抽样方法。</p>
+<p><strong>例 7.1</strong> 这是一个简单例子，考虑形状参数为 <span class="math inline">\(a\)</span>，尺度参数为 <span class="math inline">\(s\)</span> 的 Gamma 分布</p>
+<p><span class="math display">\[
+p(x) = \frac{1}{s^a\Gamma(a)}x^{a-1}e^{-\frac{x}{s}}
+\]</span></p>
+<p>下面是例7.1的 Gamma 分布（取 <span class="math inline">\(a=s=5\)</span>）的 Metropolis 抽样的 R 代码，这里的转移概率取正态分布 <span class="math inline">\(N(0,4)\)</span>。代码中 <code>k=floor(M/2)</code> 表示前面一半的抽样值算是用于热身（burn-in）最终舍弃，这是因为初始值可能不好，等到稳定些再算数。图7.3.1中的左图是得到的样本的直方图和真实分布（乘一个因子），而图7.3.1中的右图是马尔可夫链（包括用虚线表示的热身部分），对于这个问题热身前后偏离差不多。</p>
+<p>图 7.3.1 例7.1的 Metropolis 抽样：左图为样本的直方图和真实分布（乘一个因子），右图为马尔可夫链（虚线表示热身部分）</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Metropolis算法核心循环:从Gamma(shape=5, rate=5)分布中抽样</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 注意: dgamma(x,5,5)第二个5被R当成rate(速率)不是scale(尺度)!</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 若要严格对应书中"形状a=5,尺度s=5"的定义,应写成 dgamma(x, shape=5, scale=5)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="dv">20000</span>; k <span class="ot">=</span> <span class="fu">floor</span>(M<span class="sc">/</span><span class="dv">2</span>)  <span class="co"># M=总抽样次数; k=热身(burn-in)阶段长度,取前一半</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="cn">NULL</span>                    <span class="co"># 存放每一步接受的样本</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="dv">1</span>                       <span class="co"># 初始状态 x^(0)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1010</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">4</span>)                       <span class="co"># 从建议分布 q(x|x^(t-1))=N(0,4) 抽候选值</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">=</span> <span class="fu">dgamma</span>(u,<span class="dv">5</span>,<span class="dv">5</span>) <span class="sc">/</span> <span class="fu">dgamma</span>(x,<span class="dv">5</span>,<span class="dv">5</span>)    <span class="co"># 计算接受概率 alpha = p(x*)/p(x^(t-1))</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> <span class="fu">min</span>(alpha, <span class="dv">1</span>)) x <span class="ot">=</span> u      <span class="co"># 以概率min(1,alpha)接受候选值,否则保留原值</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  X[i] <span class="ot">=</span> x                                  <span class="co"># 记录这一步的状态(不管接受与否都要记录)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">t</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 左图: 抽样直方图 vs 真实密度曲线(丢弃前k个热身样本)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(X[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>k)], <span class="dv">20</span>, <span class="at">prob =</span> <span class="cn">TRUE</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">'X'</span>, <span class="at">ylab =</span> <span class="st">''</span>, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(<span class="fu">dgamma</span>(x,<span class="dv">5</span>,<span class="dv">5</span>), <span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">8</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'topright'</span>, <span class="fu">c</span>(<span class="st">'true density'</span>), <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 右图: 马尔可夫链轨迹, 区分热身期(虚线)和正式采样期(实线)</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span>k, X[<span class="dv">1</span><span class="sc">:</span>k], <span class="at">type =</span> <span class="st">'l'</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">'X'</span>, <span class="at">xlab =</span> <span class="st">"index"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,M), <span class="at">ylim =</span> <span class="fu">range</span>(X))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>((k<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>M, X[(k<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>M])</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'top'</span>, <span class="fu">c</span>(<span class="st">'after burn-in'</span>,<span class="st">'burn-in'</span>), <span class="at">lty =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">col =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">cex =</span> .<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-metropolis-gamma" class="quarto-float quarto-figure quarto-figure-center anchored" alt="左图是抽样结果的直方图叠加真实Gamma分布密度曲线,两者应高度吻合;右图是马尔可夫链随迭代次数变化的轨迹图,前半段虚线表示热身阶段,后半段实线表示热身后用于统计的阶段">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-metropolis-gamma-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="07-mcmc-algorithms_files/figure-html/fig-metropolis-gamma-1.png" class="img-fluid figure-img" alt="左图是抽样结果的直方图叠加真实Gamma分布密度曲线,两者应高度吻合;右图是马尔可夫链随迭代次数变化的轨迹图,前半段虚线表示热身阶段,后半段实线表示热身后用于统计的阶段" width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-metropolis-gamma-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: 例7.1的Metropolis抽样: 左图为样本直方图与真实密度对比, 右图为马尔可夫链轨迹(虚线为热身阶段)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>使用对称分布可能不合理，以至于对所有可能的目标分布无法充分或有效地抽样。例如，目标分布在正实轴 <span class="math inline">\([0,\infty)\)</span> 时，我们希望使用具有相同支撑的非对称分布，这就产生了 Metropolis-Hastings 算法。</p>
+</section>
+</section>
+</section>
+<section id="em-算法" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="em-算法"><span class="header-section-number">5.4</span> 7.4 EM 算法</h2>
+<p><strong>期望最大化</strong>（expectation-maximization, EM）算法是一种迭代方法，用于查找统计模型中参数的最大似然或最大后验分布（MAP）估计，其中模型依赖未观察到的潜在变量。EM 迭代是在期望（E）步骤和最大化（M）步骤之间交替进行，E 步骤利用目前参数的估计得到对数似然的期望，在 M 步骤则用最大化 E 步骤得到的对数似然得到参数估计，结果再用于 E 步骤。</p>
+<p>EM 算法用途很广，适用于有各种特点的模型及不同的目的。下面以非常通用的方式描述 EM 过程，以帮助读者理解其基本原理。</p>
+<p>EM 算法是一种通用方法，用于在数据不完整或有缺失值时从给定数据集中查找背景分布参数的最大似然估计。EM 算法有两种主要应用情况。第一种情况是数据确实存在缺失值；第二种情况发生于很难在解析上优化似然函数，而当似然函数通过假设存在任何附加但缺失（或隐藏）参数时可以进行简化。后一种应用情况在计算模式识别社区中更为常见。</p>
+<p>假设观测到的数据 <span class="math inline">\(\boldsymbol{X}\)</span> 是由某种分布生成的。我们称 <span class="math inline">\(\boldsymbol{X}\)</span> 为不完整数据。完整的数据集为 <span class="math inline">\(\boldsymbol{Z}=(\boldsymbol{X},\boldsymbol{y})\)</span>，并假定联合密度函数为</p>
+<p><span class="math display">\[
+p(\boldsymbol{z}\mid\boldsymbol{\theta}) = p(\boldsymbol{x},\boldsymbol{y}\mid\boldsymbol{\theta}) = p(\boldsymbol{y}\mid\boldsymbol{x},\boldsymbol{\theta})p(\boldsymbol{x}\mid\boldsymbol{\theta})
+\]</span></p>
+<p>基于这个密度函数，可以定义一个新的似然函数</p>
+<p><span class="math display">\[
+L(\boldsymbol{\theta}\mid\boldsymbol{Z}) = L(\boldsymbol{\theta}\mid\boldsymbol{X},\boldsymbol{Y}) = p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})
+\]</span></p>
+<p>称之为<strong>完全数据似然</strong>。该函数实际上是一个随机变量，因为缺失的信息 <span class="math inline">\(\boldsymbol{Y}\)</span> 是有可能服从背景分布的未知随机变量。原始似然 <span class="math inline">\(L(\boldsymbol{\theta}\mid\boldsymbol{X})\)</span> 称为<strong>不完全数据似然函数</strong>。</p>
+<p>EM 算法首先求完全数据对数似然 <span class="math inline">\(\log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\)</span> 的期望值，这里只有 <span class="math inline">\(\boldsymbol{Y}\)</span> 为未知。也就是说，我们定义：</p>
+<p><span class="math display">\[
+Q(\boldsymbol{\theta}\mid\boldsymbol{\theta}^{(i-1)}) = E\left[\log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\;\middle|\;\boldsymbol{X},\boldsymbol{\theta}^{(i-1)}\right] \tag{7.4.1}
+\]</span></p>
+<p>其中，<span class="math inline">\(\boldsymbol{\theta}^{(i-1)}\)</span> 是用来估计期望的当前参数估计，<span class="math inline">\(\boldsymbol{\theta}\)</span> 是用来优化的新的参数，以增加 <span class="math inline">\(Q\)</span>。</p>
+<p>这里要理解的关键是 <span class="math inline">\(\boldsymbol{X}\)</span> 和 <span class="math inline">\(\boldsymbol{\theta}^{(i-1)}\)</span> 是常量，<span class="math inline">\(\boldsymbol{\theta}\)</span> 是我们希望调整的变量，<span class="math inline">\(\boldsymbol{Y}\)</span> 是服从分布 <span class="math inline">\(f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})\)</span> 的随机变量。因此，式(7.4.1)的右边可以重写为</p>
+<p><span class="math display">\[
+E\left[\log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\;\middle|\;\boldsymbol{X},\boldsymbol{\theta}^{(i-1)}\right] = \int \log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\, f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})\,d\boldsymbol{y} \tag{7.4.2}
+\]</span></p>
+<p>这里，<span class="math inline">\(f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})\)</span> 是未观测数据的边际分布，它既依赖观测到的数据 <span class="math inline">\(\boldsymbol{X}\)</span>，也取决于当前参数 <span class="math inline">\(\boldsymbol{\theta}^{(i-1)}\)</span>，这种边际分布是假定参数 <span class="math inline">\(\boldsymbol{\theta}^{(i-1)}\)</span> 及数据 <span class="math inline">\(\boldsymbol{X}\)</span> 的简单解析表达式。在最坏的情况下，这种密度解析式可能很难获得。有时，实际使用的密度是</p>
+<p><span class="math display">\[
+f(\boldsymbol{y},\boldsymbol{X}\mid\boldsymbol{\theta}^{(i-1)}) = f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})\,f(\boldsymbol{X}\mid\boldsymbol{\theta}^{(i-1)})
+\]</span></p>
+<p>但这不会影响后续步骤，因为额外因子 <span class="math inline">\(f(\boldsymbol{X}\mid\boldsymbol{\theta}^{(i-1)})\)</span> 不依赖 <span class="math inline">\(\boldsymbol{\theta}\)</span>。</p>
+<p>作为类比，假定有两个变量的函数 <span class="math inline">\(h(\cdot,\cdot)\)</span>。考虑 <span class="math inline">\(h(\theta,y)\)</span>，其中 <span class="math inline">\(\theta\)</span> 是一个常数，<span class="math inline">\(y\)</span> 是服从分布 <span class="math inline">\(f(y)\)</span> 的随机变量。则 <span class="math inline">\(q(\theta)=E_y[h(\theta,y)]=\int h(\theta,y)f(y)\,dy\)</span> 是一个可以最大化的确定性函数。</p>
+<p>对这一期望的计算称为算法的 <strong>E 步</strong>。请注意函数 <span class="math inline">\(Q(\theta\mid\theta')\)</span> 中两个参数的第一个参数 <span class="math inline">\(\theta\)</span> 对应于最终将进行优化以使似然函数最大化的参数；第二个参数 <span class="math inline">\(\theta'\)</span> 对应于我们用来计算期望的参数。</p>
+<p>EM 算法的 <strong>M 步</strong>是最大化 E 步中计算的期望，即</p>
+<p><span class="math display">\[
+\boldsymbol{\theta}^{(i)} = \arg\max_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}\mid\boldsymbol{\theta}^{(i-1)})
+\]</span></p>
+<p>必要时重复这两个步骤，保证每次迭代都能增加对数似然，并保证算法收敛到似然函数的局部最大值。</p>
+<p>M 步也可以不最大化 <span class="math inline">\(Q(\theta\mid\theta^{(i-1)})\)</span>，我们可以找到某 <span class="math inline">\(\theta^{(i)}\)</span>，使得 <span class="math inline">\(Q(\theta^{(i)}\mid\theta^{(i-1)}) &gt; Q(\theta\mid\theta^{(i-1)})\)</span>，这种算法称为<strong>广义 EM</strong>（generalized EM, GEM）算法，它也保证了收敛。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="用你的框架总结一下 EM 在做什么">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+用你的框架总结一下 EM 在做什么
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>EM 处理的是一种特殊场景——数据里藏着一个你看不到的隐变量 <span class="math inline">\(\boldsymbol{Y}\)</span>（比如缺失值，或者刻意引入的辅助变量让似然函数变得好算）。E步”猜”隐变量的分布（在当前参数下），M步”用”这个猜测去更新参数，两步循环往复，直到收敛。</p>
+<p>这跟你之前学的 Gibbs 抽样有点像（都是交替更新的迭代思路），但<strong>EM 找的是一个点估计（MAP/MLE），Gibbs 抽样拿到的是一整条后验分布的样本</strong>——EM 更快但信息量更少，这也是为什么 7.3 节先讲 MCMC（完整后验）、7.4 节才讲 EM（快速点估计）：书的编排顺序本身就在暗示”先给你最完整的工具，再给你更快但更简化的备选方案”。</p>
+</div>
+</div>
+</section>
+<section id="变分贝叶斯近似" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="变分贝叶斯近似"><span class="header-section-number">5.5</span> 7.5 变分贝叶斯近似</h2>
+<p>马尔可夫链蒙特卡罗方法（MCMC）是一个非常有用和重要的工具，但在用于估计大型数据集的复杂后验分布或模型时可能会遇到困难。本节介绍的<strong>变分近似</strong>（variational approximations）或<strong>变分推断</strong>（variational inference）可用于拟合贝叶斯模型（Jordan et al., 1999）。对于完全贝叶斯推断，变分近似通常比 MCMC 快得多，在某些情况下，它有助于估计其他方法无法估计的模型。作为一种确定性后验近似方法，变分近似保证了收敛性，很容易对收敛性进行评估。变分近似法最适合于其他方法无法解决的完全贝叶斯推断问题。当然，变分近似确实也有一些限制，它可能低估后验分布的变异性。这种被低估的可变性是变分近似的一个缺点，然而，它是直接可控的，取决于一组透明且易于修改的假设。</p>
+<p>变分近似为贝叶斯模型的估计提供了一种不同的方法。与 EM 算法一样，变分近似也是确定性优化算法，它保证了收敛性，通过检查标量中的变化可以轻松地进行评估。与 MCMC 算法一样，变分近似估计完全后验分布，不需要额外的步骤来执行推断。下面描述变分近似的基础知识。</p>
+<p>变分近似的目标是用某一个称为<strong>近似分布</strong>（approximating distribution）的工作分布 <span class="math inline">\(q(\boldsymbol{\theta};\phi)\)</span> 来近似后验分布 <span class="math inline">\(p(\boldsymbol{\theta}\mid\boldsymbol{X})\)</span>（Bishop, 2006）。为了使这一近似尽可能接近，我们在近似分布的空间上搜索，找 <span class="math inline">\(q\)</span> 和 <span class="math inline">\(p\)</span> 之间最小的<strong>相对熵</strong>（Kullback-Leibler divergence, KL-divergence）。形式上，我们在近似分布集合中搜索的分布 <span class="math inline">\(q(\boldsymbol{\theta};\phi)\)</span> 使下式最小（下面积分运算对于离散 <span class="math inline">\(\theta\)</span> 情况应该为和运算）：</p>
+<p><span class="math display">\[
+\text{KL}(q(\boldsymbol{\theta};\phi)\|p(\boldsymbol{\theta}\mid\boldsymbol{X})) = E_{q(\boldsymbol{\theta};\phi)}[\log q(\boldsymbol{\theta};\phi) - \log p(\boldsymbol{\theta}\mid\boldsymbol{X})] = -\int q(\boldsymbol{\theta})\log\left\{\frac{p(\boldsymbol{\theta}\mid\boldsymbol{X})}{q(\boldsymbol{\theta};\phi)}\right\}d\boldsymbol{\theta} \tag{7.5.1}
+\]</span></p>
+<p>或者更确切地说寻求 <span class="math inline">\(\phi^*\)</span>，使得</p>
+<p><span class="math display">\[
+\phi^* = \arg\min_{\phi\in\Phi} \text{KL}(q(\boldsymbol{\theta};\phi)\|p(\boldsymbol{\theta}\mid\boldsymbol{X}))
+\]</span></p>
+<p>直接最小化 KL 是困难的（这里 <span class="math inline">\(\Phi\)</span> 为 <span class="math inline">\(\phi\)</span> 的空间）。因此，等价地，人们试图最大化<strong>证据下限</strong>（evidence lower bound, ELBO）。ELBO 定义为：</p>
+<p><span class="math display">\[
+\text{ELBO}(\phi) = E_{q(\boldsymbol{\theta};\phi)}[\log p(\boldsymbol{X}\mid\boldsymbol{\theta}) + \log p(\boldsymbol{\theta}) - \log q(\boldsymbol{\theta};\phi)] = E_{q(\boldsymbol{\theta};\phi)}[\log p(\boldsymbol{X},\boldsymbol{\theta}) - \log q(\boldsymbol{\theta};\phi)] \tag{7.5.2}
+\]</span></p>
+<p>因此，问题归结为寻求 <span class="math inline">\(\phi^*\)</span>，使得</p>
+<p><span class="math display">\[
+\phi^* = \arg\max_{\phi\in\Phi} \text{ELBO}(\phi)
+\]</span></p>
+<p>显然，当 <span class="math inline">\(q(\boldsymbol{\theta};\phi)=p(\boldsymbol{\theta}\mid\boldsymbol{X})\)</span> 时，式(7.5.1)或式(7.5.2)被最大化。当然，这并不是特别有帮助，但可以作为选择 <span class="math inline">\(q\)</span> 的一种参考。我们在近似分布中引入了额外的假定以使得推断可以操作。这里使用类似于 Jordan et al.&nbsp;(1999) 和 Bishop (2006) 所使用的分布形式。这里假定所谓的近似分布在参数之间的独立性，这种独立性对于真实后验分布可能并不存在。但除此之外没有任何其他假定。选择这种近似分布，也是因为它在应用于大量模型时已经被证明表现良好。Wang and Titterington (2004) 证明，在足够多的观测结果下，这种近似分布家族将正确地描述后验均值，而这对基于抽样的推断方法一般是不成立的。</p>
+<p>我们首先将 <span class="math inline">\(\boldsymbol{\theta}\)</span> 划分为 <span class="math inline">\(K\)</span> 块：<span class="math inline">\(\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_K)\)</span>，近似分布在参数之间独立意味着</p>
+<p><span class="math display">\[
+q(\boldsymbol{\theta}) = \prod_{k=1}^K q(\theta_k) \tag{7.5.3}
+\]</span></p>
+<p>变分算法将识别（而不是假定）构成分解分布的每个组成部分的特定参数族。类似于 EM 算法的迭代，我们的步骤为下面两步的迭代（直到收敛）：</p>
+<p><strong>(1)</strong> 假定有了第 <span class="math inline">\(i\)</span> 步的估计：<span class="math inline">\(\{q^{(i)}(\theta_k)\}_{k=1}^K\)</span></p>
+<p><strong>(2)</strong> 为更新第 <span class="math inline">\(k\)</span> 个因子（<span class="math inline">\(k=1,2,\ldots,K\)</span>），定义：</p>
+<p><span class="math display">\[
+E_{j\neq k}[\log p(\boldsymbol{\theta}\mid\boldsymbol{X})] = \int \prod_{j\neq k}\log p(\boldsymbol{\theta},\boldsymbol{X})\,q^{(i)}(\theta_j)\,d\theta_j
+\]</span></p>
+<p>对 <span class="math inline">\(k=1,2,\ldots,K\)</span>，令</p>
+<p><span class="math display">\[
+q^{(i+1)}(\theta_k) = \frac{\exp\{E_{j\neq k}[\log p(\boldsymbol{\theta}\mid\boldsymbol{X})]\}}{\int \exp\{E_{j\neq k}[\log p(\boldsymbol{\theta}\mid\boldsymbol{X})]\}\,d\theta_k}
+\]</span></p>
+<p>变分推断可能非常耗时，并且在某些情况下是不可行的。关于这部分的细节请参看 Blei et al.&nbsp;(2017)。</p>
+<p>最大化 ELBO 的另一种方法是<strong>自动微分变分推断</strong>（automatic differentiation variational inference, ADVI）。这是一种基于梯度的方法，仍然使用迭代优化程序来获得 <span class="math inline">\(\phi^*\)</span>。人们使用类似（随机）梯度下降的理念。这需要根据参数计算 ELBO 关于参数 <span class="math inline">\(\phi\)</span> 的导数。在复杂的模型中，这可能非常烦琐。在软件存在自动微分（AD）库的情况下，可以依靠库来准确计算导数。在 AD 库中，导数既不是以数字形式也不是以符号形式计算的。AD 依赖称为”对偶数”（dual numbers）的变量表示来有效地计算梯度。</p>
+<p>首先假设所有模型参数都是连续的。在 ADVI 中，ELBO 被重写为</p>
+<p><span class="math display">\[
+\text{ELBO}(\phi) = E_{q(\boldsymbol{\zeta};\phi)}\left\{\log p[\boldsymbol{X},T^{-1}(\boldsymbol{\zeta})] + \log|\det J_{T^{-1}}(\boldsymbol{\zeta})| - \log q(\boldsymbol{\zeta};\phi)\right\}
+\]</span></p>
+<p>这里的 <span class="math inline">\(T\)</span> 是一个把 <span class="math inline">\(\boldsymbol{\theta}\)</span> 转换到 <span class="math inline">\(\boldsymbol{\zeta}\)</span> 的函数，其值域 <span class="math inline">\(\boldsymbol{\zeta}\in\mathbb{R}^{\dim(\boldsymbol{\theta})}\)</span>。因此，需要将数据和模型参数的对数联合密度与雅可比行列式的对数绝对值相加。因为变换后的模型参数 <span class="math inline">\(\boldsymbol{\zeta}\)</span> 的支撑在实轴，所以多元正态分布为一个合适的变分分布。</p>
+<p>将多元正态作为变分分布允许我们使用蒙特卡罗估计在 ELBO 中计算期望及其梯度。也就是说，为估计 ELBO，可以从变分正态分布中抽样，并评估上述期望值内的表达式。</p>
+<p>为了最大化 ELBO，需要 ELBO 相对于变分参数的梯度，即</p>
+<p><span class="math display">\[
+\nabla_\phi\text{ELBO}(\phi) = \nabla_\phi E_{q(\boldsymbol{\zeta};\phi)}\left\{\log p[\boldsymbol{X},T^{-1}(\boldsymbol{\zeta})] + \log|\det J_{T^{-1}}(\boldsymbol{\zeta})| - \log q(\boldsymbol{\zeta};\phi)\right\}
+\]</span></p>
+<p><span class="math display">\[
+\approx \log p[\boldsymbol{X},T^{-1}(\tilde{\boldsymbol{\zeta}})] + \log|\det J_{T^{-1}}(\tilde{\boldsymbol{\zeta}})| - \log q(\tilde{\boldsymbol{\zeta}};\phi)
+\]</span></p>
+<p>上面的近似是由蒙特卡罗积分得到的。这里的 <span class="math inline">\(\tilde{\boldsymbol{\zeta}}=\boldsymbol{\mu}+z\boldsymbol{\sigma}\)</span>，<span class="math inline">\(\boldsymbol{\mu}\)</span> 和 <span class="math inline">\(\boldsymbol{\sigma}\)</span> 分别是变分的均值和标准差，而 <span class="math inline">\(z\)</span> 抽自（多元）标准正态分布。</p>
+<p>剩下的就是进行某种梯度下降法以获得 <span class="math inline">\(\phi\)</span> 的解。注意，变量参数应首先转换为无约束空间，即在对数尺度上的标准差，并不需要雅可比行列式。</p>
+<p>ADVI 可以在 PyMC3、Stan 以及一个名为 Edward 的新包中实现。关于 ADVI 的细节请参看 Kucukelbir et al.&nbsp;(2017)。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="用人话总结一下变分推断（VI）在做什么">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+用人话总结一下变分推断（VI）在做什么
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>变分推断把”求后验”这件事，从一个<strong>抽样问题</strong>（MCMC那种：不断抽样本，抽够多了就逼近真实后验）变成了一个<strong>优化问题</strong>（找一个形状简单的分布 <span class="math inline">\(q\)</span>，调它的参数，让它尽量长得像真实后验）。</p>
+<p>代价是：<span class="math inline">\(q\)</span> 通常被限定得比较”老实”（比如假设各参数互相独立），真实后验可能没这么规矩，所以变分推断算出来的结果<strong>往往会把不确定性估计得偏小</strong>——这是它明摆着的短板，但换来的是比 MCMC 快得多的速度，在大数据集、复杂模型下 MCMC 跑不动的时候，变分推断经常是唯一能落地的选择。</p>
+<p><strong>ADVI（自动微分变分推断）是这套方法里最实用的版本</strong>——你不用自己手推每个参数怎么更新，PyMC3、Stan 这些工具会自动帮你算梯度、自动优化，这也是你之后做甲基化项目时最可能真正用上的一种工具，不是纯理论。</p>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>待整理：Metropolis / Metropolis-Hastings / Gibbs / Hamiltonian Monte Carlo —— 都是 Q4 的不同实现，不改变 Q1-Q3。 # 贝叶斯推断中的一些算法</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>待整理：Metropolis / Metropolis-Hastings / Gibbs / Hamiltonian Monte Carlo —— 都是 Q4 的不同实现，不改变 Q1-Q3。</p>
+</blockquote>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/05-normal.html" class="pagination-link" aria-label="正态总体的情况">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">正态总体的情况</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/08-stan-pymc.html" class="pagination-link" aria-label="概率编程：R/Stan 与 Python/PyMC">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 贝叶斯推断中的一些算法</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>我们已经讨论了贝叶斯推断的基本概念以及一些先验分布。可以看出，贝叶斯统计后验分布的数学形式很简单，其思想也不复杂，但是，以实际可用的方式计算后验分布往往是非常具有挑战性的。主要原因是在有 $n$ 个参数时，计算正规化常数涉及重积分，即使使用共轭先验分布或其他可以推导出后验分布封闭形式的先验分布，这种计算在分析上和数值上都面临极大挑战。这也是过去几十年人们不使用贝叶斯推断来进行多元建模的主要原因之一。</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="核心矛盾：模型简单，计算却很难"}</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>贝叶斯推断的**模型本身**（先验 × 似然 → 后验）在数学上非常直白，真正的困难在于**Q4：怎么算**——具体来说，是后验分布里那个归一化常数 $p(x)$，在参数维度 $n$ 较大时，需要算一个高维积分，这个积分往往没有闭式解，也很难用数值方法精确计算。</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>**Gibbs 抽样**</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>较早使用的算法是 Gibbs 抽样（Geman and Geman, 1984）。Gibbs 抽样理论上是马尔可夫链蒙特卡罗方法（Markov Chain Monte Carlo, MCMC）的一个例子，属于 Metropolis-Hastings 算法的一个特例——因为通过模拟具有某初始分布作为其静态分布的马尔可夫链，从该分布生成随机抽取的任何算法都是马尔可夫链蒙特卡罗算法，而这正是 Gibbs 抽样所做的。但实践中由于目前的 MCMC 概念是后来形成的，很多人没有把 Gibbs 抽样算作 MCMC 的一种。</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>为了获得后验分布的近似值，Gibbs 抽样主要分两步：</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>定义马尔可夫链的稳态分布等于后验分布（Gelfand and Smith, 1990）</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>一旦马尔可夫链达到其稳态分布，就用蒙特卡罗方法从该稳态分布抽取样本，以准确地表现后验分布</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>这促进了**热身（burn-in）迭代**的使用和众多**收敛诊断**研究（Gelman and Rubin, 1992; Cowles and Carlin, 1996）。</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>**Gibbs 抽样的局限性**</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>在许多情况下，Gibbs 抽样没有问题，但在有许多参数的问题中，评估收敛可能是困难的。Gil (2004) 证明了 Gibbs 抽样或其他 MCMC 方法的收敛，要求**所有参数**都收敛，而不仅仅是特定的感兴趣参数。</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning title="容易被忽略的收敛要求"}</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>在评估应用于复杂贝叶斯模型的 Gibbs 抽样的收敛性时，这一结果的影响特别令人失望——因为这需要检查数千个参数是否收敛，**包括在抽样期间通常不存储的多余参数**（Clinton, Jackman, and Rivers, 2004）。当考虑应用于大型数据集的复杂模型时，这个问题就会被放大，特别是因为 Gibbs 抽样可能会很慢地探索高维参数空间的一些组成部分。此外，对于后验分布的收敛不足以使 Gibbs 抽样提供精确的近似。</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>现在的 MCMC 方法已经解决了 Gibbs 抽样方法的不足，贝叶斯编程软件也从以 Gibbs 为主转到更先进的 MCMC 方法。</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>**MCMC 是什么**</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>MCMC 是一种计算机驱动的采样方法（Gamerman and Lopes, 2006; Gilks et al., 1996），它允许人们在**不知道所有分布的数学属性**的情况下，通过从分布中随机抽样来描述分布。MCMC 的一个特殊优势在于它可用于从分布中提取样本来计算不同样本的密度。</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>MCMC 的名称结合了两个属性：**蒙特卡罗**（Monte Carlo, MC）和**马尔可夫链**（Markov Chain, MC）。</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="拆解 MCMC 这个名字"}</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>**蒙特卡罗（Monte Carlo）**：通过检查分布中的随机样本来估计分布属性的实践。例如，不是通过从分布方程直接计算来找到正态分布的均值，而是从正态分布中抽取大量随机样本，并计算其中的样本均值。</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>蒙特卡罗方法的好处很明显：计算大数量样本的平均值，比直接从正态分布方程计算平均值要容易得多——当随机样本易于获得、而分布方程很难以其他方式得到时，这种好处最为明显。</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>**马尔可夫链（Markov Chain）**：随机样本由特殊的序贯过程生成，每个随机样本用作基石以生成下一个随机样本（因此形成了一条链）。马尔可夫链的一个特殊属性是：虽然每个新样本取决于它之前的样本，但新样本不依赖前一个样本之前的任何样本——这称为**马尔可夫性**。</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>**常用计算方法一览**</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>常用的 MCMC 和期望最大化（EM）方法（Dempster, Laird, and Rubin, 1977）在许多实质性问题中运行良好，但在应用于大型数据集或复杂模型时性能较差。在这些情况下，**变分近似（Variational Approximation, VA）**是最有效的。</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>| 方法 | 全称 | 特点 |</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>| Gibbs 抽样 | Gibbs Sampling | MCMC/Metropolis-Hastings的特例，早期算法 |</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>| MCMC | Markov Chain Monte Carlo | 更一般化的采样框架，不需要知道分布数学属性 |</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>| EM | Expectation-Maximization | 适合中小规模问题，大数据/复杂模型下性能下降 |</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>| VA | Variational Approximation | 大型数据集/复杂模型下最有效 |</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.1 最大后验概率法</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>在贝叶斯统计中，最大后验概率（maximum a posteriori, MAP）估计是对后验分布的模的估计。MAP 可根据经验数据获得未观测量的点估计。它与最大似然（ML）估计方法密切相关，但采用了一个包含先验分布的增强优化目标。因此，MAP 估计可以看作 ML 估计的正则化方法。对于 $\boldsymbol{x}=x_1,x_2,\ldots,n$，ML 估计为</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>\hat\theta_{\text{MLE}} = \arg\max_\theta p(\boldsymbol{x}\mid\theta) = \arg\max_\theta \prod_{i=1}^n p(x_i\mid\theta)</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>= \arg\max_\theta \log\prod_{i=1}^n p(x_i\mid\theta) = \arg\max_\theta \sum_{i=1}^n \log p(x_i\mid\theta)</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>而 MAP 估计为</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>\hat\theta_{\text{MAP}} = \arg\max_\theta \frac{p(\boldsymbol{x}\mid\theta)p(\theta)}{p(\boldsymbol{x})} = \arg\max_\theta p(\boldsymbol{x}\mid\theta)p(\theta)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>= \arg\max_\theta \prod_{i=1}^n p(x_i\mid\theta)p(\theta) = \arg\max_\theta \sum_{i=1}^n \log p(x_i\mid\theta)p(\theta)</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>显然，如果先验分布是个常数，$\hat\theta_{\text{MLE}}$ 和 $\hat\theta_{\text{MAP}}$ 相等。</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>如果后验分布的模可以以封闭的数学形式给出（比如使用共轭先验时），则可以用分析方法得到 MAP 估计。如果不能得到封闭形式，或者太复杂，则可用共轭梯度法或牛顿法等数值优化法，这通常需要采用两阶导数。如果不用导数，可使用改进的 EM 算法，也可以使用模拟退火的蒙特卡罗方法。</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="2-3句话理解和应用"}</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>**MAP = MLE 加了一个"先验的约束"**：MLE 只问"哪个 $\theta$ 让数据出现的可能性最大"，MAP 多问一句"这个 $\theta$ 本身合不合理（先验答不答应）"——两者优化目标只差一个 $p(\theta)$ 乘项，先验是常数（无信息先验）时两者答案完全一样。</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>**它是后验的"简化版"**：MAP 只要众数（曲线最高点）这一个数字，不像完整贝叶斯要保留整条后验分布，计算成本低很多，但代价是丢掉了"这个估计有多不确定"这个信息（对照之前学的可信区间、HDR，MAP 全都没有）。</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>**对甲基化项目的实际提示**：当 DMR 检测流程需要处理成千上万个位点、跑一遍完整贝叶斯（MCMC/闭式后验）太慢时，MAP 是一个常用的"快速近似"折中方案——用共轭先验凑出闭式解、或者用牛顿法/EM 数值优化，直接拿到点估计就够用，不需要每个位点都算一整条后验曲线。</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.2 拉普拉斯近似</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>MAP 估计只是找到后验分布的最大值。拉普拉斯近似（Laplace approximation）更进一步，并且还计算极大值附近的局部曲率到二阶项。这实际上等价于假定后验分布在最大值附近接近正态分布。拉普拉斯近似适用于 $L^2$ 类，即分布 $f$ 满足 $\int f(x)^2\,dx&lt;\infty$ 的情况。</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>对于任何光滑的并且在其最大值点附近达到顶峰的概率密度函数（pdf），拉普拉斯建议用一个普通的 pdf 来近似它。这是 pdf 对数的一个简单的两项泰勒展开。用 $\hat\theta$ 表示 pdf（及其对数）的最大值点，记 pdf 的对数为 $q(\theta)=\log f(\theta)$，则有</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>q(\theta) \approx q(\hat\theta) + (\theta-\hat\theta)\dot{q}(\hat\theta) + \frac{1}{2}(\theta-\hat\theta)^2\ddot{q}(\hat\theta)</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>= q(\hat\theta) + 0 + \frac{1}{2}(\theta-\hat\theta)^2\ddot{q}(\hat\theta)</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>= \text{const} + \frac{1}{2}(\theta-\hat\theta)^2\ddot{q}(\hat\theta)</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>注意，这一最终结果和有均值 $\hat\theta$ 及精度 $-\ddot{q}(\hat\theta)$ 的正态分布的对数概率密度函数一样。</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>对于后验分布 $f(\theta\mid x)\propto \ell(\theta\mid x)p(\theta)$，有 $q(\theta)=\text{const}+\log\ell(\theta\mid x)+\log p(\theta)$。可以证明，在一些正则条件下，当样本量很大时，共轭后验分布趋于正态分布。</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>一般来说，如果 $\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_m)$，$\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$，当 $n\gg m$ 时，后验分布 $p(\boldsymbol{\theta}\mid\boldsymbol{x})$ 可近似为</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{\theta}\mid\boldsymbol{x}) \approx (2\pi)^{-\frac{m}{2}}|\boldsymbol{A}|^{\frac{1}{2}}\exp\left<span class="co">[</span><span class="ot">-\frac{1}{2}(\boldsymbol{\theta}-\hat{\boldsymbol{\theta}})^\top\boldsymbol{A}(\boldsymbol{\theta}-\hat{\boldsymbol{\theta}})\right</span><span class="co">]</span></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>这里 $\boldsymbol{A}=<span class="co">[</span><span class="ot">A_{ij}</span><span class="co">]</span>$ 是 Fisher 信息阵：</span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>A_{ij} = -\frac{\partial}{\partial\theta_i}\frac{\partial}{\partial\theta_j}\log p(\boldsymbol{\theta}\mid\boldsymbol{x})\Big|_{\theta=\hat\theta}</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>我们有</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>\log p(\boldsymbol{\theta}\mid\boldsymbol{x}) \approx \log p(\hat{\boldsymbol{\theta}}) + \log p(\boldsymbol{x}\mid\boldsymbol{\theta}) + \frac{m}{2}\log 2\pi - \frac{1}{2}\log|\boldsymbol{A}|</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>当样本量大的时候，</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>\log p(\boldsymbol{\theta}\mid\boldsymbol{x}) \approx \log p(\boldsymbol{x}\mid\boldsymbol{\theta}) - \frac{m}{2}\log n</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>其中 $-2\log p(\boldsymbol{x}\mid\boldsymbol{\theta})+m\log n$ 称为**贝叶斯信息准则**（Bayesian information criterion, BIC）。注意，**赤池信息准则**（Akaike information criterion, AIC）定义为 $-2\log p(\boldsymbol{x}\mid\boldsymbol{\theta})+2m$。</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>拉普拉斯近似取代了旨在将函数与最大化的积分问题。为了计算拉普拉斯近似，我们必须计算模的位置，这是一个优化问题。通常，使用易于理解的函数优化器来解决这个问题要比积分相同的函数更快。</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="L² 类是什么（人话版）"}</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>$L^p$ 是一整个"函数分类家族"，按"这个函数衰减得够不够快"来分类，$p$ 是那个分类编号。</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>f \in L^p \iff \int |f(x)|^p\,dx &lt; \infty</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>一句话：把函数自己做 $p$ 次方，再求总面积，这个面积必须是个有限数，不能是无穷大——说明这个函数不能有"甩不掉的长尾巴"。</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>| 类别 | 人话理解 |</span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>| $L^1$ | 最基本的要求，几乎所有正常的概率密度函数天生都满足（"积分=1"本身就是这个条件） |</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>| $L^2$（拉普拉斯近似要求的） | 更严格一点，要求"自己乘自己"之后还能积出有限值，尾巴要衰减得更快 |</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>| $L^\infty$ | 函数值不能冲到无穷大 |</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>**你实际需要记住的**：正态、Beta、Gamma 这些你天天在用的分布，基本上全部满足 $L^2$，不用特别担心撞上这个限制——这条件更像是数学家写论文时"把话说严谨"用的，日常做统计分析基本不会真正卡在这里。</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="用图理解 L² 类：尾巴粗细决定收敛还是发散"}</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-l2-space</span></span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "四条不同衰减速度的曲线,平方后累积积分的收敛(L2)与发散(非L2)对比"</span></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "上图展示四条不同衰减速度的函数曲线,下图展示这四条曲线平方后的累积积分,其中衰减快的三条曲线积分收敛趋于平稳,衰减最慢的一条持续增长不收敛"</span></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 7</span></span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">500</span>, <span class="at">length.out =</span> <span class="dv">5000</span>)</span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> <span class="fu">diff</span>(x)[<span class="dv">1</span>]</span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>f_gauss <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>x<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="dv">20</span>)</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>f_fast  <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>x)<span class="sc">^</span><span class="fl">1.2</span></span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>f_slow  <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>x)<span class="sc">^</span><span class="fl">0.6</span></span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>f_notL2 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>x)<span class="sc">^</span><span class="fl">0.3</span></span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a>df_curves <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rep</span>(x[x <span class="sc">&lt;=</span> <span class="dv">10</span>], <span class="dv">4</span>),</span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(f_gauss[x <span class="sc">&lt;=</span> <span class="dv">10</span>], f_fast[x <span class="sc">&lt;=</span> <span class="dv">10</span>], f_slow[x <span class="sc">&lt;=</span> <span class="dv">10</span>], f_notL2[x <span class="sc">&lt;=</span> <span class="dv">10</span>]),</span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>  曲线 <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"高斯(极快衰减)"</span>, <span class="st">"1/(1+x)^1.2"</span>, <span class="st">"1/(1+x)^0.6"</span>, <span class="st">"1/(1+x)^0.3 (非L2)"</span>),</span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>             <span class="at">each =</span> <span class="fu">sum</span>(x <span class="sc">&lt;=</span> <span class="dv">10</span>))</span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>df_cumsum <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rep</span>(x, <span class="dv">4</span>),</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">cum_integral =</span> <span class="fu">c</span>(<span class="fu">cumsum</span>(f_gauss<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx, <span class="fu">cumsum</span>(f_fast<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx,</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">cumsum</span>(f_slow<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx, <span class="fu">cumsum</span>(f_notL2<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span>dx),</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>  曲线 <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"高斯(极快衰减)"</span>, <span class="st">"1/(1+x)^1.2"</span>, <span class="st">"1/(1+x)^0.6"</span>, <span class="st">"1/(1+x)^0.3 (非L2)"</span>),</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>             <span class="at">each =</span> <span class="fu">length</span>(x))</span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_curves, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> 曲线, <span class="at">linetype =</span> 曲线)) <span class="sc">+</span></span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"四条曲线本身(尾巴粗细不同)"</span>, <span class="at">x =</span> <span class="st">"x"</span>, <span class="at">y =</span> <span class="st">"f(x)"</span>) <span class="sc">+</span></span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">11</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_cumsum, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> cum_integral, <span class="at">color =</span> 曲线, <span class="at">linetype =</span> 曲线)) <span class="sc">+</span></span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"平方后累积积分: 收敛=L2, 发散=非L2"</span>,</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"积分上限"</span>, <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">integral</span>(<span class="fu">f</span>(x)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>dx))) <span class="sc">+</span></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">11</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>**图怎么读**：下图是核心——把每条曲线**平方后**做累积积分。趴平不再增长的曲线（面积锁定在有限值）**属于 $L^2$**；一直往上爬、永不封顶的曲线（面积发散到无穷）**不属于 $L^2$**——尾巴越"重"（衰减越慢），越容易掉进"非L2"这一类。</span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.3 马尔可夫链蒙特卡罗方法</span></span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>我们讨论过的 MAP 和拉普拉斯近似，当后验分布是关于最大值的一个非常尖锐的峰值函数时有用。但通常后验分布会有长尾，这时 MAP 和拉普拉斯近似都不合适。另一种方法是直接从后验分布抽样。**蒙特卡罗模拟**（Monte Carlo simulations）是一种从后验分布抽样的技术，是贝叶斯推断在实际应用中最重要的工具之一。本节将介绍马尔可夫链蒙特卡罗（MCMC）模拟。</span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a>将概率模型应用于数据通常涉及对复杂的多维概率分布进行积分。在大多数情况下，由于维数高或者根本没有封闭表达式，这些积分是不可计算的。MCMC 是一种允许使用随机抽样来近似复杂积分的方法。该方法由马尔可夫链和蒙特卡罗积分两部分组成。</span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>蒙特卡罗积分是利用有关分布的随机抽样来近似积分的一种有力方法。但从有关概率分布中抽样很困难或者无法直接做到，因此需要马尔可夫链。马尔可夫链是一种序贯模型，它以概率的方式从一种状态转移到另一种状态，其中链所采取的下一个状态取决于以前的状态（这就是所谓的马尔可夫性）。如果马尔可夫链构造得当并运行很长时间，那么它也将从目标概率分布中提取样本的状态。我们要做的就是构造马尔可夫链从想做积分的分布中抽样，然后利用蒙特卡罗积分来近似积分。</span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.1 蒙特卡罗积分</span></span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>一般来说，当 $X$ 为有分布 $\pi$ 的随机变量，想要计算函数 $h(x)$ 的期望 $E_\pi<span class="co">[</span><span class="ot">h(x)</span><span class="co">]</span>$ 时，需要计算积分</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a>E_\pi<span class="co">[</span><span class="ot">h(x)</span><span class="co">]</span> = \int h(x)\pi(x)\,dx</span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>该积分可能不容易求，特别是当 $X$ 是高维变量时更难。但可以从分布 $\pi$ 中抽样</span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>x^{(1)},x^{(2)},\cdots,x^{(n)} \sim \pi</span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a>然后可以得到积分的近似</span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a>E_\pi<span class="co">[</span><span class="ot">h(x)</span><span class="co">]</span> \approx \frac{1}{n}\sum_{i=1}^n h(x^{(i)})</span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a>这就是**蒙特卡罗积分**（Monte Carlo integration）。根据大数定理，当 $n\to\infty$，有下面的依概率收敛：</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>\frac{1}{n}\sum_{i=1}^n h(x^{(i)}) \xrightarrow{p} E_\pi<span class="co">[</span><span class="ot">h(x)</span><span class="co">]</span></span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.2 马尔可夫链</span></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>为什么要引入马尔可夫链呢？这是因为参数可能有很多维，如 $\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_m)$。这意味着先验分布和后验分布都是高维的。这是一种通常被描述为**维度诅咒**的情况，可用的数据在该空间内变得极其稀少，因此，在利用抽样计算积分时，必须按照某种章法使得我们有可能以较小的样本得到好的近似。</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a>MCMC 是一种使用马尔可夫链机制生成样本 $x^{(i)}$ 的方法，这种方法的构造是为了使链花费更多时间在最重要的地方。特别是，它的构造使样本 $x^{(i)}$ 模拟从目标分布 $p(x)$ 中提取样本。当然，用 MCMC 不能直接从 $p(x)$ 中提取样本，但可以估计 $p(x)$ 到一个标准化常数的程度。</span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>我们在有限状态空间 $\mathcal{X}=<span class="sc">\{</span>x_1,x_2,\ldots,x_s<span class="sc">\}</span>$ 上直观引入马尔可夫链，令 $x^{(i)}$ 为马尔可夫链第 $i$ 个状态，这里 $x^{(i)}\in\mathcal{X}$ 只能有 $s$ 个离散值。满足下面性质的随机过程 $x^{(i)}$ 被称为马尔可夫链：</span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a>p\left(x^{(i)}\mid x^{(i-1)},x^{(i-2)},\ldots,x^{(1)}\right) = p\left(x^{(i)}\mid x^{(i-1)}\right), \quad \forall i</span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>式中的 $p(x^{(i)}\mid x^{(i-1)})$ 称为从状态 $x^{(i-1)}$ 到状态 $x^{(i)}$ 的转移概率。上式意味着随机过程处于某状态的概率仅仅依赖前一个状态，与之前的历史无关，这就是**马尔可夫性**。</span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>如果对于任意两个状态 $x_i,x_j\in\mathcal{X}$，$s\times s$ 矩阵 $\boldsymbol{P}\equiv<span class="co">[</span><span class="ot">P_{ij}</span><span class="co">]</span>=<span class="co">[</span><span class="ot">p(x^{(k)}=x_j\mid x^{(k-1)}=x_i)</span><span class="co">]</span>$ 对所有 $k$ 保持不变，而且 $\sum_i P_{ij}=1$，则称该马尔可夫链是**时齐**（homogeneous）的。$\boldsymbol{P}$ 称为一次转移概率矩阵。</span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>对于任意初始状态分布 $\boldsymbol{\pi}_0=(\pi_1^{(0)},\pi_2^{(0)},\ldots,\pi_s^{(0)})$，在 $t$ 次转移之后在各个状态的概率为向量</span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>\boldsymbol{\pi}_0\overbrace{\boldsymbol{P}\boldsymbol{P}\cdots\boldsymbol{P}}^{t} = \boldsymbol{\pi}_0\boldsymbol{P}^t</span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>很容易验证，当 $t$ 很大时，概率向量 $\boldsymbol{\pi}_0\boldsymbol{P}^t$ 收敛到一个稳定的值 $\boldsymbol{\pi}$，而且该值和初始概率 $\boldsymbol{\pi}_0$ 无关，即</span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>\lim_{t\to\infty}\boldsymbol{\pi}_0\boldsymbol{P}^t = \boldsymbol{\pi}</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a>乘积矩阵 $\boldsymbol{P}^t$ 的元素 $P_{ij}^t$ 为从状态 $x_i$ 经过 $t$ 步转移到状态 $x_j$ 的概率。显然有</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a>\boldsymbol{\pi} = \boldsymbol{\pi}\boldsymbol{P}</span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a>概率 $\boldsymbol{\pi}$ 称为**平稳概率**（stationary distribution 或 equilibrium distribution）。这就是 $\boldsymbol{P}^\top$ 的特征值问题。</span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a>下面考虑一个 $s=3$ 的例子，如果转移概率矩阵例子为</span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>\boldsymbol{P} = \begin{bmatrix} 0.5 &amp; 0 &amp; 0.5 <span class="sc">\\</span> 0 &amp; 0.8 &amp; 0.2 <span class="sc">\\</span> 0.6 &amp; 0.2 &amp; 0.2 \end{bmatrix}</span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a>而初始概率（最初在各状态 $x_1,x_2,x_3$ 的概率）为向量 $\boldsymbol{\pi}_0=(\pi_1^{(0)},\pi_2^{(0)},\pi_3^{(0)})=(0.3,0.1,0.6)$，得到，当 $t\to\infty$（实际上几步就收敛了），</span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a>\boldsymbol{\pi}_0\boldsymbol{P}^t \longrightarrow \boldsymbol{\pi} = (0.375,\ 0.3125,\ 0.3125)</span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>对于这个简单数值例子，可以用下面 R 代码实现：</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>P <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(.<span class="dv">5</span>,<span class="dv">0</span>,.<span class="dv">5</span>,<span class="dv">0</span>,.<span class="dv">8</span>,.<span class="dv">2</span>,.<span class="dv">6</span>,.<span class="dv">2</span>,.<span class="dv">2</span>), <span class="dv">3</span>, <span class="dv">3</span>, <span class="at">b=</span>T)</span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">3</span>,.<span class="dv">1</span>,.<span class="dv">6</span>)  <span class="co"># 可以取任何其他的概率向量</span></span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> p0</span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">55</span>)</span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>  p1 <span class="ot">=</span> p1 <span class="sc">%*%</span> P</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>p1</span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a>为保证这种与初始概率分布无关的不变性，只需要转移矩阵 $\boldsymbol{P}$ 满足两个条件：</span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a>**(1) 不可约性**（irreducibility）：从任何状态出发访问马尔可夫链的任何其他状态的概率都是正的。也就是说，矩阵 $\boldsymbol{P}$ 不能简化为分离较小的矩阵。这也说明所有状态是连接的。</span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a>**(2) 非周期性**（aperiodicity）：链不应该被困在循环中。一个状态 $x_i$，从它开始经过 $t$ 步回到该状态的转移概率为 $P_{ii}^t$。周期定义为</span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a>k = \gcd<span class="sc">\{</span>n\mid P_{ii}^n&gt;0<span class="sc">\}</span></span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a>式中，符号 $\gcd$ 为最大公约数。如果 $k=1$，则状态 $x_i$ 称为**非周期性的**（aperiodic）。如果每个状态都是非周期性的，那么马尔可夫链是非周期性的。一个不可约马尔可夫链只需要一个非周期状态就意味着所有状态都是非周期性的。</span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a>事实上，如果从状态 $x_i$ 总是可以达到 $x_j$ 的概率为 $\pi_j$ 对于所有的 $j$ 成立，或当 $n\to\infty$，</span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a>P_{ij}^n \longrightarrow \pi_j, \quad \forall j</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>那么 $\boldsymbol{\pi}=(\pi_1,\pi_2,\ldots,\pi_s)$ 为**不变的**（invariant）。而且，如果不可约的链有一个平稳的分布，那么该平稳分布是唯一的。</span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>如果马尔可夫链</span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>x^{(1)},x^{(2)},\cdots,x^{(n)} \sim \boldsymbol{\pi}</span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>是非周期性的和不可约的，而且 $\boldsymbol{\pi}$ 是平稳分布，那么，当 $n\to\infty$ 时，有</span>
+<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a>\frac{1}{n}\sum_{t=1}^n h(x^{(t)}) \longrightarrow E_{\boldsymbol{\pi}}<span class="co">[</span><span class="ot">h(X)</span><span class="co">]</span> = \int h(\boldsymbol{x})\boldsymbol{\pi}(\boldsymbol{x})\,d\boldsymbol{x}</span>
+<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a>这就是所谓**遍历定理**（ergodic theorem）。因此，我们可以通过模拟有平稳分布 $\boldsymbol{\pi}$ 的马尔可夫链，用蒙特卡罗积分来近似 $\int h(\boldsymbol{x})\boldsymbol{\pi}(\boldsymbol{x})\,d\boldsymbol{x}$。</span>
+<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>对于连续状态空间的马尔可夫过程可以通过离散化处理。</span>
+<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.3 MCMC 方法综述</span></span>
+<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>对于贝叶斯推断，MCMC 模拟一个自选初始点 $\theta^{(0)}$ 的离散时间马尔可夫链，产生一串相依的随机变量 $<span class="sc">\{</span>\theta^{(i)}<span class="sc">\}</span>_{i=1}^M$，有近似分布</span>
+<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a>p(\theta^{(i)}) \approx p(\theta\mid\boldsymbol{x})</span>
+<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a>由于马尔可夫性，$\theta^{(i)}$ 的分布仅仅和 $\theta^{(i-1)}$ 有关。</span>
+<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a>MCMC 在状态空间 $\theta\in\Theta$ 产生了一个马尔可夫链 $<span class="sc">\{</span>\theta^{(1)},\theta^{(2)},\ldots,\theta^{(M)}<span class="sc">\}</span>$，其每个样本都假定来自稳定分布 $p(\theta\mid\boldsymbol{x})$，即我们感兴趣的后验分布。</span>
+<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a>使用马尔可夫链从特定的目标分布中进行抽样，关键是必须设计合适的转移矩阵（算子），以便生成的链达到与目标分布相匹配的稳定分布。这就是我们后面要介绍的若干方法的要点。</span>
+<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a>以互联网为例，通常把网页和链接解释为马尔可夫链的状态。显然，我们希望在网上漫游，但不想陷入循环（保持非周期性），并希望能够访问所有现有的网页（不可约性）。考虑由搜索引擎谷歌使用的流行的信息检索算法 PageRank（Page et al., 1998），它的转移矩阵由两个成分组成：$\boldsymbol{P}=\boldsymbol{L}+\boldsymbol{E}$。其中，$\boldsymbol{L}$ 是一个大的链接矩阵，行和列对应于网页或链接，其 $L_{ij}$ 代表从网页 $i$ 到网页 $j$ 的（正则化）数目，而 $\boldsymbol{E}$ 为一个均匀随机矩阵（小的噪声），以确保不可约性和非周期性。这种附加的噪声可防止我们被困在循环中，确保总是有一些概率跳到网络上的任何地方。</span>
+<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a>总之，MCMC 的基本思想是在后验分布抽样中伴随着（蒙特卡罗积分）的随机搜索与不取决于初始点（马尔可夫链方面）的智能跳跃。因此，可以说马尔可夫链蒙特卡罗方法是通过**智能跳跃执行的无记忆搜索**。</span>
+<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.4 Metropolis 算法</span></span>
+<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a>前面谈到直接从一些目标概率分布 $p(x)$ 中进行抽样较为困难，必须为马尔可夫链设计一个转移算子，使链的平稳分布与目标分布相匹配。Metropolis 算法（及作为其推广的 Metropolis-Hastings 算法）使用简单的启发式方法来实现这样的过渡算子。</span>
+<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a>Metropolis 方法从一些随机初始状态 $x^{(0)}\sim\pi^{(0)}$ 开始，该算法首先从类似于马尔可夫链转移概率的分布 $q(x\mid x^{(t-1)})$ 中提取可能的候选样本 $x^*$。该候选样本受到 Metropolis 方法的一个额外步骤的评估，看目标分布在其附近是否有足够大的密度，以确定是否接受其作为链的下一个状态。如果 $p(x^*)$ 的密度低于建议的状态，则它可能被拒绝。接受或拒绝候补状态的标准由以下直观方法定义：</span>
+<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>如果 $p(x^*)\geq p(x^{(t-1)})$，则保留候补状态 $x^*$ 作为链的下一个状态，也就是马尔可夫链的 $p(x)$ 不能减少</span>
+<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>如果 $p(x^*)&lt;p(x^{(t-1)})$，这说明在 $x^*$ 附近密度 $p(x)$ 较小，候选状态仅仅以概率 $p(x^*)/p(x^{(t-1)})$ 保留</span>
+<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a>为了说明，设立接受概率</span>
+<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a>\alpha = \min\left(1,\ \frac{p(x^*)}{p(x^{(t-1)})}\right)</span>
+<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a>有了接受概率，Metropolis 方法的转移运算符则运行如下：如果均匀随机数 $u$ 小于或等于 $\alpha$，则接受状态 $x^*$，否则会拒绝 $x^*$ 并建议下一个候选状态。下面是收集 $M$ 个样本的形式代码：</span>
+<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. 转移算子的可逆性</span></span>
+<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a>结果表明，为了使转移算子收敛到一个平稳的分布或目标分布，马尔可夫链存在理论上的约束：$x^{(t)}\to x^{(t+1)}$ 的转移概率必须等于反向转移 $x^{(t-1)}\to x^{(t)}$ 的概率。此可逆性属性通常称为**详细平衡**（detailed balance）。使用 Metropolis 方法在建议的转移概率分布 $q(x\mid x^{(t-1)})$ 对称时可以确保可逆性。正态分布、Cauchy 分布、$t$ 分布和均匀分布都有这种对称性。</span>
+<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. 一个例子</span></span>
+<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a>从一个例子看 MCMC 抽样方法。</span>
+<span id="cb5-397"><a href="#cb5-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-398"><a href="#cb5-398" aria-hidden="true" tabindex="-1"></a>**例 7.1** 这是一个简单例子，考虑形状参数为 $a$，尺度参数为 $s$ 的 Gamma 分布</span>
+<span id="cb5-399"><a href="#cb5-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a>p(x) = \frac{1}{s^a\Gamma(a)}x^{a-1}e^{-\frac{x}{s}}</span>
+<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a>下面是例7.1的 Gamma 分布（取 $a=s=5$）的 Metropolis 抽样的 R 代码，这里的转移概率取正态分布 $N(0,4)$。代码中 <span class="in">`k=floor(M/2)`</span> 表示前面一半的抽样值算是用于热身（burn-in）最终舍弃，这是因为初始值可能不好，等到稳定些再算数。图7.3.1中的左图是得到的样本的直方图和真实分布（乘一个因子），而图7.3.1中的右图是马尔可夫链（包括用虚线表示的热身部分），对于这个问题热身前后偏离差不多。</span>
+<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>图 7.3.1 例7.1的 Metropolis 抽样：左图为样本的直方图和真实分布（乘一个因子），右图为马尔可夫链（虚线表示热身部分）</span>
+<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: metropolis-sampling</span></span>
+<span id="cb5-412"><a href="#cb5-412" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb5-413"><a href="#cb5-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb5-414"><a href="#cb5-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a><span class="co"># Metropolis算法核心循环:从Gamma(shape=5, rate=5)分布中抽样</span></span>
+<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a><span class="co"># 注意: dgamma(x,5,5)第二个5被R当成rate(速率)不是scale(尺度)!</span></span>
+<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a><span class="co"># 若要严格对应书中"形状a=5,尺度s=5"的定义,应写成 dgamma(x, shape=5, scale=5)</span></span>
+<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="dv">20000</span>; k <span class="ot">=</span> <span class="fu">floor</span>(M<span class="sc">/</span><span class="dv">2</span>)  <span class="co"># M=总抽样次数; k=热身(burn-in)阶段长度,取前一半</span></span>
+<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="cn">NULL</span>                    <span class="co"># 存放每一步接受的样本</span></span>
+<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="dv">1</span>                       <span class="co"># 初始状态 x^(0)</span></span>
+<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1010</span>)</span>
+<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) {</span>
+<span id="cb5-425"><a href="#cb5-425" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">4</span>)                       <span class="co"># 从建议分布 q(x|x^(t-1))=N(0,4) 抽候选值</span></span>
+<span id="cb5-426"><a href="#cb5-426" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">=</span> <span class="fu">dgamma</span>(u,<span class="dv">5</span>,<span class="dv">5</span>) <span class="sc">/</span> <span class="fu">dgamma</span>(x,<span class="dv">5</span>,<span class="dv">5</span>)    <span class="co"># 计算接受概率 alpha = p(x*)/p(x^(t-1))</span></span>
+<span id="cb5-427"><a href="#cb5-427" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> <span class="fu">min</span>(alpha, <span class="dv">1</span>)) x <span class="ot">=</span> u      <span class="co"># 以概率min(1,alpha)接受候选值,否则保留原值</span></span>
+<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a>  X[i] <span class="ot">=</span> x                                  <span class="co"># 记录这一步的状态(不管接受与否都要记录)</span></span>
+<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-434"><a href="#cb5-434" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-435"><a href="#cb5-435" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-metropolis-gamma</span></span>
+<span id="cb5-436"><a href="#cb5-436" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "例7.1的Metropolis抽样: 左图为样本直方图与真实密度对比, 右图为马尔可夫链轨迹(虚线为热身阶段)"</span></span>
+<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "左图是抽样结果的直方图叠加真实Gamma分布密度曲线,两者应高度吻合;右图是马尔可夫链随迭代次数变化的轨迹图,前半段虚线表示热身阶段,后半段实线表示热身后用于统计的阶段"</span></span>
+<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4.5</span></span>
+<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">t</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>))</span>
+<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-445"><a href="#cb5-445" aria-hidden="true" tabindex="-1"></a><span class="co"># 左图: 抽样直方图 vs 真实密度曲线(丢弃前k个热身样本)</span></span>
+<span id="cb5-446"><a href="#cb5-446" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(X[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>k)], <span class="dv">20</span>, <span class="at">prob =</span> <span class="cn">TRUE</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>),</span>
+<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">'X'</span>, <span class="at">ylab =</span> <span class="st">''</span>, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(<span class="fu">dgamma</span>(x,<span class="dv">5</span>,<span class="dv">5</span>), <span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">8</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'topright'</span>, <span class="fu">c</span>(<span class="st">'true density'</span>), <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a><span class="co"># 右图: 马尔可夫链轨迹, 区分热身期(虚线)和正式采样期(实线)</span></span>
+<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span>k, X[<span class="dv">1</span><span class="sc">:</span>k], <span class="at">type =</span> <span class="st">'l'</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>,</span>
+<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">'X'</span>, <span class="at">xlab =</span> <span class="st">"index"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,M), <span class="at">ylim =</span> <span class="fu">range</span>(X))</span>
+<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>((k<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>M, X[(k<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>M])</span>
+<span id="cb5-455"><a href="#cb5-455" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'top'</span>, <span class="fu">c</span>(<span class="st">'after burn-in'</span>,<span class="st">'burn-in'</span>), <span class="at">lty =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">col =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">cex =</span> .<span class="dv">6</span>)</span>
+<span id="cb5-456"><a href="#cb5-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a>使用对称分布可能不合理，以至于对所有可能的目标分布无法充分或有效地抽样。例如，目标分布在正实轴 $[0,\infty)$ 时，我们希望使用具有相同支撑的非对称分布，这就产生了 Metropolis-Hastings 算法。</span>
+<span id="cb5-459"><a href="#cb5-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-460"><a href="#cb5-460" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.4 EM 算法</span></span>
+<span id="cb5-461"><a href="#cb5-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-462"><a href="#cb5-462" aria-hidden="true" tabindex="-1"></a>**期望最大化**（expectation-maximization, EM）算法是一种迭代方法，用于查找统计模型中参数的最大似然或最大后验分布（MAP）估计，其中模型依赖未观察到的潜在变量。EM 迭代是在期望（E）步骤和最大化（M）步骤之间交替进行，E 步骤利用目前参数的估计得到对数似然的期望，在 M 步骤则用最大化 E 步骤得到的对数似然得到参数估计，结果再用于 E 步骤。</span>
+<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a>EM 算法用途很广，适用于有各种特点的模型及不同的目的。下面以非常通用的方式描述 EM 过程，以帮助读者理解其基本原理。</span>
+<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a>EM 算法是一种通用方法，用于在数据不完整或有缺失值时从给定数据集中查找背景分布参数的最大似然估计。EM 算法有两种主要应用情况。第一种情况是数据确实存在缺失值；第二种情况发生于很难在解析上优化似然函数，而当似然函数通过假设存在任何附加但缺失（或隐藏）参数时可以进行简化。后一种应用情况在计算模式识别社区中更为常见。</span>
+<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a>假设观测到的数据 $\boldsymbol{X}$ 是由某种分布生成的。我们称 $\boldsymbol{X}$ 为不完整数据。完整的数据集为 $\boldsymbol{Z}=(\boldsymbol{X},\boldsymbol{y})$，并假定联合密度函数为</span>
+<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{z}\mid\boldsymbol{\theta}) = p(\boldsymbol{x},\boldsymbol{y}\mid\boldsymbol{\theta}) = p(\boldsymbol{y}\mid\boldsymbol{x},\boldsymbol{\theta})p(\boldsymbol{x}\mid\boldsymbol{\theta})</span>
+<span id="cb5-472"><a href="#cb5-472" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a>基于这个密度函数，可以定义一个新的似然函数</span>
+<span id="cb5-475"><a href="#cb5-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-476"><a href="#cb5-476" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>L(\boldsymbol{\theta}\mid\boldsymbol{Z}) = L(\boldsymbol{\theta}\mid\boldsymbol{X},\boldsymbol{Y}) = p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})</span>
+<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-479"><a href="#cb5-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-480"><a href="#cb5-480" aria-hidden="true" tabindex="-1"></a>称之为**完全数据似然**。该函数实际上是一个随机变量，因为缺失的信息 $\boldsymbol{Y}$ 是有可能服从背景分布的未知随机变量。原始似然 $L(\boldsymbol{\theta}\mid\boldsymbol{X})$ 称为**不完全数据似然函数**。</span>
+<span id="cb5-481"><a href="#cb5-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a>EM 算法首先求完全数据对数似然 $\log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})$ 的期望值，这里只有 $\boldsymbol{Y}$ 为未知。也就是说，我们定义：</span>
+<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a>Q(\boldsymbol{\theta}\mid\boldsymbol{\theta}^{(i-1)}) = E\left<span class="co">[</span><span class="ot">\log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\;\middle|\;\boldsymbol{X},\boldsymbol{\theta}^{(i-1)}\right</span><span class="co">]</span> \tag{7.4.1}</span>
+<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-488"><a href="#cb5-488" aria-hidden="true" tabindex="-1"></a>其中，$\boldsymbol{\theta}^{(i-1)}$ 是用来估计期望的当前参数估计，$\boldsymbol{\theta}$ 是用来优化的新的参数，以增加 $Q$。</span>
+<span id="cb5-489"><a href="#cb5-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-490"><a href="#cb5-490" aria-hidden="true" tabindex="-1"></a>这里要理解的关键是 $\boldsymbol{X}$ 和 $\boldsymbol{\theta}^{(i-1)}$ 是常量，$\boldsymbol{\theta}$ 是我们希望调整的变量，$\boldsymbol{Y}$ 是服从分布 $f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})$ 的随机变量。因此，式(7.4.1)的右边可以重写为</span>
+<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-492"><a href="#cb5-492" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-493"><a href="#cb5-493" aria-hidden="true" tabindex="-1"></a>E\left<span class="co">[</span><span class="ot">\log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\;\middle|\;\boldsymbol{X},\boldsymbol{\theta}^{(i-1)}\right</span><span class="co">]</span> = \int \log p(\boldsymbol{X},\boldsymbol{Y}\mid\boldsymbol{\theta})\, f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})\,d\boldsymbol{y} \tag{7.4.2}</span>
+<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-496"><a href="#cb5-496" aria-hidden="true" tabindex="-1"></a>这里，$f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})$ 是未观测数据的边际分布，它既依赖观测到的数据 $\boldsymbol{X}$，也取决于当前参数 $\boldsymbol{\theta}^{(i-1)}$，这种边际分布是假定参数 $\boldsymbol{\theta}^{(i-1)}$ 及数据 $\boldsymbol{X}$ 的简单解析表达式。在最坏的情况下，这种密度解析式可能很难获得。有时，实际使用的密度是</span>
+<span id="cb5-497"><a href="#cb5-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-498"><a href="#cb5-498" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-499"><a href="#cb5-499" aria-hidden="true" tabindex="-1"></a>f(\boldsymbol{y},\boldsymbol{X}\mid\boldsymbol{\theta}^{(i-1)}) = f(\boldsymbol{y}\mid\boldsymbol{X},\boldsymbol{\theta}^{(i-1)})\,f(\boldsymbol{X}\mid\boldsymbol{\theta}^{(i-1)})</span>
+<span id="cb5-500"><a href="#cb5-500" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-501"><a href="#cb5-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-502"><a href="#cb5-502" aria-hidden="true" tabindex="-1"></a>但这不会影响后续步骤，因为额外因子 $f(\boldsymbol{X}\mid\boldsymbol{\theta}^{(i-1)})$ 不依赖 $\boldsymbol{\theta}$。</span>
+<span id="cb5-503"><a href="#cb5-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-504"><a href="#cb5-504" aria-hidden="true" tabindex="-1"></a>作为类比，假定有两个变量的函数 $h(\cdot,\cdot)$。考虑 $h(\theta,y)$，其中 $\theta$ 是一个常数，$y$ 是服从分布 $f(y)$ 的随机变量。则 $q(\theta)=E_y<span class="co">[</span><span class="ot">h(\theta,y)</span><span class="co">]</span>=\int h(\theta,y)f(y)\,dy$ 是一个可以最大化的确定性函数。</span>
+<span id="cb5-505"><a href="#cb5-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-506"><a href="#cb5-506" aria-hidden="true" tabindex="-1"></a>对这一期望的计算称为算法的 **E 步**。请注意函数 $Q(\theta\mid\theta')$ 中两个参数的第一个参数 $\theta$ 对应于最终将进行优化以使似然函数最大化的参数；第二个参数 $\theta'$ 对应于我们用来计算期望的参数。</span>
+<span id="cb5-507"><a href="#cb5-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-508"><a href="#cb5-508" aria-hidden="true" tabindex="-1"></a>EM 算法的 **M 步**是最大化 E 步中计算的期望，即</span>
+<span id="cb5-509"><a href="#cb5-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-510"><a href="#cb5-510" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-511"><a href="#cb5-511" aria-hidden="true" tabindex="-1"></a>\boldsymbol{\theta}^{(i)} = \arg\max_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}\mid\boldsymbol{\theta}^{(i-1)})</span>
+<span id="cb5-512"><a href="#cb5-512" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-513"><a href="#cb5-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-514"><a href="#cb5-514" aria-hidden="true" tabindex="-1"></a>必要时重复这两个步骤，保证每次迭代都能增加对数似然，并保证算法收敛到似然函数的局部最大值。</span>
+<span id="cb5-515"><a href="#cb5-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-516"><a href="#cb5-516" aria-hidden="true" tabindex="-1"></a>M 步也可以不最大化 $Q(\theta\mid\theta^{(i-1)})$，我们可以找到某 $\theta^{(i)}$，使得 $Q(\theta^{(i)}\mid\theta^{(i-1)}) &gt; Q(\theta\mid\theta^{(i-1)})$，这种算法称为**广义 EM**（generalized EM, GEM）算法，它也保证了收敛。</span>
+<span id="cb5-517"><a href="#cb5-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-518"><a href="#cb5-518" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="用你的框架总结一下 EM 在做什么"}</span>
+<span id="cb5-519"><a href="#cb5-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-520"><a href="#cb5-520" aria-hidden="true" tabindex="-1"></a>EM 处理的是一种特殊场景——数据里藏着一个你看不到的隐变量 $\boldsymbol{Y}$（比如缺失值，或者刻意引入的辅助变量让似然函数变得好算）。E步"猜"隐变量的分布（在当前参数下），M步"用"这个猜测去更新参数，两步循环往复，直到收敛。</span>
+<span id="cb5-521"><a href="#cb5-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-522"><a href="#cb5-522" aria-hidden="true" tabindex="-1"></a>这跟你之前学的 Gibbs 抽样有点像（都是交替更新的迭代思路），但**EM 找的是一个点估计（MAP/MLE），Gibbs 抽样拿到的是一整条后验分布的样本**——EM 更快但信息量更少，这也是为什么 7.3 节先讲 MCMC（完整后验）、7.4 节才讲 EM（快速点估计）：书的编排顺序本身就在暗示"先给你最完整的工具，再给你更快但更简化的备选方案"。</span>
+<span id="cb5-523"><a href="#cb5-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-524"><a href="#cb5-524" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-525"><a href="#cb5-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-526"><a href="#cb5-526" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.5 变分贝叶斯近似</span></span>
+<span id="cb5-527"><a href="#cb5-527" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-528"><a href="#cb5-528" aria-hidden="true" tabindex="-1"></a>马尔可夫链蒙特卡罗方法（MCMC）是一个非常有用和重要的工具，但在用于估计大型数据集的复杂后验分布或模型时可能会遇到困难。本节介绍的**变分近似**（variational approximations）或**变分推断**（variational inference）可用于拟合贝叶斯模型（Jordan et al., 1999）。对于完全贝叶斯推断，变分近似通常比 MCMC 快得多，在某些情况下，它有助于估计其他方法无法估计的模型。作为一种确定性后验近似方法，变分近似保证了收敛性，很容易对收敛性进行评估。变分近似法最适合于其他方法无法解决的完全贝叶斯推断问题。当然，变分近似确实也有一些限制，它可能低估后验分布的变异性。这种被低估的可变性是变分近似的一个缺点，然而，它是直接可控的，取决于一组透明且易于修改的假设。</span>
+<span id="cb5-529"><a href="#cb5-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-530"><a href="#cb5-530" aria-hidden="true" tabindex="-1"></a>变分近似为贝叶斯模型的估计提供了一种不同的方法。与 EM 算法一样，变分近似也是确定性优化算法，它保证了收敛性，通过检查标量中的变化可以轻松地进行评估。与 MCMC 算法一样，变分近似估计完全后验分布，不需要额外的步骤来执行推断。下面描述变分近似的基础知识。</span>
+<span id="cb5-531"><a href="#cb5-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-532"><a href="#cb5-532" aria-hidden="true" tabindex="-1"></a>变分近似的目标是用某一个称为**近似分布**（approximating distribution）的工作分布 $q(\boldsymbol{\theta};\phi)$ 来近似后验分布 $p(\boldsymbol{\theta}\mid\boldsymbol{X})$（Bishop, 2006）。为了使这一近似尽可能接近，我们在近似分布的空间上搜索，找 $q$ 和 $p$ 之间最小的**相对熵**（Kullback-Leibler divergence, KL-divergence）。形式上，我们在近似分布集合中搜索的分布 $q(\boldsymbol{\theta};\phi)$ 使下式最小（下面积分运算对于离散 $\theta$ 情况应该为和运算）：</span>
+<span id="cb5-533"><a href="#cb5-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-534"><a href="#cb5-534" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-535"><a href="#cb5-535" aria-hidden="true" tabindex="-1"></a>\text{KL}(q(\boldsymbol{\theta};\phi)\|p(\boldsymbol{\theta}\mid\boldsymbol{X})) = E_{q(\boldsymbol{\theta};\phi)}<span class="co">[</span><span class="ot">\log q(\boldsymbol{\theta};\phi) - \log p(\boldsymbol{\theta}\mid\boldsymbol{X})</span><span class="co">]</span> = -\int q(\boldsymbol{\theta})\log\left<span class="sc">\{</span>\frac{p(\boldsymbol{\theta}\mid\boldsymbol{X})}{q(\boldsymbol{\theta};\phi)}\right<span class="sc">\}</span>d\boldsymbol{\theta} \tag{7.5.1}</span>
+<span id="cb5-536"><a href="#cb5-536" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-537"><a href="#cb5-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-538"><a href="#cb5-538" aria-hidden="true" tabindex="-1"></a>或者更确切地说寻求 $\phi^*$，使得</span>
+<span id="cb5-539"><a href="#cb5-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-540"><a href="#cb5-540" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-541"><a href="#cb5-541" aria-hidden="true" tabindex="-1"></a>\phi^* = \arg\min_{\phi\in\Phi} \text{KL}(q(\boldsymbol{\theta};\phi)\|p(\boldsymbol{\theta}\mid\boldsymbol{X}))</span>
+<span id="cb5-542"><a href="#cb5-542" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-543"><a href="#cb5-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-544"><a href="#cb5-544" aria-hidden="true" tabindex="-1"></a>直接最小化 KL 是困难的（这里 $\Phi$ 为 $\phi$ 的空间）。因此，等价地，人们试图最大化**证据下限**（evidence lower bound, ELBO）。ELBO 定义为：</span>
+<span id="cb5-545"><a href="#cb5-545" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-546"><a href="#cb5-546" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-547"><a href="#cb5-547" aria-hidden="true" tabindex="-1"></a>\text{ELBO}(\phi) = E_{q(\boldsymbol{\theta};\phi)}<span class="co">[</span><span class="ot">\log p(\boldsymbol{X}\mid\boldsymbol{\theta}) + \log p(\boldsymbol{\theta}) - \log q(\boldsymbol{\theta};\phi)</span><span class="co">]</span> = E_{q(\boldsymbol{\theta};\phi)}<span class="co">[</span><span class="ot">\log p(\boldsymbol{X},\boldsymbol{\theta}) - \log q(\boldsymbol{\theta};\phi)</span><span class="co">]</span> \tag{7.5.2}</span>
+<span id="cb5-548"><a href="#cb5-548" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-549"><a href="#cb5-549" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-550"><a href="#cb5-550" aria-hidden="true" tabindex="-1"></a>因此，问题归结为寻求 $\phi^*$，使得</span>
+<span id="cb5-551"><a href="#cb5-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-552"><a href="#cb5-552" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-553"><a href="#cb5-553" aria-hidden="true" tabindex="-1"></a>\phi^* = \arg\max_{\phi\in\Phi} \text{ELBO}(\phi)</span>
+<span id="cb5-554"><a href="#cb5-554" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-555"><a href="#cb5-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-556"><a href="#cb5-556" aria-hidden="true" tabindex="-1"></a>显然，当 $q(\boldsymbol{\theta};\phi)=p(\boldsymbol{\theta}\mid\boldsymbol{X})$ 时，式(7.5.1)或式(7.5.2)被最大化。当然，这并不是特别有帮助，但可以作为选择 $q$ 的一种参考。我们在近似分布中引入了额外的假定以使得推断可以操作。这里使用类似于 Jordan et al. (1999) 和 Bishop (2006) 所使用的分布形式。这里假定所谓的近似分布在参数之间的独立性，这种独立性对于真实后验分布可能并不存在。但除此之外没有任何其他假定。选择这种近似分布，也是因为它在应用于大量模型时已经被证明表现良好。Wang and Titterington (2004) 证明，在足够多的观测结果下，这种近似分布家族将正确地描述后验均值，而这对基于抽样的推断方法一般是不成立的。</span>
+<span id="cb5-557"><a href="#cb5-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-558"><a href="#cb5-558" aria-hidden="true" tabindex="-1"></a>我们首先将 $\boldsymbol{\theta}$ 划分为 $K$ 块：$\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_K)$，近似分布在参数之间独立意味着</span>
+<span id="cb5-559"><a href="#cb5-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-560"><a href="#cb5-560" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-561"><a href="#cb5-561" aria-hidden="true" tabindex="-1"></a>q(\boldsymbol{\theta}) = \prod_{k=1}^K q(\theta_k) \tag{7.5.3}</span>
+<span id="cb5-562"><a href="#cb5-562" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-563"><a href="#cb5-563" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-564"><a href="#cb5-564" aria-hidden="true" tabindex="-1"></a>变分算法将识别（而不是假定）构成分解分布的每个组成部分的特定参数族。类似于 EM 算法的迭代，我们的步骤为下面两步的迭代（直到收敛）：</span>
+<span id="cb5-565"><a href="#cb5-565" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-566"><a href="#cb5-566" aria-hidden="true" tabindex="-1"></a>**(1)** 假定有了第 $i$ 步的估计：$<span class="sc">\{</span>q^{(i)}(\theta_k)<span class="sc">\}</span>_{k=1}^K$</span>
+<span id="cb5-567"><a href="#cb5-567" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-568"><a href="#cb5-568" aria-hidden="true" tabindex="-1"></a>**(2)** 为更新第 $k$ 个因子（$k=1,2,\ldots,K$），定义：</span>
+<span id="cb5-569"><a href="#cb5-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-570"><a href="#cb5-570" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-571"><a href="#cb5-571" aria-hidden="true" tabindex="-1"></a>E_{j\neq k}<span class="co">[</span><span class="ot">\log p(\boldsymbol{\theta}\mid\boldsymbol{X})</span><span class="co">]</span> = \int \prod_{j\neq k}\log p(\boldsymbol{\theta},\boldsymbol{X})\,q^{(i)}(\theta_j)\,d\theta_j</span>
+<span id="cb5-572"><a href="#cb5-572" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-573"><a href="#cb5-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-574"><a href="#cb5-574" aria-hidden="true" tabindex="-1"></a>对 $k=1,2,\ldots,K$，令</span>
+<span id="cb5-575"><a href="#cb5-575" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-576"><a href="#cb5-576" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-577"><a href="#cb5-577" aria-hidden="true" tabindex="-1"></a>q^{(i+1)}(\theta_k) = \frac{\exp<span class="sc">\{</span>E_{j\neq k}<span class="co">[</span><span class="ot">\log p(\boldsymbol{\theta}\mid\boldsymbol{X})</span><span class="co">]</span><span class="sc">\}</span>}{\int \exp<span class="sc">\{</span>E_{j\neq k}<span class="co">[</span><span class="ot">\log p(\boldsymbol{\theta}\mid\boldsymbol{X})</span><span class="co">]</span><span class="sc">\}</span>\,d\theta_k}</span>
+<span id="cb5-578"><a href="#cb5-578" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-579"><a href="#cb5-579" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-580"><a href="#cb5-580" aria-hidden="true" tabindex="-1"></a>变分推断可能非常耗时，并且在某些情况下是不可行的。关于这部分的细节请参看 Blei et al. (2017)。</span>
+<span id="cb5-581"><a href="#cb5-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-582"><a href="#cb5-582" aria-hidden="true" tabindex="-1"></a>最大化 ELBO 的另一种方法是**自动微分变分推断**（automatic differentiation variational inference, ADVI）。这是一种基于梯度的方法，仍然使用迭代优化程序来获得 $\phi^*$。人们使用类似（随机）梯度下降的理念。这需要根据参数计算 ELBO 关于参数 $\phi$ 的导数。在复杂的模型中，这可能非常烦琐。在软件存在自动微分（AD）库的情况下，可以依靠库来准确计算导数。在 AD 库中，导数既不是以数字形式也不是以符号形式计算的。AD 依赖称为"对偶数"（dual numbers）的变量表示来有效地计算梯度。</span>
+<span id="cb5-583"><a href="#cb5-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-584"><a href="#cb5-584" aria-hidden="true" tabindex="-1"></a>首先假设所有模型参数都是连续的。在 ADVI 中，ELBO 被重写为</span>
+<span id="cb5-585"><a href="#cb5-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-586"><a href="#cb5-586" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-587"><a href="#cb5-587" aria-hidden="true" tabindex="-1"></a>\text{ELBO}(\phi) = E_{q(\boldsymbol{\zeta};\phi)}\left<span class="sc">\{</span>\log p<span class="co">[</span><span class="ot">\boldsymbol{X},T^{-1}(\boldsymbol{\zeta})</span><span class="co">]</span> + \log|\det J_{T^{-1}}(\boldsymbol{\zeta})| - \log q(\boldsymbol{\zeta};\phi)\right<span class="sc">\}</span></span>
+<span id="cb5-588"><a href="#cb5-588" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-589"><a href="#cb5-589" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-590"><a href="#cb5-590" aria-hidden="true" tabindex="-1"></a>这里的 $T$ 是一个把 $\boldsymbol{\theta}$ 转换到 $\boldsymbol{\zeta}$ 的函数，其值域 $\boldsymbol{\zeta}\in\mathbb{R}^{\dim(\boldsymbol{\theta})}$。因此，需要将数据和模型参数的对数联合密度与雅可比行列式的对数绝对值相加。因为变换后的模型参数 $\boldsymbol{\zeta}$ 的支撑在实轴，所以多元正态分布为一个合适的变分分布。</span>
+<span id="cb5-591"><a href="#cb5-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-592"><a href="#cb5-592" aria-hidden="true" tabindex="-1"></a>将多元正态作为变分分布允许我们使用蒙特卡罗估计在 ELBO 中计算期望及其梯度。也就是说，为估计 ELBO，可以从变分正态分布中抽样，并评估上述期望值内的表达式。</span>
+<span id="cb5-593"><a href="#cb5-593" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-594"><a href="#cb5-594" aria-hidden="true" tabindex="-1"></a>为了最大化 ELBO，需要 ELBO 相对于变分参数的梯度，即</span>
+<span id="cb5-595"><a href="#cb5-595" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-596"><a href="#cb5-596" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-597"><a href="#cb5-597" aria-hidden="true" tabindex="-1"></a>\nabla_\phi\text{ELBO}(\phi) = \nabla_\phi E_{q(\boldsymbol{\zeta};\phi)}\left<span class="sc">\{</span>\log p<span class="co">[</span><span class="ot">\boldsymbol{X},T^{-1}(\boldsymbol{\zeta})</span><span class="co">]</span> + \log|\det J_{T^{-1}}(\boldsymbol{\zeta})| - \log q(\boldsymbol{\zeta};\phi)\right<span class="sc">\}</span></span>
+<span id="cb5-598"><a href="#cb5-598" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-599"><a href="#cb5-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-600"><a href="#cb5-600" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-601"><a href="#cb5-601" aria-hidden="true" tabindex="-1"></a>\approx \log p<span class="co">[</span><span class="ot">\boldsymbol{X},T^{-1}(\tilde{\boldsymbol{\zeta}})</span><span class="co">]</span> + \log|\det J_{T^{-1}}(\tilde{\boldsymbol{\zeta}})| - \log q(\tilde{\boldsymbol{\zeta}};\phi)</span>
+<span id="cb5-602"><a href="#cb5-602" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-603"><a href="#cb5-603" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-604"><a href="#cb5-604" aria-hidden="true" tabindex="-1"></a>上面的近似是由蒙特卡罗积分得到的。这里的 $\tilde{\boldsymbol{\zeta}}=\boldsymbol{\mu}+z\boldsymbol{\sigma}$，$\boldsymbol{\mu}$ 和 $\boldsymbol{\sigma}$ 分别是变分的均值和标准差，而 $z$ 抽自（多元）标准正态分布。</span>
+<span id="cb5-605"><a href="#cb5-605" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-606"><a href="#cb5-606" aria-hidden="true" tabindex="-1"></a>剩下的就是进行某种梯度下降法以获得 $\phi$ 的解。注意，变量参数应首先转换为无约束空间，即在对数尺度上的标准差，并不需要雅可比行列式。</span>
+<span id="cb5-607"><a href="#cb5-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-608"><a href="#cb5-608" aria-hidden="true" tabindex="-1"></a>ADVI 可以在 PyMC3、Stan 以及一个名为 Edward 的新包中实现。关于 ADVI 的细节请参看 Kucukelbir et al. (2017)。</span>
+<span id="cb5-609"><a href="#cb5-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-610"><a href="#cb5-610" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="用人话总结一下变分推断（VI）在做什么"}</span>
+<span id="cb5-611"><a href="#cb5-611" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-612"><a href="#cb5-612" aria-hidden="true" tabindex="-1"></a>变分推断把"求后验"这件事，从一个**抽样问题**（MCMC那种：不断抽样本，抽够多了就逼近真实后验）变成了一个**优化问题**（找一个形状简单的分布 $q$，调它的参数，让它尽量长得像真实后验）。</span>
+<span id="cb5-613"><a href="#cb5-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-614"><a href="#cb5-614" aria-hidden="true" tabindex="-1"></a>代价是：$q$ 通常被限定得比较"老实"（比如假设各参数互相独立），真实后验可能没这么规矩，所以变分推断算出来的结果**往往会把不确定性估计得偏小**——这是它明摆着的短板，但换来的是比 MCMC 快得多的速度，在大数据集、复杂模型下 MCMC 跑不动的时候，变分推断经常是唯一能落地的选择。</span>
+<span id="cb5-615"><a href="#cb5-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-616"><a href="#cb5-616" aria-hidden="true" tabindex="-1"></a>**ADVI（自动微分变分推断）是这套方法里最实用的版本**——你不用自己手推每个参数怎么更新，PyMC3、Stan 这些工具会自动帮你算梯度、自动优化，这也是你之后做甲基化项目时最可能真正用上的一种工具，不是纯理论。</span>
+<span id="cb5-617"><a href="#cb5-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-618"><a href="#cb5-618" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-619"><a href="#cb5-619" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-620"><a href="#cb5-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-621"><a href="#cb5-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-622"><a href="#cb5-622" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待整理：Metropolis / Metropolis-Hastings / Gibbs / Hamiltonian Monte Carlo —— 都是 Q4 的不同实现，不改变 Q1-Q3。</span></span>
+<span id="cb5-623"><a href="#cb5-623" aria-hidden="true" tabindex="-1"></a><span class="fu"># 贝叶斯推断中的一些算法</span></span>
+<span id="cb5-624"><a href="#cb5-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-625"><a href="#cb5-625" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待整理：Metropolis / Metropolis-Hastings / Gibbs / Hamiltonian Monte Carlo —— 都是 Q4 的不同实现，不改变 Q1-Q3。</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>笔记基于吴喜之《贝叶斯数据分析》整理</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/07-mcmc-algorithms.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>本站由 Quarto 构建</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

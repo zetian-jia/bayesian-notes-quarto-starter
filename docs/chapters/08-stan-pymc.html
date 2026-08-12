@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; 概率编程：R/Stan 与 Python/PyMC – 贝叶斯数据分析笔记</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/10-lm-bayes.html" rel="next">
+<link href="../chapters/07-mcmc-algorithms.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07-mcmc-algorithms.html">第三部分：算法与概率编程</a></li><li class="breadcrumb-item"><a href="../chapters/08-stan-pymc.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">贝叶斯数据分析笔记</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-git"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">第一部分：基础篇</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">引言</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-basic-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">基本概念</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">第二部分：初等贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bernoulli.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">比例的推断：Bernoulli 试验</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-normal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">正态总体的情况</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">第三部分：算法与概率编程</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stan-pymc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">第四部分：更多的贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-lm-bayes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-bayes-net.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言"><span class="header-section-number">6.1</span> 8.1 引言</a></li>
+  <li><a href="#概率编程概述" id="toc-概率编程概述" class="nav-link" data-scroll-target="#概率编程概述"><span class="header-section-number">6.2</span> 8.2 概率编程概述</a>
+  <ul class="collapse">
+  <li><a href="#概率编程要点" id="toc-概率编程要点" class="nav-link" data-scroll-target="#概率编程要点"><span class="header-section-number">6.2.1</span> 8.2.1 概率编程要点</a></li>
+  <li><a href="#不收敛问题" id="toc-不收敛问题" class="nav-link" data-scroll-target="#不收敛问题"><span class="header-section-number">6.2.2</span> 不收敛问题</a></li>
+  <li><a href="#先验分布的选择从概率编程的角度" id="toc-先验分布的选择从概率编程的角度" class="nav-link" data-scroll-target="#先验分布的选择从概率编程的角度"><span class="header-section-number">6.2.3</span> 8.2.2 先验分布的选择——从概率编程的角度</a></li>
+  <li><a href="#对例8.1的数据运行-stan" id="toc-对例8.1的数据运行-stan" class="nav-link" data-scroll-target="#对例8.1的数据运行-stan"><span class="header-section-number">6.2.4</span> 8.4.3 对例8.1的数据运行 Stan</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/08-stan-pymc.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07-mcmc-algorithms.html">第三部分：算法与概率编程</a></li><li class="breadcrumb-item"><a href="../chapters/08-stan-pymc.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="引言" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="引言"><span class="header-section-number">6.1</span> 8.1 引言</h2>
+<p>贝叶斯统计理论上相对简单，最主要的度量是概率，特别是后验概率。其最耗费资源的地方在于，当无法得到分析结果时，仅用纸和笔是得不出结论的。在计算机时代，概率编程或贝叶斯编程的手段给研究者开拓了一个广阔的前景，人们可以实现以前可望而不可即的大量目标。</p>
+<p>Jaynes (2003) 认为，在具有不完整和不确定信息的情况下，概率可以被视为理性推理逻辑的一种替代和延伸，他发展了这一理论并提出了所谓的非物理”机器人”的概念，这是一种使概率推断自动化的推断引擎。</p>
+<p>如何设计推断的机器是人们长期争论的问题。一些人认为随机变量和概率计算或多或少是必需的工具（Ghahramani, 2015; Tenenbaum et al., 2011），基本工具是推断，他们的领域大致称为贝叶斯或概率机器学习（Bayesian or probabilistic machine learning），所使用的是概率编程语言；持有相反观点的则属于深度学习（LeCun et al., 2015; Goodfellow et al., 2016），他们的基本工具是（通常基于梯度的）优化，用于分类和回归。</p>
+<p>概率编程涉及开发语言以表示和处理推断问题。人工智能的深度学习、大数据回归方法的快速发展主要是由编程语言工具的出现引发的，这些工具可以把烦琐、麻烦的推导和为优化所做的梯度计算自动化。</p>
+<p>概率编程旨在构建和提供工具链，让概率机器学习支持监督、无监督和半监督的推断。如果没有这样的工具链，人们可能会因基于推断的人工智能系统方法的复杂性太高而对开拓深度学习方法望而却步。</p>
+<p>近年来，概率编程工具和技术改变了贝叶斯统计分析的执行方式。传统贝叶斯统计分析所需的大部分工作是迭代模型设计，其中每次迭代通常涉及针对当前模型的推断算法的令人痛苦的实现，自动推断可以显著降低迭代模型设计的成本，从而在更短的时间内获得更好的整体模型，并带来后续的好处。</p>
+<p>无法想象一个对贝叶斯统计的理论和应用感兴趣的工作者，在不懂概率编程/贝叶斯编程的状况下能够做出有意义的成就。本章通过一个著名例子来介绍概率编程，并初步介绍本书使用的两个贝叶斯编程软件：基于R平台的 Stan 和基于 Python 平台的 PyMC3。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="说人话精简版">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+说人话精简版
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这一章要讲的事情，一句话概括：<strong>以前贝叶斯统计卡在”算不出来”，现在有软件帮你算了</strong>。</p>
+<ul>
+<li><p>贝叶斯统计的<strong>公式</strong>从来不难（前几章学的那些，先验乘似然、贝叶斯定理），难的是把这些公式变成实际能跑出数字的代码——尤其是后验没有闭式解、要靠 MCMC/变分推断这类方法时，手推手算基本不现实。</p></li>
+<li><p><strong>概率编程语言</strong>（Stan、PyMC3 这些）解决的就是这个问题：只需要<strong>描述模型长什么样</strong>（Q1-Q4 里的 <span class="math inline">\(\theta\)</span>、似然、先验分别是什么），剩下的抽样、优化、算梯度这些脏活累活，软件自动帮你搞定。</p></li>
+<li><p>书里顺带提了一句<strong>贝叶斯学派 vs 深度学习</strong>的路线之争——贝叶斯这边靠”概率+推断”，深度学习那边靠”梯度+优化”，两条路子工具不同，但都在解决”怎么从数据里学到东西”这个共同问题。</p></li>
+<li><p><strong>这一章之后正式学 Stan 和 PyMC3</strong>——前七章教的是”怎么想清楚一个贝叶斯模型”（也就是自己那套 Q1-Q5 框架），这一章开始教”怎么把想清楚的模型，变成能跑的代码”。对甲基化 DMR 项目来说，这才是真正开始接近”能写进软件里”的部分。</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="概率编程概述" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="概率编程概述"><span class="header-section-number">6.2</span> 8.2 概率编程概述</h2>
+<section id="概率编程要点" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="概率编程要点"><span class="header-section-number">6.2.1</span> 8.2.1 概率编程要点</h3>
+<p>本书介绍两种贝叶斯编程语言，以 R 为平台的 Stan 和以 Python 为平台的 PyMC3。这两种语言仅仅借助 R 和 Python 工作，但语法独立于 R 和 Python。一般来说有以下几点：</p>
+<p><strong>贝叶斯建模</strong>：贝叶斯建模的核心问题是，给定数据，以及我们选择了对这些数据建模的概率模型之后，如何找到模型参数的后验分布。如第7章所介绍的，有一些很好的算法来解决这个问题，比如 MCMC 抽样、变分推断等。无论用 R/Stan 还是 Python/PyMC3，这些方法都需要做大量抽样和迭代，而且都是在 C++ 的编译环境下实现的。建议感兴趣的读者参考第7章的内容。</p>
+<p><strong>模型的公式化</strong>：需要考虑你的数据是如何生成的：是哪种机制产生的数据，并依此得到合理的模型公式。尽量避免使用相关变量，虽然一些更强大的抽样器（NUTS）可以应对后验相关的随机变量，但如果变量不相关，则每个变量的抽样都更容易。实际上这里所说的”变量不相关”条件标准很低。尽量避免使用离散的隐变量和离散参数，这是因为没有好方法对它们进行抽样（因为离散参数没有梯度），对于不用梯度的所谓的”朴素”抽样器，往往需要有指数级增长的样本数目来得到较好的结果。</p>
+<p><strong>分层模型</strong>：前面很多例子显示，贝叶斯模型大都是分层模型，层数越多，抽样越困难。</p>
+<p><strong>模型实施</strong>：贝叶斯模型中有两件事可能出错（这里不包括语法错误）而导致实施失败：</p>
+<ol type="1">
+<li>数据错误</li>
+<li>模型错误</li>
+</ol>
+<p>调试数据比调试模型要容易得多。因此，事先做探索性数据分析及数据清理是很有必要的。</p>
+<p><strong>MCMC 初始化和抽样</strong>：对于初学者来说，最好信赖软件的默认初始化和抽样设置。NUTS 是目前已知的最有效的 MCMC 抽样器。</p>
+<p><strong>MCMC 痕迹诊断</strong>：一般软件会给你提供各种抽样过程的图示、各种提示和警告，会显示发散链的总数和百分比。通常如果出现计算问题（主要是不收敛），极有可能你的模型是错误的。</p>
+</section>
+<section id="不收敛问题" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="不收敛问题"><span class="header-section-number">6.2.2</span> 不收敛问题</h3>
+<p>如果调整后有若干发散，可能需要增加目标接受（target_accept）概率或重新参数化。当抽样器处于曲率极高的区域会因不收敛而发生故障。如果发现链不同，则很可能有问题。软件有时会给出各种建议，但不一定都有效。如果所有软件给出的建议都失效，最好考虑重新参数化或重新指定模型。</p>
+<p><strong>一些常见警告</strong>：</p>
+<ul>
+<li><strong>关于不收敛的警告</strong>是最糟糕的警告——即使有一个链收敛，也说明结果不可靠</li>
+<li><strong>有效样本数量不够的警告</strong>：通常表明链中存在强烈的自相关，因此需要确保你使用像 NUTS 这样的高效抽样器。需要调整接受概率，使它足够大以确保良好的搜索，又足够小以不拒绝所有提议并被卡住</li>
+<li><strong>Gelman-Rubin 统计量太大的警告</strong>：说明抽样有些问题。Gelman-Rubin 统计量衡量各个链的相似程度，理想情况下应该接近1。增加（tune）参数可能会有所帮助</li>
+<li><strong>链达到最大树深度（maximum tree depth）的警告</strong>：应该增加最大树深度，增加目标接受概率或重新参数化。NUTS 对每次迭代期间评估的树的深度设置上限，达到最大允许树深度表示 NUTS 过早地撤出以避免过多的计算时间</li>
+</ul>
+<p><strong>模型重新参数化</strong>：可能会经常遇到警告要求重新参数化，我们很难说明具体问题，实际上直觉、统计知识和经验会有帮助。</p>
+<p><strong>模型诊断</strong>：</p>
+<ol type="1">
+<li>检查变量的配对图，来看两个随机变量是否相关，以帮助识别参数空间中任何麻烦的邻域</li>
+<li>查看你的后验分布（通过痕迹图、密度图等）</li>
+<li>从广义上讲，后验分布可能会受到不良几何形状的影响：
+<ul>
+<li><strong>高度相关的后验分布</strong>：这可能会导致发散（看起来不像”模糊的毛毛虫”）。这时，要么查看每对变量的联合图，要么查看所有变量的相关矩阵，尝试使用居中参数化，或以其他方式重新参数化，以消除这些相关性</li>
+<li><strong>形成”漏斗”的后验分布</strong>可能会导致不收敛，可尝试使用非中心参数化</li>
+<li><strong>长尾后验分布</strong>可能会引发关于超过最大树深度的警告。如果数据有长尾，则应使用长尾分布对其进行建模；如果数据没有长尾，那么模型可能没有设定好，可以试试更强信息的先验分布</li>
+</ul></li>
+<li>选择一小部分原始数据，并查看模型对该数据的确切作用，这可以发现一些问题的产生原因</li>
+<li>运行<strong>后验预测检查</strong>（posterior predictive check, PPC）：对后验分布抽样，将其重新拟合模型，并生成新的数据集。其目的是查看生成的数据集是否重现真实数据中你关心的模式。但后验预测分布与观测数据的匹配程度不大，后验预测分布表明在给定观测到的数据后重新测量时可预期什么数据，它是先验知识和观测数据的产物，而不仅仅是适合观测数据</li>
+</ol>
+</section>
+<section id="先验分布的选择从概率编程的角度" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="先验分布的选择从概率编程的角度"><span class="header-section-number">6.2.3</span> 8.2.2 先验分布的选择——从概率编程的角度</h3>
+<p>先验分布的选择是一种艺术。前面提到的诸如共轭先验分布、Jeffreys 先验分布等是数学上方便的先验分布。此外，计算机技术及贝叶斯编程（本书参看第三部分）使得人们可以使用更广泛的先验分布，但并不是任何先验分布都有意义。无论是数学上是否合理，还是先验分布的选择是否符合人们建模的目标，都是应该注意的问题。</p>
+<p>按包含的主观信息量，先验分布可以进行如下分类：</p>
+<ul>
+<li><strong>扁平先验分布</strong>：比如均匀分布，或者在实轴上的非恰当（积分为 <span class="math inline">\(\infty\)</span> 的）均匀分布</li>
+<li><strong>超模糊但恰当的先验分布</strong>：比如标准差很大的正态分布（诸如 <span class="math inline">\(N(0,10^8)\)</span>）</li>
+<li><strong>弱信息先验分布</strong>：比如标准差为10的正态分布</li>
+<li><strong>一般弱信息先验分布</strong>：比如标准正态分布</li>
+<li><strong>指明具体信息的先验分布</strong>：比如 <span class="math inline">\(N(-2.3,1.2)\)</span>（也可以表示为对具有某种标准分布变量的缩放）</li>
+</ul>
+<p>上述先验分布信息量多少的文字表述以及具体分布参数的数值，必须和具体问题及感兴趣的目标（包括量纲）结合才有意义。脱离实际抽象地讨论信息量多少是毫无意义的。</p>
+<p><strong>1. 先验分布参数的独立性</strong></p>
+<p>通常在设置模型时，我们希望参数在先验分布中是独立的，一方面是为了方便，另一方面是以这种方式设置模型更容易理解。此外，在贝叶斯编程时，不独立的参数可能会导致计算困难。</p>
+<p>在分层模型的计算中，可以使用后验预测核对来检查先验独立性。注意，在给定数据的情况下是后验的，但在研究跨组的参数分布的意义上它是先验的。即便模拟本身具有先验依赖性，也可以使用多变量模型，把依赖性归于诸如协方差矩阵之中。有时，可能需要重新参数化来保持参数的独立性。</p>
+<p><strong>2. 先验分布选择的一般原理</strong></p>
+<p>在贝叶斯计算的软件中有很多默认先验分布，这些先验分布或者限于共轭先验分布，或者具有封闭的数学形式，或者便于 Gibbs 抽样。实际上这并不重要。</p>
+<ul>
+<li>要注意，在贝叶斯计算中的不稳定性主要来源于后验分布的<strong>厚尾几何特性</strong></li>
+<li>如果按照诸如 Jeffreys 不变性原则、最大熵原则等来选择先验分布，在不熟悉其含义的情况下可能会陷入盲目性并造成误导</li>
+<li><strong>弱信息先验</strong>应该包含足够的信息来规范化，也就是说，要排除不合理的值域，但保持可能有意义的函数空间</li>
+<li>和稳健地包含可能相关的函数空间相比，采用弱信息先验分布而非完全信息先验分布导致的精度损失并不那么严重</li>
+<li>使用信息丰富的先验分布时，要明确每一个选择的具体意义</li>
+<li>为避免计算上陷入困境，除非边界意味着真正的约束，否则不要使用有限的均匀先验分布或更一般的硬约束分布。比如，可用正态分布 <span class="math inline">\(N(0.5,0.5)\)</span> 来代替 <span class="math inline">\(U(0,1)\)</span>；如果需要正值域时，不要用正值域的均匀分布。这时，或者不设先验分布（也可试着采用诸如指数分布那样的弱先验分布），或者用半正态、半柯西分布、半 <span class="math inline">\(t\)</span> 分布，或者（比如在 Stan 中）把值域限定在正实轴。超弱先验对于诊断很方便，它允许在贝叶斯计算中在不发生卡顿的情况下看到问题</li>
+<li>对于具有超级约束的先验分布，在贝叶斯计算中应该指定初始值</li>
+</ul>
+<p>由于实际问题中的数据千差万别，如何选择先验分布绝对不可能有一定之规，这需要对问题、数据和概率模型选择有较好的理解。自然，随着大量的数据分析而不断积累的经验会使得选择先验分布时更加顺手。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="说人话精简版">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+说人话精简版
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>先验独立性：设计模型时尽量让参数之间互相独立——不是为了数学上好看，是因为相关的参数会拖慢/搞乱抽样（回想你之前学的 Metropolis 算法，参数之间高度相关会让后验的几何形状变得难走，容易发散）。如果参数天生就相关，别硬拗成独立，用多变量模型把相关性明确地放进协方差矩阵里处理。</p>
+<p>先验怎么选，几条硬规矩：</p>
+<p>别迷信”数学上好看”的先验（Jeffreys、最大熵这些）——听着高级，但不懂原理乱用反而容易踩坑 弱信息先验是最推荐的默认选择：既不像扁平先验那样”什么都不管”，又不像强先验那样”把话说死”——留够让数据说话的空间，同时排除明显不合理的取值 最实用的一条：能不用”硬边界”（比如均匀分布 U(0,1)）就不用，改用”软边界”（比如正态分布压缩在合理范围附近）——因为硬边界一旦抽样器想探索边界外面一点点，就直接卡死报错；软边界即使数值稍微越界，也只是概率变得很小，不会让整个抽样过程崩溃</p>
+<p>一句话总结：选先验没有放之四海皆准的公式，靠的是你对具体问题的理解+经验积累——这也是为什么书里反复强调”结合实际问题谈信息量才有意义”，脱离场景空谈先验强弱是没有意义的。</p>
+</div>
+</div>
+<p>生成模拟数据</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 书中原代码需要读取 toy.txt,但该文件未提供下载渠道</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 这里改用模拟数据代替,数据结构(Y, N)与书中完全一致,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 不影响后续四种先验分布对比的学习效果</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>true_lambda <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n, <span class="at">rate =</span> true_lambda)   <span class="co"># 等价于书中 dat = scan("toy.txt")</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>toy_dat <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Y =</span> dat, <span class="at">N =</span> <span class="fu">length</span>(dat))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 写到当前工作目录下的 toy.txt</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># row.names=FALSE, col.names=FALSE, quote=FALSE 三个参数缺一不可,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 否则写出来的格式 scan() 读不回来(会报错)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># write.table(dat, file.path(getwd(), "toy.txt"),</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#             row.names = FALSE, col.names = FALSE, quote = FALSE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="对例8.1的数据运行-stan" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="对例8.1的数据运行-stan"><span class="header-section-number">6.2.4</span> 8.4.3 对例8.1的数据运行 Stan</h3>
+<p>首先输入数据，并且必须把数据转换成模型中所用名称的形式：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">scan</span>(<span class="st">"toy.txt"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>toy_data <span class="ot">=</span> <span class="fu">list</span>(<span class="at">Y=</span>dat, <span class="at">N=</span><span class="fu">length</span>(dat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 替代写法(自己生成等价数据,结构完全一致)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n, <span class="at">rate =</span> true_lambda)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dat = scan("toy.txt")</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>toy_data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Y =</span> dat, <span class="at">N =</span> <span class="fu">length</span>(dat))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(toy_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Y
+ [1] 1.68629946 1.93174242 2.97055159 2.69608897 2.33705797 3.21170469
+ [7] 2.99348574 3.14130509 0.06353549 1.19569938 4.33567949 1.01323146
+[13] 0.51911563 5.19378423 2.45805146 1.58136352 1.25856016 2.50928201
+[19] 1.17736928 2.25858007
+
+$N
+[1] 20</code></pre>
+</div>
+</div>
+<p>在运算中，我们将要用到两个数据变量：<code>Y</code> 和 <code>N</code>，它们在下面 Stan 程序中的名称必须和 <code>toy_data</code> 中的一致。</p>
+<section id="gamma-先验分布的程序" class="level4" data-number="6.2.4.1">
+<h4 data-number="6.2.4.1" class="anchored" data-anchor-id="gamma-先验分布的程序"><span class="header-section-number">6.2.4.1</span> 1. Gamma 先验分布的程序</h4>
+<p>程序一定要用 Stan 语言来撰写，该语言和 R 不一样。Stan 代码以字符串记录，并存在 R 中名为 <code>toy</code> 的对象之中：</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>toy <span class="ot">=</span> <span class="st">"data{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="st">  int N;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">  vector [N] Y;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">parameters{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">  real &lt;lower=0&gt; lambda;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">model{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">  lambda ~ gamma(1,1);</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">  Y ~ exponential(lambda);</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">generated quantities{</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">  real pred;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">  pred = exponential_rng(lambda);</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>这里把程序的字符串赋值于名为 <code>toy</code> 的对象。也可以把程序存入以 <code>.stan</code> 为扩展名的文件（比如 <code>toy.stan</code>）。</p>
+<p>关于程序中有几块，根据不同的需要可以有很多块，我们这里只有4块：</p>
+<ul>
+<li><strong><code>data{}</code></strong>：给出数据名字、性质（比如这里 <code>N</code> 是整数——<code>int</code>）和可能要说明的维数（如这里的 <code>Y</code> 是 <code>N</code> 维向量）；有时还要说明值域</li>
+<li><strong><code>parameters{}</code></strong>：给出后验分布并且求先验分布的参数，我们的模型只有一个大于0的实数参数 <code>lambda</code>：<code>"real &lt;lower=0&gt; lambda;"</code></li>
+<li><strong><code>model{}</code></strong>：一定要给参数及观测值以假定的先验分布</li>
+<li><strong><code>generated quantities{}</code></strong>：计算一些附加值，这里是由得到的 <code>lambda</code> 后验分布中做随机抽样产生的预测值</li>
+</ul>
+<p>每一个语句后面必须加分号（<code>;</code>）！在 Stan 代码中，注释放在 <code>//</code> 之后（或 <code>/*</code> 与 <code>*/</code> 之间），不能用 R 中的 <code>#</code>。</p>
+<p>然后调用 R 程序包 <code>rstan</code> 中的函数 <code>stan</code> 来进行 MCMC 抽样：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstan)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">=</span> <span class="fu">stan</span>(<span class="at">model_code =</span> toy, <span class="at">data =</span> toy_data,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">warmup=</span><span class="dv">1000</span>, <span class="at">iter=</span><span class="dv">2000</span>, <span class="at">chain=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>程序中表明，我们使用的模型是存在对象 <code>toy</code> 中的字符串，如果我们的模型在文件 <code>toy.stan</code> 中，则第一个选项应该为 <code>file="toy.stan"</code>；程序中指明数据为 <code>toy_data</code>；热身部分的抽样为1000次，总的迭代次数为2000次；最后指明抽取2个马尔可夫链。其默认的抽样方法为 NUTS。</p>
+<p>抽样的结果赋予了对象 <code>fit</code>，可以用代码 <code>print(fit)</code> 来得到汇总数字： 程序中表明，我们使用的模型是存在对象 <code>toy</code> 中的字符串，如果我们的模型在文件 <code>toy.stan</code> 中，则第一个选项应该为 <code>file="toy.stan"</code>；程序中指明数据为 <code>toy_data</code>；热身部分的抽样为1000次，总的迭代次数为2000次；最后指明抽取2个马尔可夫链。其默认的抽样方法为 NUTS。</p>
+<p>抽样的结果赋予了对象 <code>fit</code>，可以用代码 <code>print(fit)</code> 来得到汇总数字：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>使用下面的代码可以使抽样结果形成一个 <span class="math inline">\((2000\times3)\)</span> 矩阵，各列以名字显示其所代表的参数：“lambda”、“pred”、“lp__“。第二行代码是打印出参数 lambda 自相关函数的点图（见图8.4.1）。</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>chain <span class="ot">=</span> <span class="fu">as.matrix</span>(fit)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(chain[,<span class="st">"lambda"</span>], <span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>这里打印出来了许多抽样的细节。除了 <code>lambda</code> 和 <code>pred</code> 的汇总之外，还有 <code>lp__</code>（似然对数）。结果中的各种列（诸如均值、标准差、分位点等）都是不言自明的。</p>
+<p><strong>输出结果：</strong></p>
+<pre><code>&gt; print(fit)
+Inference for Stan model: dcf105d9b4589462a41bcf98df2aee32.
+2 chains, each with iter=2000; warmup=1000; thin=1;
+post-warmup draws per chain=1000, total post-warmup draws=2000.
+
+        mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat
+lambda  0.99    0.00 0.04  0.90  0.96  0.99  1.02  1.08   678    1
+pred    1.03    0.03 1.06  0.03  0.29  0.71  1.42  3.98  1789    1
+lp__ -504.96    0.03 0.71 -507.01 -505.10 -504.68 -504.50 -504.45 677  1
+
+Samples were drawn using NUTS(diag_e) at Thu Aug 22 09:35:02 2019.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at
+convergence, Rhat=1).</code></pre>
+<table class="caption-top table">
+<caption><code>fit</code> 输出结果各列含义</caption>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>列名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>lambda</code></td>
+<td>这就是模型参数 <span class="math inline">\(\theta\)</span>（在指数分布这道题里换了个符号，用希腊字母 <span class="math inline">\(\lambda\)</span> 表示，本质没变——对应 <span class="math inline">\(y\sim\text{Exponential}(\lambda)\)</span>）。</td>
+</tr>
+<tr class="even">
+<td><code>pred</code></td>
+<td>对应 Stan 代码里 <code>generated quantities</code> 那个模块：<strong>含义</strong>：每一次 MCMC 抽样得到一个 <span class="math inline">\(\lambda\)</span> 的候选值之后，Stan 顺手<strong>用这个 <span class="math inline">\(\lambda\)</span> 去模拟生成一个新的”假想数据点”</strong>，存进 <code>pred</code> 里。这就是<strong>后验预测检查（PPC）</strong>的具体实现方式——不是在测 <span class="math inline">\(\lambda\)</span> 本身，是在问：“如果 <span class="math inline">\(\lambda\)</span> 就是这个值，我预期未来会测到一个什么样的新数据？”</td>
+</tr>
+<tr class="odd">
+<td><code>mean</code></td>
+<td>后验均值——平方损失函数下的贝叶斯点估计</td>
+</tr>
+<tr class="even">
+<td><code>se_mean</code></td>
+<td>蒙特卡罗标准误，衡量”估计这个均值本身”的抽样误差，不是参数的不确定性</td>
+</tr>
+<tr class="odd">
+<td><code>sd</code></td>
+<td>后验分布的标准差，描述参数真实值本身的分散程度</td>
+</tr>
+<tr class="even">
+<td><code>2.5% / 97.5%</code></td>
+<td>合起来就是95%可信区间</td>
+</tr>
+<tr class="odd">
+<td><code>n_eff</code></td>
+<td>有效样本量，衡量这批相关的MCMC样本相当于多少个独立样本的信息量</td>
+</tr>
+<tr class="even">
+<td><code>Rhat</code></td>
+<td>收敛诊断指标（Gelman-Rubin统计量），理想值为1，多条链结果是否一致</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(\lambda\)</span> 是指数分布的<strong>速率参数</strong>——<span class="math inline">\(\lambda\)</span> 越大，事件之间的等待时间越短、分布衰减越快。跑 Stan 就是在求 <span class="math inline">\(\lambda\)</span> 的后验分布，输出表格里的 <code>lambda</code> 那一行，就是这个后验分布的汇总统计量（均值、标准差、可信区间……）。</p>
+<p><strong>为什么 <code>pred</code> 的不确定性比 <code>lambda</code> 大很多</strong></p>
+<p><code>lambda</code> 的不确定性只来自”对参数本身认识不够精确”（认知不确定性）；<code>pred</code> 的不确定性<strong>叠加了两层</strong>：既包含”参数本身不确定”，又包含”就算参数确定了，指数分布本身抽样出来的具体数值也是随机的”（随机不确定性，是数据生成过程自带的噪声，没法通过收集更多数据消除）。</p>
+<p>这也是为什么后面要专门画一张”预测值 <code>pred</code> 的密度图 vs 原始数据直方图”对比——检验模型模拟出来的假想数据，跟真实观测到的原始数据长得像不像。如果像，说明模型设定合理；如果差异很大，说明模型可能哪里没设对，这正是后验预测检查存在的意义。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="什么是自相关（Autocorrelation）">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+什么是自相关（Autocorrelation）
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>自相关</strong>问的是：一串数据里，<strong>某个位置的值，和它前面若干步的值，相不相似</strong>。</p>
+<p><code>chain[,"lambda"]</code> 是2000个 <span class="math inline">\(\lambda\)</span> 的抽样值按抽样顺序排成一列。自相关要检查的是：第100个抽样值，跟第99个、第98个……往前数，到底有多像。</p>
+<p><strong>为什么 MCMC 天生会有自相关</strong>：下一个状态是从”当前状态”出发、按转移概率走出来的（<span class="math inline">\(p(x^{(i)}\mid x^{(i-1)})\)</span>）。既然每一步都是”从上一步挪一小步”生成的，相邻的样本天然会有点像，这是马尔可夫链的结构性产物，不是抽样出了问题。</p>
+<p><strong><code>acf()</code> 在画什么</strong>：</p>
+<p><span class="math display">\[
+\text{ACF}(k) = \text{相隔 } k \text{ 步的两个样本，相关程度有多高}
+\]</span></p>
+<ul>
+<li>横轴 <code>Lag</code>：相隔多少步</li>
+<li>纵轴 <code>ACF</code>：相关系数，取值在 <span class="math inline">\(-1\)</span> 到 <span class="math inline">\(1\)</span> 之间</li>
+</ul>
+<p><strong>健康的链长什么样</strong>：lag=0 处永远是1，随着 lag 增大迅速下降、很快掉到接近0并保持晃动。下降越快，抽样效率越高；如果曲线迟迟不掉到0，说明链走得慢，有效信息量远小于抽样总数。</p>
+<p><strong>三者的逻辑链</strong>：</p>
+<p><span class="math display">\[
+\text{自相关强} \;\Rightarrow\; \text{有效样本数}(n\_eff)\text{ 变小} \;\Rightarrow\; \text{需要抽更多次才能获得同样精度的估计}
+\]</span></p>
+<p><code>acf</code> 图是图形诊断，<code>n_eff</code> 是数字诊断，两者反映的是同一件事：链的抽样效率。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="为什么 lambda 和 pred 的痕迹图差别这么大">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+为什么 lambda 和 pred 的痕迹图差别这么大
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>两条链都呈现”毛毛虫”形状（没有漂移趋势、没有卡住不动），说明<strong>两者各自都收敛良好</strong>——但波动幅度天差地别：</p>
+<p><strong><code>lambda</code> 的痕迹图</strong>：波动范围窄，因为它只反映一件事——“每一次抽样，模型认为 <span class="math inline">\(\lambda\)</span> 大概是多少”。这个不确定性纯粹来自<strong>对参数本身认识不够精确</strong>（数据量有限带来的认知不确定性）。</p>
+<p><strong><code>pred</code> 的痕迹图</strong>：波动范围宽得多，因为它叠加了两层随机性：</p>
+<p><span class="math display">\[
+\text{pred的波动} = \underbrace{\text{lambda本身在变}}_{\text{认知不确定性}} + \underbrace{\text{指数分布抽样自带的随机噪声}}_{\text{随机不确定性}}
+\]</span></p>
+<p>代码层面：<code>pred = exponential_rng(lambda)</code> 这一行，即使 <code>lambda</code> 固定不变，<code>exponential_rng()</code> 每次调用也会因为指数分布本身的随机性抽出完全不同的数字——这层随机性 <code>lambda</code> 自己没有，是 <code>pred</code> 独有的额外噪声。</p>
+<p><strong>一句话总结</strong>：<code>lambda</code> 的毛毛虫瘦，是因为它只测”我们有多确定这个参数”；<code>pred</code> 的毛毛虫胖，是因为它还额外测了”就算参数确定了，真实世界本身会有多大的随机波动”——这正是后验预测检查（PPC）要专门看 <code>pred</code> 而不是只看 <code>lambda</code> 的原因。</p>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>待整理：把前面几章的解析解模型，改用 Stan / PyMC 重新拟合一遍，验证结果一致。</p>
+</blockquote>
+
+
+<!-- -->
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/07-mcmc-algorithms.html" class="pagination-link" aria-label="贝叶斯推断中的一些算法">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/10-lm-bayes.html" class="pagination-link" aria-label="第 10 章 贝叶斯广义线性模型">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 概率编程：R/Stan 与 Python/PyMC</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.1 引言</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>贝叶斯统计理论上相对简单，最主要的度量是概率，特别是后验概率。其最耗费资源的地方在于，当无法得到分析结果时，仅用纸和笔是得不出结论的。在计算机时代，概率编程或贝叶斯编程的手段给研究者开拓了一个广阔的前景，人们可以实现以前可望而不可即的大量目标。</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>Jaynes (2003) 认为，在具有不完整和不确定信息的情况下，概率可以被视为理性推理逻辑的一种替代和延伸，他发展了这一理论并提出了所谓的非物理"机器人"的概念，这是一种使概率推断自动化的推断引擎。</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>如何设计推断的机器是人们长期争论的问题。一些人认为随机变量和概率计算或多或少是必需的工具（Ghahramani, 2015; Tenenbaum et al., 2011），基本工具是推断，他们的领域大致称为贝叶斯或概率机器学习（Bayesian or probabilistic machine learning），所使用的是概率编程语言；持有相反观点的则属于深度学习（LeCun et al., 2015; Goodfellow et al., 2016），他们的基本工具是（通常基于梯度的）优化，用于分类和回归。</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>概率编程涉及开发语言以表示和处理推断问题。人工智能的深度学习、大数据回归方法的快速发展主要是由编程语言工具的出现引发的，这些工具可以把烦琐、麻烦的推导和为优化所做的梯度计算自动化。</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>概率编程旨在构建和提供工具链，让概率机器学习支持监督、无监督和半监督的推断。如果没有这样的工具链，人们可能会因基于推断的人工智能系统方法的复杂性太高而对开拓深度学习方法望而却步。</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>近年来，概率编程工具和技术改变了贝叶斯统计分析的执行方式。传统贝叶斯统计分析所需的大部分工作是迭代模型设计，其中每次迭代通常涉及针对当前模型的推断算法的令人痛苦的实现，自动推断可以显著降低迭代模型设计的成本，从而在更短的时间内获得更好的整体模型，并带来后续的好处。</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>无法想象一个对贝叶斯统计的理论和应用感兴趣的工作者，在不懂概率编程/贝叶斯编程的状况下能够做出有意义的成就。本章通过一个著名例子来介绍概率编程，并初步介绍本书使用的两个贝叶斯编程软件：基于R平台的 Stan 和基于 Python 平台的 PyMC3。</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="说人话精简版"}</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>这一章要讲的事情，一句话概括：**以前贝叶斯统计卡在"算不出来"，现在有软件帮你算了**。</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>贝叶斯统计的**公式**从来不难（前几章学的那些，先验乘似然、贝叶斯定理），难的是把这些公式变成实际能跑出数字的代码——尤其是后验没有闭式解、要靠 MCMC/变分推断这类方法时，手推手算基本不现实。</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**概率编程语言**（Stan、PyMC3 这些）解决的就是这个问题：只需要**描述模型长什么样**（Q1-Q4 里的 $\theta$、似然、先验分别是什么），剩下的抽样、优化、算梯度这些脏活累活，软件自动帮你搞定。</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>书里顺带提了一句**贝叶斯学派 vs 深度学习**的路线之争——贝叶斯这边靠"概率+推断"，深度学习那边靠"梯度+优化"，两条路子工具不同，但都在解决"怎么从数据里学到东西"这个共同问题。</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**这一章之后正式学 Stan 和 PyMC3**——前七章教的是"怎么想清楚一个贝叶斯模型"（也就是自己那套 Q1-Q5 框架），这一章开始教"怎么把想清楚的模型，变成能跑的代码"。对甲基化 DMR 项目来说，这才是真正开始接近"能写进软件里"的部分。</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.2 概率编程概述</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.1 概率编程要点</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>本书介绍两种贝叶斯编程语言，以 R 为平台的 Stan 和以 Python 为平台的 PyMC3。这两种语言仅仅借助 R 和 Python 工作，但语法独立于 R 和 Python。一般来说有以下几点：</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>**贝叶斯建模**：贝叶斯建模的核心问题是，给定数据，以及我们选择了对这些数据建模的概率模型之后，如何找到模型参数的后验分布。如第7章所介绍的，有一些很好的算法来解决这个问题，比如 MCMC 抽样、变分推断等。无论用 R/Stan 还是 Python/PyMC3，这些方法都需要做大量抽样和迭代，而且都是在 C++ 的编译环境下实现的。建议感兴趣的读者参考第7章的内容。</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>**模型的公式化**：需要考虑你的数据是如何生成的：是哪种机制产生的数据，并依此得到合理的模型公式。尽量避免使用相关变量，虽然一些更强大的抽样器（NUTS）可以应对后验相关的随机变量，但如果变量不相关，则每个变量的抽样都更容易。实际上这里所说的"变量不相关"条件标准很低。尽量避免使用离散的隐变量和离散参数，这是因为没有好方法对它们进行抽样（因为离散参数没有梯度），对于不用梯度的所谓的"朴素"抽样器，往往需要有指数级增长的样本数目来得到较好的结果。</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>**分层模型**：前面很多例子显示，贝叶斯模型大都是分层模型，层数越多，抽样越困难。</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>**模型实施**：贝叶斯模型中有两件事可能出错（这里不包括语法错误）而导致实施失败：</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>数据错误</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>模型错误</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>调试数据比调试模型要容易得多。因此，事先做探索性数据分析及数据清理是很有必要的。</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>**MCMC 初始化和抽样**：对于初学者来说，最好信赖软件的默认初始化和抽样设置。NUTS 是目前已知的最有效的 MCMC 抽样器。</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>**MCMC 痕迹诊断**：一般软件会给你提供各种抽样过程的图示、各种提示和警告，会显示发散链的总数和百分比。通常如果出现计算问题（主要是不收敛），极有可能你的模型是错误的。</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="fu">### 不收敛问题</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>如果调整后有若干发散，可能需要增加目标接受（target_accept）概率或重新参数化。当抽样器处于曲率极高的区域会因不收敛而发生故障。如果发现链不同，则很可能有问题。软件有时会给出各种建议，但不一定都有效。如果所有软件给出的建议都失效，最好考虑重新参数化或重新指定模型。</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>**一些常见警告**：</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**关于不收敛的警告**是最糟糕的警告——即使有一个链收敛，也说明结果不可靠</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**有效样本数量不够的警告**：通常表明链中存在强烈的自相关，因此需要确保你使用像 NUTS 这样的高效抽样器。需要调整接受概率，使它足够大以确保良好的搜索，又足够小以不拒绝所有提议并被卡住</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Gelman-Rubin 统计量太大的警告**：说明抽样有些问题。Gelman-Rubin 统计量衡量各个链的相似程度，理想情况下应该接近1。增加（tune）参数可能会有所帮助</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**链达到最大树深度（maximum tree depth）的警告**：应该增加最大树深度，增加目标接受概率或重新参数化。NUTS 对每次迭代期间评估的树的深度设置上限，达到最大允许树深度表示 NUTS 过早地撤出以避免过多的计算时间</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>**模型重新参数化**：可能会经常遇到警告要求重新参数化，我们很难说明具体问题，实际上直觉、统计知识和经验会有帮助。</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>**模型诊断**：</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>检查变量的配对图，来看两个随机变量是否相关，以帮助识别参数空间中任何麻烦的邻域</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>查看你的后验分布（通过痕迹图、密度图等）</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>从广义上讲，后验分布可能会受到不良几何形状的影响：</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**高度相关的后验分布**：这可能会导致发散（看起来不像"模糊的毛毛虫"）。这时，要么查看每对变量的联合图，要么查看所有变量的相关矩阵，尝试使用居中参数化，或以其他方式重新参数化，以消除这些相关性</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**形成"漏斗"的后验分布**可能会导致不收敛，可尝试使用非中心参数化</span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**长尾后验分布**可能会引发关于超过最大树深度的警告。如果数据有长尾，则应使用长尾分布对其进行建模；如果数据没有长尾，那么模型可能没有设定好，可以试试更强信息的先验分布</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>选择一小部分原始数据，并查看模型对该数据的确切作用，这可以发现一些问题的产生原因</span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>运行**后验预测检查**（posterior predictive check, PPC）：对后验分布抽样，将其重新拟合模型，并生成新的数据集。其目的是查看生成的数据集是否重现真实数据中你关心的模式。但后验预测分布与观测数据的匹配程度不大，后验预测分布表明在给定观测到的数据后重新测量时可预期什么数据，它是先验知识和观测数据的产物，而不仅仅是适合观测数据</span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.2 先验分布的选择——从概率编程的角度</span></span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>先验分布的选择是一种艺术。前面提到的诸如共轭先验分布、Jeffreys 先验分布等是数学上方便的先验分布。此外，计算机技术及贝叶斯编程（本书参看第三部分）使得人们可以使用更广泛的先验分布，但并不是任何先验分布都有意义。无论是数学上是否合理，还是先验分布的选择是否符合人们建模的目标，都是应该注意的问题。</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>按包含的主观信息量，先验分布可以进行如下分类：</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**扁平先验分布**：比如均匀分布，或者在实轴上的非恰当（积分为 $\infty$ 的）均匀分布</span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**超模糊但恰当的先验分布**：比如标准差很大的正态分布（诸如 $N(0,10^8)$）</span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**弱信息先验分布**：比如标准差为10的正态分布</span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**一般弱信息先验分布**：比如标准正态分布</span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**指明具体信息的先验分布**：比如 $N(-2.3,1.2)$（也可以表示为对具有某种标准分布变量的缩放）</span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>上述先验分布信息量多少的文字表述以及具体分布参数的数值，必须和具体问题及感兴趣的目标（包括量纲）结合才有意义。脱离实际抽象地讨论信息量多少是毫无意义的。</span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>**1. 先验分布参数的独立性**</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>通常在设置模型时，我们希望参数在先验分布中是独立的，一方面是为了方便，另一方面是以这种方式设置模型更容易理解。此外，在贝叶斯编程时，不独立的参数可能会导致计算困难。</span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>在分层模型的计算中，可以使用后验预测核对来检查先验独立性。注意，在给定数据的情况下是后验的，但在研究跨组的参数分布的意义上它是先验的。即便模拟本身具有先验依赖性，也可以使用多变量模型，把依赖性归于诸如协方差矩阵之中。有时，可能需要重新参数化来保持参数的独立性。</span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>**2. 先验分布选择的一般原理**</span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>在贝叶斯计算的软件中有很多默认先验分布，这些先验分布或者限于共轭先验分布，或者具有封闭的数学形式，或者便于 Gibbs 抽样。实际上这并不重要。</span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>要注意，在贝叶斯计算中的不稳定性主要来源于后验分布的**厚尾几何特性**</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>如果按照诸如 Jeffreys 不变性原则、最大熵原则等来选择先验分布，在不熟悉其含义的情况下可能会陷入盲目性并造成误导</span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**弱信息先验**应该包含足够的信息来规范化，也就是说，要排除不合理的值域，但保持可能有意义的函数空间</span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>和稳健地包含可能相关的函数空间相比，采用弱信息先验分布而非完全信息先验分布导致的精度损失并不那么严重</span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>使用信息丰富的先验分布时，要明确每一个选择的具体意义</span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>为避免计算上陷入困境，除非边界意味着真正的约束，否则不要使用有限的均匀先验分布或更一般的硬约束分布。比如，可用正态分布 $N(0.5,0.5)$ 来代替 $U(0,1)$；如果需要正值域时，不要用正值域的均匀分布。这时，或者不设先验分布（也可试着采用诸如指数分布那样的弱先验分布），或者用半正态、半柯西分布、半 $t$ 分布，或者（比如在 Stan 中）把值域限定在正实轴。超弱先验对于诊断很方便，它允许在贝叶斯计算中在不发生卡顿的情况下看到问题</span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>对于具有超级约束的先验分布，在贝叶斯计算中应该指定初始值</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>由于实际问题中的数据千差万别，如何选择先验分布绝对不可能有一定之规，这需要对问题、数据和概率模型选择有较好的理解。自然，随着大量的数据分析而不断积累的经验会使得选择先验分布时更加顺手。</span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="说人话精简版"}</span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>先验独立性：设计模型时尽量让参数之间互相独立——不是为了数学上好看，是因为相关的参数会拖慢/搞乱抽样（回想你之前学的 Metropolis 算法，参数之间高度相关会让后验的几何形状变得难走，容易发散）。如果参数天生就相关，别硬拗成独立，用多变量模型把相关性明确地放进协方差矩阵里处理。</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>先验怎么选，几条硬规矩：</span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>别迷信"数学上好看"的先验（Jeffreys、最大熵这些）——听着高级，但不懂原理乱用反而容易踩坑</span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>弱信息先验是最推荐的默认选择：既不像扁平先验那样"什么都不管"，又不像强先验那样"把话说死"——留够让数据说话的空间，同时排除明显不合理的取值</span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>最实用的一条：能不用"硬边界"（比如均匀分布 U(0,1)）就不用，改用"软边界"（比如正态分布压缩在合理范围附近）——因为硬边界一旦抽样器想探索边界外面一点点，就直接卡死报错；软边界即使数值稍微越界，也只是概率变得很小，不会让整个抽样过程崩溃</span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>一句话总结：选先验没有放之四海皆准的公式，靠的是你对具体问题的理解+经验积累——这也是为什么书里反复强调"结合实际问题谈信息量才有意义"，脱离场景空谈先验强弱是没有意义的。</span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a>生成模拟数据</span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sim-toy-data</span></span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a><span class="co"># 书中原代码需要读取 toy.txt,但该文件未提供下载渠道</span></span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a><span class="co"># 这里改用模拟数据代替,数据结构(Y, N)与书中完全一致,</span></span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a><span class="co"># 不影响后续四种先验分布对比的学习效果</span></span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>true_lambda <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n, <span class="at">rate =</span> true_lambda)   <span class="co"># 等价于书中 dat = scan("toy.txt")</span></span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>toy_dat <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Y =</span> dat, <span class="at">N =</span> <span class="fu">length</span>(dat))</span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="co"># 写到当前工作目录下的 toy.txt</span></span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a><span class="co"># row.names=FALSE, col.names=FALSE, quote=FALSE 三个参数缺一不可,</span></span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a><span class="co"># 否则写出来的格式 scan() 读不回来(会报错)</span></span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a><span class="co"># write.table(dat, file.path(getwd(), "toy.txt"),</span></span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a><span class="co">#             row.names = FALSE, col.names = FALSE, quote = FALSE)</span></span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.4.3 对例8.1的数据运行 Stan</span></span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>首先输入数据，并且必须把数据转换成模型中所用名称的形式：</span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">scan</span>(<span class="st">"toy.txt"</span>)</span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a>toy_data <span class="ot">=</span> <span class="fu">list</span>(<span class="at">Y=</span>dat, <span class="at">N=</span><span class="fu">length</span>(dat))</span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a><span class="co"># 替代写法(自己生成等价数据,结构完全一致)</span></span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n, <span class="at">rate =</span> true_lambda)</span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a><span class="co"># dat = scan("toy.txt")</span></span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a>toy_data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Y =</span> dat, <span class="at">N =</span> <span class="fu">length</span>(dat))</span>
+<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(toy_data)</span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a>在运算中，我们将要用到两个数据变量：<span class="in">`Y`</span> 和 <span class="in">`N`</span>，它们在下面 Stan 程序中的名称必须和 <span class="in">`toy_data`</span> 中的一致。</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Gamma 先验分布的程序</span></span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a>程序一定要用 Stan 语言来撰写，该语言和 R 不一样。Stan 代码以字符串记录，并存在 R 中名为 <span class="in">`toy`</span> 的对象之中：</span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a>toy <span class="ot">=</span> <span class="st">"data{</span></span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a><span class="st">  int N;</span></span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a><span class="st">  vector [N] Y;</span></span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a><span class="st">parameters{</span></span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a><span class="st">  real &lt;lower=0&gt; lambda;</span></span>
+<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a><span class="st">model{</span></span>
+<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a><span class="st">  lambda ~ gamma(1,1);</span></span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a><span class="st">  Y ~ exponential(lambda);</span></span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a><span class="st">generated quantities{</span></span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a><span class="st">  real pred;</span></span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a><span class="st">  pred = exponential_rng(lambda);</span></span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a>这里把程序的字符串赋值于名为 <span class="in">`toy`</span> 的对象。也可以把程序存入以 <span class="in">`.stan`</span> 为扩展名的文件（比如 <span class="in">`toy.stan`</span>）。</span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a>关于程序中有几块，根据不同的需要可以有很多块，我们这里只有4块：</span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`data{}`**：给出数据名字、性质（比如这里 <span class="in">`N`</span> 是整数——<span class="in">`int`</span>）和可能要说明的维数（如这里的 <span class="in">`Y`</span> 是 <span class="in">`N`</span> 维向量）；有时还要说明值域</span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`parameters{}`**：给出后验分布并且求先验分布的参数，我们的模型只有一个大于0的实数参数 <span class="in">`lambda`</span>：<span class="in">`"real &lt;lower=0&gt; lambda;"`</span></span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`model{}`**：一定要给参数及观测值以假定的先验分布</span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`generated quantities{}`**：计算一些附加值，这里是由得到的 <span class="in">`lambda`</span> 后验分布中做随机抽样产生的预测值</span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>每一个语句后面必须加分号（<span class="in">`;`</span>）！在 Stan 代码中，注释放在 <span class="in">`//`</span> 之后（或 <span class="in">`/*`</span> 与 <span class="in">`*/`</span> 之间），不能用 R 中的 <span class="in">`#`</span>。</span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a>然后调用 R 程序包 <span class="in">`rstan`</span> 中的函数 <span class="in">`stan`</span> 来进行 MCMC 抽样：</span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstan)</span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">=</span> <span class="fu">stan</span>(<span class="at">model_code =</span> toy, <span class="at">data =</span> toy_data,</span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a>           <span class="at">warmup=</span><span class="dv">1000</span>, <span class="at">iter=</span><span class="dv">2000</span>, <span class="at">chain=</span><span class="dv">2</span>)</span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a>程序中表明，我们使用的模型是存在对象 <span class="in">`toy`</span> 中的字符串，如果我们的模型在文件 <span class="in">`toy.stan`</span> 中，则第一个选项应该为 <span class="in">`file="toy.stan"`</span>；程序中指明数据为 <span class="in">`toy_data`</span>；热身部分的抽样为1000次，总的迭代次数为2000次；最后指明抽取2个马尔可夫链。其默认的抽样方法为 NUTS。</span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a>抽样的结果赋予了对象 <span class="in">`fit`</span>，可以用代码 <span class="in">`print(fit)`</span> 来得到汇总数字：</span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a>程序中表明，我们使用的模型是存在对象 <span class="in">`toy`</span> 中的字符串，如果我们的模型在文件 <span class="in">`toy.stan`</span> 中，则第一个选项应该为 <span class="in">`file="toy.stan"`</span>；程序中指明数据为 <span class="in">`toy_data`</span>；热身部分的抽样为1000次，总的迭代次数为2000次；最后指明抽取2个马尔可夫链。其默认的抽样方法为 NUTS。</span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a>抽样的结果赋予了对象 <span class="in">`fit`</span>，可以用代码 <span class="in">`print(fit)`</span> 来得到汇总数字：</span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit)</span>
+<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a>使用下面的代码可以使抽样结果形成一个 $(2000\times3)$ 矩阵，各列以名字显示其所代表的参数："lambda"、"pred"、"lp__"。第二行代码是打印出参数 lambda 自相关函数的点图（见图8.4.1）。</span>
+<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a>chain <span class="ot">=</span> <span class="fu">as.matrix</span>(fit)</span>
+<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(chain[,<span class="st">"lambda"</span>], <span class="dv">500</span>)</span>
+<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-245"><a href="#cb10-245" aria-hidden="true" tabindex="-1"></a>这里打印出来了许多抽样的细节。除了 <span class="in">`lambda`</span> 和 <span class="in">`pred`</span> 的汇总之外，还有 <span class="in">`lp__`</span>（似然对数）。结果中的各种列（诸如均值、标准差、分位点等）都是不言自明的。</span>
+<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a>**输出结果：**</span>
+<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a><span class="in">&gt; print(fit)</span></span>
+<span id="cb10-251"><a href="#cb10-251" aria-hidden="true" tabindex="-1"></a><span class="in">Inference for Stan model: dcf105d9b4589462a41bcf98df2aee32.</span></span>
+<span id="cb10-252"><a href="#cb10-252" aria-hidden="true" tabindex="-1"></a><span class="in">2 chains, each with iter=2000; warmup=1000; thin=1;</span></span>
+<span id="cb10-253"><a href="#cb10-253" aria-hidden="true" tabindex="-1"></a><span class="in">post-warmup draws per chain=1000, total post-warmup draws=2000.</span></span>
+<span id="cb10-254"><a href="#cb10-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a><span class="in">        mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat</span></span>
+<span id="cb10-256"><a href="#cb10-256" aria-hidden="true" tabindex="-1"></a><span class="in">lambda  0.99    0.00 0.04  0.90  0.96  0.99  1.02  1.08   678    1</span></span>
+<span id="cb10-257"><a href="#cb10-257" aria-hidden="true" tabindex="-1"></a><span class="in">pred    1.03    0.03 1.06  0.03  0.29  0.71  1.42  3.98  1789    1</span></span>
+<span id="cb10-258"><a href="#cb10-258" aria-hidden="true" tabindex="-1"></a><span class="in">lp__ -504.96    0.03 0.71 -507.01 -505.10 -504.68 -504.50 -504.45 677  1</span></span>
+<span id="cb10-259"><a href="#cb10-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-260"><a href="#cb10-260" aria-hidden="true" tabindex="-1"></a><span class="in">Samples were drawn using NUTS(diag_e) at Thu Aug 22 09:35:02 2019.</span></span>
+<span id="cb10-261"><a href="#cb10-261" aria-hidden="true" tabindex="-1"></a><span class="in">For each parameter, n_eff is a crude measure of effective sample size,</span></span>
+<span id="cb10-262"><a href="#cb10-262" aria-hidden="true" tabindex="-1"></a><span class="in">and Rhat is the potential scale reduction factor on split chains (at</span></span>
+<span id="cb10-263"><a href="#cb10-263" aria-hidden="true" tabindex="-1"></a><span class="in">convergence, Rhat=1).</span></span>
+<span id="cb10-264"><a href="#cb10-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-265"><a href="#cb10-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-266"><a href="#cb10-266" aria-hidden="true" tabindex="-1"></a>| 列名 | 含义 |</span>
+<span id="cb10-267"><a href="#cb10-267" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb10-268"><a href="#cb10-268" aria-hidden="true" tabindex="-1"></a>|<span class="in">`lambda`</span>|这就是模型参数 $\theta$（在指数分布这道题里换了个符号，用希腊字母 $\lambda$ 表示，本质没变——对应 $y\sim\text{Exponential}(\lambda)$）。|</span>
+<span id="cb10-269"><a href="#cb10-269" aria-hidden="true" tabindex="-1"></a>|<span class="in">`pred`</span> |对应 Stan 代码里 <span class="in">`generated quantities`</span> 那个模块：**含义**：每一次 MCMC 抽样得到一个 $\lambda$ 的候选值之后，Stan 顺手**用这个 $\lambda$ 去模拟生成一个新的"假想数据点"**，存进 `pred` 里。这就是**后验预测检查（PPC）**的具体实现方式——不是在测 $\lambda$ 本身，是在问："如果 $\lambda$ 就是这个值，我预期未来会测到一个什么样的新数据？"|</span>
+<span id="cb10-270"><a href="#cb10-270" aria-hidden="true" tabindex="-1"></a>| <span class="in">`mean`</span> | 后验均值——平方损失函数下的贝叶斯点估计 |</span>
+<span id="cb10-271"><a href="#cb10-271" aria-hidden="true" tabindex="-1"></a>| <span class="in">`se_mean`</span> | 蒙特卡罗标准误，衡量"估计这个均值本身"的抽样误差，不是参数的不确定性 |</span>
+<span id="cb10-272"><a href="#cb10-272" aria-hidden="true" tabindex="-1"></a>| <span class="in">`sd`</span> | 后验分布的标准差，描述参数真实值本身的分散程度 |</span>
+<span id="cb10-273"><a href="#cb10-273" aria-hidden="true" tabindex="-1"></a>| <span class="in">`2.5% / 97.5%`</span> | 合起来就是95%可信区间 |</span>
+<span id="cb10-274"><a href="#cb10-274" aria-hidden="true" tabindex="-1"></a>| <span class="in">`n_eff`</span> | 有效样本量，衡量这批相关的MCMC样本相当于多少个独立样本的信息量 |</span>
+<span id="cb10-275"><a href="#cb10-275" aria-hidden="true" tabindex="-1"></a>| <span class="in">`Rhat`</span> | 收敛诊断指标（Gelman-Rubin统计量），理想值为1，多条链结果是否一致 |</span>
+<span id="cb10-276"><a href="#cb10-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-277"><a href="#cb10-277" aria-hidden="true" tabindex="-1"></a>: <span class="in">`fit`</span> 输出结果各列含义 {tbl-colwidths="<span class="co">[</span><span class="ot">15,85</span><span class="co">]</span>"}</span>
+<span id="cb10-278"><a href="#cb10-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-279"><a href="#cb10-279" aria-hidden="true" tabindex="-1"></a>$\lambda$ 是指数分布的**速率参数**——$\lambda$ 越大，事件之间的等待时间越短、分布衰减越快。跑 Stan 就是在求 $\lambda$ 的后验分布，输出表格里的 <span class="in">`lambda`</span> 那一行，就是这个后验分布的汇总统计量（均值、标准差、可信区间……）。</span>
+<span id="cb10-280"><a href="#cb10-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-281"><a href="#cb10-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-282"><a href="#cb10-282" aria-hidden="true" tabindex="-1"></a>**为什么 `pred` 的不确定性比 `lambda` 大很多**</span>
+<span id="cb10-283"><a href="#cb10-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-284"><a href="#cb10-284" aria-hidden="true" tabindex="-1"></a><span class="in">`lambda`</span> 的不确定性只来自"对参数本身认识不够精确"（认知不确定性）；<span class="in">`pred`</span> 的不确定性**叠加了两层**：既包含"参数本身不确定"，又包含"就算参数确定了，指数分布本身抽样出来的具体数值也是随机的"（随机不确定性，是数据生成过程自带的噪声，没法通过收集更多数据消除）。</span>
+<span id="cb10-285"><a href="#cb10-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-286"><a href="#cb10-286" aria-hidden="true" tabindex="-1"></a>这也是为什么后面要专门画一张"预测值 <span class="in">`pred`</span> 的密度图 vs 原始数据直方图"对比——检验模型模拟出来的假想数据，跟真实观测到的原始数据长得像不像。如果像，说明模型设定合理；如果差异很大，说明模型可能哪里没设对，这正是后验预测检查存在的意义。</span>
+<span id="cb10-287"><a href="#cb10-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-288"><a href="#cb10-288" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="什么是自相关（Autocorrelation）"}</span>
+<span id="cb10-289"><a href="#cb10-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-290"><a href="#cb10-290" aria-hidden="true" tabindex="-1"></a>**自相关**问的是：一串数据里，**某个位置的值，和它前面若干步的值，相不相似**。</span>
+<span id="cb10-291"><a href="#cb10-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-292"><a href="#cb10-292" aria-hidden="true" tabindex="-1"></a><span class="in">`chain[,"lambda"]`</span> 是2000个 $\lambda$ 的抽样值按抽样顺序排成一列。自相关要检查的是：第100个抽样值，跟第99个、第98个……往前数，到底有多像。</span>
+<span id="cb10-293"><a href="#cb10-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-294"><a href="#cb10-294" aria-hidden="true" tabindex="-1"></a>**为什么 MCMC 天生会有自相关**：下一个状态是从"当前状态"出发、按转移概率走出来的（$p(x^{(i)}\mid x^{(i-1)})$）。既然每一步都是"从上一步挪一小步"生成的，相邻的样本天然会有点像，这是马尔可夫链的结构性产物，不是抽样出了问题。</span>
+<span id="cb10-295"><a href="#cb10-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-296"><a href="#cb10-296" aria-hidden="true" tabindex="-1"></a>**`acf()` 在画什么**：</span>
+<span id="cb10-297"><a href="#cb10-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-298"><a href="#cb10-298" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-299"><a href="#cb10-299" aria-hidden="true" tabindex="-1"></a>\text{ACF}(k) = \text{相隔 } k \text{ 步的两个样本，相关程度有多高}</span>
+<span id="cb10-300"><a href="#cb10-300" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-301"><a href="#cb10-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-302"><a href="#cb10-302" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>横轴 <span class="in">`Lag`</span>：相隔多少步</span>
+<span id="cb10-303"><a href="#cb10-303" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>纵轴 <span class="in">`ACF`</span>：相关系数，取值在 $-1$ 到 $1$ 之间</span>
+<span id="cb10-304"><a href="#cb10-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-305"><a href="#cb10-305" aria-hidden="true" tabindex="-1"></a>**健康的链长什么样**：lag=0 处永远是1，随着 lag 增大迅速下降、很快掉到接近0并保持晃动。下降越快，抽样效率越高；如果曲线迟迟不掉到0，说明链走得慢，有效信息量远小于抽样总数。</span>
+<span id="cb10-306"><a href="#cb10-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-307"><a href="#cb10-307" aria-hidden="true" tabindex="-1"></a>**三者的逻辑链**：</span>
+<span id="cb10-308"><a href="#cb10-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-309"><a href="#cb10-309" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-310"><a href="#cb10-310" aria-hidden="true" tabindex="-1"></a>\text{自相关强} \;\Rightarrow\; \text{有效样本数}(n<span class="sc">\_</span>eff)\text{ 变小} \;\Rightarrow\; \text{需要抽更多次才能获得同样精度的估计}</span>
+<span id="cb10-311"><a href="#cb10-311" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-312"><a href="#cb10-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-313"><a href="#cb10-313" aria-hidden="true" tabindex="-1"></a><span class="in">`acf`</span> 图是图形诊断，<span class="in">`n_eff`</span> 是数字诊断，两者反映的是同一件事：链的抽样效率。</span>
+<span id="cb10-314"><a href="#cb10-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-315"><a href="#cb10-315" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-316"><a href="#cb10-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-317"><a href="#cb10-317" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="为什么 lambda 和 pred 的痕迹图差别这么大"}</span>
+<span id="cb10-318"><a href="#cb10-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-319"><a href="#cb10-319" aria-hidden="true" tabindex="-1"></a>两条链都呈现"毛毛虫"形状（没有漂移趋势、没有卡住不动），说明**两者各自都收敛良好**——但波动幅度天差地别：</span>
+<span id="cb10-320"><a href="#cb10-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-321"><a href="#cb10-321" aria-hidden="true" tabindex="-1"></a>**`lambda` 的痕迹图**：波动范围窄，因为它只反映一件事——"每一次抽样，模型认为 $\lambda$ 大概是多少"。这个不确定性纯粹来自**对参数本身认识不够精确**（数据量有限带来的认知不确定性）。</span>
+<span id="cb10-322"><a href="#cb10-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-323"><a href="#cb10-323" aria-hidden="true" tabindex="-1"></a>**`pred` 的痕迹图**：波动范围宽得多，因为它叠加了两层随机性：</span>
+<span id="cb10-324"><a href="#cb10-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-325"><a href="#cb10-325" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-326"><a href="#cb10-326" aria-hidden="true" tabindex="-1"></a>\text{pred的波动} = \underbrace{\text{lambda本身在变}}_{\text{认知不确定性}} + \underbrace{\text{指数分布抽样自带的随机噪声}}_{\text{随机不确定性}}</span>
+<span id="cb10-327"><a href="#cb10-327" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-328"><a href="#cb10-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-329"><a href="#cb10-329" aria-hidden="true" tabindex="-1"></a>代码层面：<span class="in">`pred = exponential_rng(lambda)`</span> 这一行，即使 <span class="in">`lambda`</span> 固定不变，<span class="in">`exponential_rng()`</span> 每次调用也会因为指数分布本身的随机性抽出完全不同的数字——这层随机性 <span class="in">`lambda`</span> 自己没有，是 <span class="in">`pred`</span> 独有的额外噪声。</span>
+<span id="cb10-330"><a href="#cb10-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-331"><a href="#cb10-331" aria-hidden="true" tabindex="-1"></a>**一句话总结**：<span class="in">`lambda`</span> 的毛毛虫瘦，是因为它只测"我们有多确定这个参数"；<span class="in">`pred`</span> 的毛毛虫胖，是因为它还额外测了"就算参数确定了，真实世界本身会有多大的随机波动"——这正是后验预测检查（PPC）要专门看 <span class="in">`pred`</span> 而不是只看 <span class="in">`lambda`</span> 的原因。</span>
+<span id="cb10-332"><a href="#cb10-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-333"><a href="#cb10-333" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-334"><a href="#cb10-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-335"><a href="#cb10-335" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 待整理：把前面几章的解析解模型，改用 Stan / PyMC 重新拟合一遍，验证结果一致。</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>笔记基于吴喜之《贝叶斯数据分析》整理</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/08-stan-pymc.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>本站由 Quarto 构建</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

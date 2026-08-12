@@ -239,14 +239,43 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/06-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/07-mcmc-algorithms.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">贝叶斯推断中的一些算法</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/07-stan-pymc.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/08-stan-pymc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">概率编程：R/Stan 与 Python/PyMC</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">第四部分：更多的贝叶斯模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-lm-bayes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">第 10 章 贝叶斯广义线性模型</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-bayes-net.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">第 13 章 贝叶斯网络</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-HMM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">隐马尔可夫模型</span></span></a>
   </div>
 </li>
       </ul>
@@ -352,6 +381,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>下载数据: https://vincentarelbundock.github.io/Rdatasets/datasets.html</p>
 
 
 <!-- -->
@@ -1019,7 +1049,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>但这些"幸存者"依然共享同一套底层逻辑：先构造统计量，再问它在重复抽样下的分布长什么样，然后拿这个抽样分布做检验或算区间——依然逃不出 **Q5（频率学派的长期频率性质）** 这个框架。</span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>这句反问真正的杀伤力不在于"找不到替代统计量"，而在于：**只要还留在频率学派的哲学框架里，就永远逃不开"构造统计量 → 推导抽样分布 → 用抽样分布校准结论"这套动作**。它是在为贝叶斯方法登场做铺垫——不是换一个统计量，而是换一套哲学：不问"这个统计量在无穷次重复抽样下怎么表现"，而是直接问"给定这份数据，$\theta$ 的后验分布是什么"。</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>下载数据: https://vincentarelbundock.github.io/Rdatasets/datasets.html</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
