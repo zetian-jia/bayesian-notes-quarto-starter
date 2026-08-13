@@ -425,6 +425,8 @@ $$
 
 读者可以自己验证这个关系。
 
+---
+
 ### 常用分布及其参数的共轭先验分布
 
 #### (1) Bernoulli 分布（Bernoulli distribution）
@@ -520,9 +522,13 @@ abline(v = ci, col = "#B5432B", lwd = 1.5, lty = 3)
 
 :::
 
+---
+
 #### (2) 二项分布（binomial distribution）
 
-在 $n$ 次 Bernoulli 试验中（每次成功概率记为 $p$）成功次数 $k$ 的分布（记为 $B(n,p)$，或 $\text{Bin}(n,p)$），其概率质量函数为
+**定义**: 二项分布是对"固定次数的独立重复试验中，成功次数"进行建模的**离散概率**分布。每次试验只有两个可能的结果（成功或失败），且每次试验成功的概率保持不变。
+
+在 $n$ 次 Bernoulli 试验中（每次成功概率记为 $p$）成功次数 $k$ 的分布（记为 $B(n,p)$，或 $\text{Bin}(n,p)$），其**概率质量函数**为
 
 $$
 f(k\mid n,p) = \binom{n}{k}p^k(1-p)^{n-k}, \quad k=0,1,2,\ldots,n
@@ -538,6 +544,9 @@ $$
 
 - **参数 $p$ 的先验分布**：$\text{Beta}(\alpha,\beta)$
 - **后验分布的超参数**：$\left(\alpha+\sum_{i=1}^n x_i,\ \ \beta+\sum_{i=1}^n N_i-\sum_{i=1}^n x_i\right)$
+
+> - $N_{i}$ 表示第 $i$ 组中，总共进行了多少次 Bernoulli 尝试 （不是单次的）
+> - $x_{i}$ 表示第 $i$ 组中，成功了多少次
 
 ```{r}
 #| label: fig-binomial-shapes
@@ -566,7 +575,11 @@ p4 <- make_binom_plot(50, 0.5, "n=50, p=0.5 (n增大,趋于正态)") +
 (p1 | p2) / (p3 | p4)   # patchwork 的排版语法: | 左右拼, / 上下拼
 ```
 
+---
+
 #### (3) 负二项分布（negative binomial distribution）
+
+定义：负二项分布是一种离散分布，用于建模生成指定数量的事件所需的试验数量。每个试验具有两个可能的结果。事件是所需的试验结果。负二项分布也可以为您**观测到指定数量的结果前发生的非事件数建模**。
 
 考虑一系列独立同分布伯努利试验（记成功概率为 $p$）。负二项式分布是在指定的（非随机）失败次数（记为 $r$）之前成功次数（记为 $k$）的离散概率分布（记为 $\text{NB}(r,p)$）。其概率质量函数为：
 
@@ -607,6 +620,8 @@ p4 <- make_negbinom_plot(10, 0.3, "r=10, p=0.3") +
 ```
 
 > 但要注意 R 官方文档对 prob 参数的定义，和你截图这本书对 p 的定义，成功/失败的角色可能是反的
+
+---
 
 #### (4) Poisson 分布（Poisson distribution）
 
@@ -659,6 +674,7 @@ p4 <- make_pois_plot(30, "Λ=30 (接近正态)", kmax = 60) +
 (p1 | p2) / (p3 | p4)
 ```
 
+---
 
 #### (5) 分类分布（categorical distribution）
 
@@ -751,6 +767,8 @@ $$
 
 :::
 
+---
+
 #### (6) 多项分布（multinomial distribution）
 
 它是二项分布所基于的 Bernoulli 试验从两个结果到多个（记为 $k$ 个）结果的推广，每个结果的概率固定，记为
@@ -807,6 +825,8 @@ p4 <- make_multi_plot(100, c(0.6,0.3,0.1), "n=100, 换个随机种子(抽样波�
 
 ```
 
+---
+
 #### (7) 超几何分布（hypergeometric distribution）
 
 考虑有刚好 $N$ 个对象，其中有 $K$ 个具有某种特征，超几何分布描述在 $n$ 次不放回的抽取中，刚好抽到 $k$ 个具有该特征对象的概率。其概率质量函数为
@@ -856,6 +876,8 @@ p4 <- make_compare_plot(N = 2000, K = 700, ndraw = 5, "N=2000 (N远大于n,两�
 (p1 | p2) / (p3 | p4)
 ```
 
+---
+
 #### (8) 几何分布（geometric distribution）
 
 是研究在 Bernoulli 试验中得到一个成功（记每次成功的概率为 $p$）时所需要的试验次数的分布（记为 $k$）。其概率质量函数为：
@@ -899,6 +921,8 @@ p4 <- make_geom_plot(0.1, "p=0.1 (成功率低,长尾拖延)", kmax = 40) +
 
 (p1 | p2) / (p3 | p4)
 ```
+
+---
 
 #### (9) 正态分布（normal distribution）或高斯分布（Gaussian distribution）
 
@@ -1021,6 +1045,7 @@ p4 <- make_posterior_plot(50, "n=50 (高度集中于真值附近)")
 | (c)(d)(e) | 均值 | 方差/精度 | 逆Gamma / 缩放逆$\chi^2$ / Gamma |
 | (f)(g) | 都不知道 | $\mu$ 和 方差/精度 | 正态-逆Gamma / 正态-Gamma（联合先验） |
 
+---
 
 #### (10) Gamma 分布（gamma distribution）
 
@@ -1082,6 +1107,7 @@ p4 <- make_gamma_plot(5, 2, "α=5, β=2 (β增大,整体左移变窄)", xmax = 1
 (p1 | p2) / (p3 | p4)
 ```
 
+---
 
 #### (11) 指数分布（exponential distribution）
 
@@ -1124,6 +1150,8 @@ p4 <- make_exp_plot(0.2, "Λ=0.2 (缓慢拖尾)", xmax = 20) +
 
 (p1 | p2) / (p3 | p4)
 ```
+
+---
 
 #### (12) 逆 Gamma 分布（inverse-gamma distribution）
 
@@ -1176,6 +1204,7 @@ p4 <- make_invgamma_plot(1, 1, "α=1, β=1 (α小,重尾更明显)", xmax = 10) 
 (p1 | p2) / (p3 | p4)
 ```
 
+---
 
 #### (13) Beta 分布（beta distribution）
 
@@ -1219,6 +1248,8 @@ p4 <- make_beta_plot(0.5, 0.5, "α=0.5, β=0.5 (U形,两端极化)") +
 
 (p1 | p2) / (p3 | p4)
 ```
+
+---
 
 #### (14) Dirichlet 分布（Dirichlet distribution）
 
