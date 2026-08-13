@@ -83,7 +83,7 @@ $$
 - **$\log\left[\dfrac{f(l_j)}{1-f(l_j)}\right]$**
   对 $f(l_j)$ 做 **logit 变换**（对数几率），将取值范围为 $(0,1)$ 的比例映射到整个实数轴，便于用多项式回归建模——这是二项 GLM（logistic 回归）的标准处理方式
 
-is approximated by a second degree polynomial. We assume that data follow a binomial distribution and the parameters defining the polynomial are estimated by fitting a weighted generalized linear model to the data inside the genomic window. For data points inside this window, indexed by $l_k$, weights are inversely proportional to the standard errors of the CpG-level measurements, $\text{SE}(\hat{\pi}_k)$, and decrease with the distance between the loci $|l_k - l_j|$ according to a tricube kernel (Figure 3a,b). Note that the smoothness of our estimated profile $\hat{f}$ depends on genomic CpG density. We recommend users adapt the algorithm's parameters when applying it to organisms other than human.
+is approximated by a second degree polynomial. We assume that data follow a binomial distribution and the parameters defining the polynomial are estimated by fitting a weighted generalized linear model to the data inside the genomic window. For data points inside this window, indexed by $l_k$, weights are inversely proportional to the standard errors of the CpG-level measurements, $\text{SE}(\hat{\pi}_k)$, and decrease with the distance between the loci $|l_k - l_j|$ according to a **tricube kernel** (Figure 3a,b). Note that the smoothness of our estimated profile $\hat{f}$ depends on genomic CpG density. We recommend users adapt the algorithm's parameters when applying it to organisms other than human.
 
 - **二次多项式近似（second degree polynomial）**：在每个窗口内，假设 logit 变换后的 $f$ 可以用关于位置的二次多项式局部逼近——这是局部多项式回归（local polynomial regression）的核心假设，比简单的"窗口内取平均"更灵活，能捕捉局部趋势（斜率、曲率）
 
