@@ -378,3 +378,25 @@ ggplot(df, aes(x = group, y = proportion)) +
 ```
 
 
+## 其他问题
+
+
+::: {.callout-tip title="什么是压缩感知"}
+
+**压缩感知**（Compressed Sensing, CS）： 是现代信号处理和数学领域的一个核心理论。它打破了传统**奈奎斯特采样定理**（Nyquist-Shannon sampling theorem）的束缚——传统理论要求采样频率必须大于信号最高频率的两倍；而压缩感知指出：如果信号具有稀疏性，我们就可以用远低于传统采样率的观测次数来精确或高概率地重建信号。
+
+压缩感知的核心在于设计特殊的随机测量矩阵 $\Phi$ 去主动采集少量混合数据（$y = \Phi x$）
+
+压缩感知成立的两大核心条件:
+
+- 信号的稀疏性（Sparsity）
+- 测量矩阵的非相干性（Incoherence）与 RIP（Restricted Isometry Property，受限等距性质）
+
+:::
+
+
+:::{.callout-tip title="什么是矩阵补全"}
+
+**矩阵补全**（Matrix Completion）的核心则在于观测矩阵中未知的、随机丢失的元素（如推荐系统中的评分矩阵、或某些缺失数据的恢复），通常依赖矩阵的秩极小化（Nuclear Norm Minimization）来完成。
+
+:::
