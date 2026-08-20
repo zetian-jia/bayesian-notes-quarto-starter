@@ -500,5 +500,82 @@
       "第五部分：举例子",
       "<span class='chapter-number'>13</span>  <span class='chapter-title'>基础内容</span>"
     ]
+  },
+  {
+    "objectID": "chapters/22-basic.html#其他问题",
+    "href": "chapters/22-basic.html#其他问题",
+    "title": "13  基础内容",
+    "section": "13.4 其他问题",
+    "text": "13.4 其他问题\n\n\n\n\n\n\n什么是压缩感知\n\n\n\n压缩感知（Compressed Sensing, CS）： 是现代信号处理和数学领域的一个核心理论。它打破了传统奈奎斯特采样定理（Nyquist-Shannon sampling theorem）的束缚——传统理论要求采样频率必须大于信号最高频率的两倍；而压缩感知指出：如果信号具有稀疏性，我们就可以用远低于传统采样率的观测次数来精确或高概率地重建信号。\n压缩感知的核心在于设计特殊的随机测量矩阵 \\(\\Phi\\) 去主动采集少量混合数据（\\(y = \\Phi x\\)）\n压缩感知成立的两大核心条件:\n\n信号的稀疏性（Sparsity）\n测量矩阵的非相干性（Incoherence）与 RIP（Restricted Isometry Property，受限等距性质）\n\n\n\n\n\n\n\n\n\n什么是矩阵补全\n\n\n\n矩阵补全（Matrix Completion）的核心则在于观测矩阵中未知的、随机丢失的元素（如推荐系统中的评分矩阵、或某些缺失数据的恢复），通常依赖矩阵的秩极小化（Nuclear Norm Minimization）来完成。",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>基础内容</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/examples/methylation_smoothing_comparison.html",
+    "href": "chapters/examples/methylation_smoothing_comparison.html",
+    "title": "14  Methylation Smoothing Comparison: Raw vs. BSmooth",
+    "section": "",
+    "text": "14.1 目的\n比较 BSmooth 平滑前（raw）与平滑后（smoothed）的单个 CpG 位点甲基化 profile，直观展示局部似然平滑对甲基化曲线的影响。",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Methylation Smoothing Comparison: Raw vs. BSmooth</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/examples/methylation_smoothing_comparison.html#加载依赖包",
+    "href": "chapters/examples/methylation_smoothing_comparison.html#加载依赖包",
+    "title": "14  Methylation Smoothing Comparison: Raw vs. BSmooth",
+    "section": "14.2 加载依赖包",
+    "text": "14.2 加载依赖包\n\n\nCode\nlibrary(DSS)\nlibrary(bsseq)\nlibrary(ggplot2)\nlibrary(tidyr)\nlibrary(dplyr)\nlibrary(patchwork)",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Methylation Smoothing Comparison: Raw vs. BSmooth</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/examples/methylation_smoothing_comparison.html#数据读入",
+    "href": "chapters/examples/methylation_smoothing_comparison.html#数据读入",
+    "title": "14  Methylation Smoothing Comparison: Raw vs. BSmooth",
+    "section": "14.3 数据读入",
+    "text": "14.3 数据读入\n使用 DSS 包自带的示例数据（2 个 condition，各 2 个重复），取前 1000 个位点做演示。\n\n\nCode\npath &lt;- file.path(system.file(package = \"DSS\"), \"extdata\")\n\ndat1.1 &lt;- read.table(file.path(path, \"cond1_1.txt\"), header = TRUE)\ndat1.2 &lt;- read.table(file.path(path, \"cond1_2.txt\"), header = TRUE)\ndat2.1 &lt;- read.table(file.path(path, \"cond2_1.txt\"), header = TRUE)\ndat2.2 &lt;- read.table(file.path(path, \"cond2_2.txt\"), header = TRUE)\n\nBSobj &lt;- makeBSseqData(\n  list(dat1.1, dat1.2, dat2.1, dat2.2),\n  c(\"C1\", \"C2\", \"N1\", \"N2\")\n)[1:1000, ]\n\nBSobj\n\n\nAn object of type 'BSseq' with\n  1000 methylation loci\n  4 samples\nhas not been smoothed\nAll assays are in-memory",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Methylation Smoothing Comparison: Raw vs. BSmooth</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/examples/methylation_smoothing_comparison.html#bsmooth-平滑",
+    "href": "chapters/examples/methylation_smoothing_comparison.html#bsmooth-平滑",
+    "title": "14  Methylation Smoothing Comparison: Raw vs. BSmooth",
+    "section": "14.4 BSmooth 平滑",
+    "text": "14.4 BSmooth 平滑\n\n\nCode\nBSobj.smoothed &lt;- BSmooth(BSobj, verbose = TRUE)\n\nmeth_raw      &lt;- getMeth(BSobj.smoothed, type = \"raw\")\nmeth_smoothed &lt;- getMeth(BSobj.smoothed, type = \"smooth\")\n\nhead(meth_raw)\n\n\n             C1        C2        N1        N2\n[1,]        NaN 0.9285714       NaN       NaN\n[2,]        NaN 0.0000000       NaN       NaN\n[3,] 0.07692308 0.6885246 0.4736842 0.4615385\n[4,] 0.36363636 0.3170732 0.0000000 0.2500000\n[5,] 0.39393939 0.3000000 0.3333333 0.3333333\n[6,] 0.50000000 0.3880597 0.4074074 0.3157895\n\n\nCode\nhead(meth_smoothed)\n\n\n            C1        C2        N1        N2\n[1,] 0.3920040 0.4517834 0.2726472 0.3653426\n[2,] 0.3919525 0.4517334 0.2727701 0.3653293\n[3,] 0.3917129 0.4515007 0.2733426 0.3652677\n[4,] 0.3632373 0.4253280 0.3393343 0.3541643\n[5,] 0.3632164 0.4253095 0.3393806 0.3541538\n[6,] 0.3631800 0.4252771 0.3394618 0.3541355",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Methylation Smoothing Comparison: Raw vs. BSmooth</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/examples/methylation_smoothing_comparison.html#可视化raw-vs.-smoothed",
+    "href": "chapters/examples/methylation_smoothing_comparison.html#可视化raw-vs.-smoothed",
+    "title": "14  Methylation Smoothing Comparison: Raw vs. BSmooth",
+    "section": "14.5 可视化：Raw vs. Smoothed",
+    "text": "14.5 可视化：Raw vs. Smoothed\n统一配色（瑞士风格配色方案），并列展示平滑前后的甲基化曲线对比。\n\n\nCode\nsample_colors &lt;- c(\n  \"C1\" = \"#B5432B\",\n  \"C2\" = \"#E07A5F\",\n  \"N1\" = \"#1D3557\",\n  \"N2\" = \"#457B9D\"\n)\n\nplot_meth &lt;- function(mat, title, n_points = 150) {\n  df &lt;- as.data.frame(mat)\n  df &lt;- df[1:n_points, ]\n  df$pos &lt;- 1:nrow(df)\n\n  df_long &lt;- pivot_longer(\n    df,\n    cols = c(\"C1\", \"C2\", \"N1\", \"N2\"),\n    names_to = \"sample\",\n    values_to = \"meth\"\n  )\n\n  ggplot(df_long, aes(x = pos, y = meth, color = sample)) +\n    geom_line(linewidth = 0.8) +\n    scale_color_manual(values = sample_colors) +\n    labs(\n      x = \"Genomic position (index)\",\n      y = \"Methylation level\",\n      color = \"Sample\",\n      title = title\n    ) +\n    theme_minimal(base_size = 13) +\n    theme(\n      panel.grid.minor = element_blank(),\n      plot.title = element_text(face = \"bold\")\n    )\n}\n\n\n\n\nCode\np_raw    &lt;- plot_meth(meth_raw,      \"Raw Methylation Profiles\")\np_smooth &lt;- plot_meth(meth_smoothed, \"Smoothed Methylation Profiles\")\n\np_raw + p_smooth + plot_layout(guides = \"collect\")\n\n\n\n\n\n左：平滑前（raw）；右：平滑后（BSmooth）",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Methylation Smoothing Comparison: Raw vs. BSmooth</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/examples/methylation_smoothing_comparison.html#小结",
+    "href": "chapters/examples/methylation_smoothing_comparison.html#小结",
+    "title": "14  Methylation Smoothing Comparison: Raw vs. BSmooth",
+    "section": "14.6 小结",
+    "text": "14.6 小结\n\nRaw 曲线逐位点波动较大，反映了单位点甲基化估计的抽样噪声（与覆盖度相关的标准误 \\(\\text{SE}=\\sqrt{\\pi(1-\\pi)/N}\\) 直接相关）。\nSmoothed 曲线在保留整体趋势的同时显著降低了位点间的锯齿状波动，体现了 BSmooth 局部似然加权平滑（覆盖度加权 + 核函数距离加权）的效果。",
+    "crumbs": [
+      "第五部分：举例子",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Methylation Smoothing Comparison: Raw vs. BSmooth</span>"
+    ]
   }
 ]

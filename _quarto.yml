@@ -37,6 +37,7 @@ book:
       chapters:
         - chapters/21-intro.qmd
         - chapters/22-basic.qmd
+        - chapters/examples/methylation_smoothing_comparison.qmd
   page-navigation: true
   search: true
   sidebar:

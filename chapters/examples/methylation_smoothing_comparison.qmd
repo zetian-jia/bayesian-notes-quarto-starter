@@ -1,0 +1,112 @@
+
+# Methylation Smoothing Comparison: Raw vs. BSmooth
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 12,
+  fig.height = 5
+)
+```
+
+## 目的
+
+比较 BSmooth 平滑前（raw）与平滑后（smoothed）的单个 CpG 位点甲基化 profile，直观展示局部似然平滑对甲基化曲线的影响。
+
+## 加载依赖包
+
+```{r libraries}
+library(DSS)
+library(bsseq)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(patchwork)
+```
+
+## 数据读入
+
+使用 DSS 包自带的示例数据（2 个 condition，各 2 个重复），取前 1000 个位点做演示。
+
+```{r load-data}
+path <- file.path(system.file(package = "DSS"), "extdata")
+
+dat1.1 <- read.table(file.path(path, "cond1_1.txt"), header = TRUE)
+dat1.2 <- read.table(file.path(path, "cond1_2.txt"), header = TRUE)
+dat2.1 <- read.table(file.path(path, "cond2_1.txt"), header = TRUE)
+dat2.2 <- read.table(file.path(path, "cond2_2.txt"), header = TRUE)
+
+BSobj <- makeBSseqData(
+  list(dat1.1, dat1.2, dat2.1, dat2.2),
+  c("C1", "C2", "N1", "N2")
+)[1:1000, ]
+
+BSobj
+```
+
+## BSmooth 平滑
+
+```{r smooth}
+BSobj.smoothed <- BSmooth(BSobj, verbose = TRUE)
+
+meth_raw      <- getMeth(BSobj.smoothed, type = "raw")
+meth_smoothed <- getMeth(BSobj.smoothed, type = "smooth")
+
+head(meth_raw)
+head(meth_smoothed)
+```
+
+## 可视化：Raw vs. Smoothed
+
+统一配色（瑞士风格配色方案），并列展示平滑前后的甲基化曲线对比。
+
+```{r plot-setup}
+sample_colors <- c(
+  "C1" = "#B5432B",
+  "C2" = "#E07A5F",
+  "N1" = "#1D3557",
+  "N2" = "#457B9D"
+)
+
+plot_meth <- function(mat, title, n_points = 150) {
+  df <- as.data.frame(mat)
+  df <- df[1:n_points, ]
+  df$pos <- 1:nrow(df)
+
+  df_long <- pivot_longer(
+    df,
+    cols = c("C1", "C2", "N1", "N2"),
+    names_to = "sample",
+    values_to = "meth"
+  )
+
+  ggplot(df_long, aes(x = pos, y = meth, color = sample)) +
+    geom_line(linewidth = 0.8) +
+    scale_color_manual(values = sample_colors) +
+    labs(
+      x = "Genomic position (index)",
+      y = "Methylation level",
+      color = "Sample",
+      title = title
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      panel.grid.minor = element_blank(),
+      plot.title = element_text(face = "bold")
+    )
+}
+```
+
+```{r plot-combined, fig.cap="左：平滑前（raw）；右：平滑后（BSmooth）"}
+p_raw    <- plot_meth(meth_raw,      "Raw Methylation Profiles")
+p_smooth <- plot_meth(meth_smoothed, "Smoothed Methylation Profiles")
+
+p_raw + p_smooth + plot_layout(guides = "collect")
+```
+
+## 小结
+
+- Raw 曲线逐位点波动较大，反映了单位点甲基化估计的抽样噪声（与覆盖度相关的标准误 $\text{SE}=\sqrt{\pi(1-\pi)/N}$ 直接相关）。
+- Smoothed 曲线在保留整体趋势的同时显著降低了位点间的锯齿状波动，体现了 BSmooth 局部似然加权平滑（覆盖度加权 + 核函数距离加权）的效果。

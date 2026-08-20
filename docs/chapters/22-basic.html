@@ -64,6 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../chapters/examples/methylation_smoothing_comparison.html" rel="next">
 <link href="../chapters/21-intro.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -312,6 +313,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">基础内容</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/examples/methylation_smoothing_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Methylation Smoothing Comparison: Raw vs.&nbsp;BSmooth</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -338,6 +345,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#使用前提条件" id="toc-使用前提条件" class="nav-link" data-scroll-target="#使用前提条件"><span class="header-section-number">13.3.1</span> 使用前提条件</a></li>
   </ul></li>
+  <li><a href="#其他问题" id="toc-其他问题" class="nav-link" data-scroll-target="#其他问题"><span class="header-section-number">13.4</span> 其他问题</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/22-basic.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -508,23 +516,23 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
 </figcaption>
 <div aria-describedby="tbl-fisher-gt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="jiqubufivu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jiqubufivu table {
+<div id="wbtbedzfri" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wbtbedzfri table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jiqubufivu thead, #jiqubufivu tbody, #jiqubufivu tfoot, #jiqubufivu tr, #jiqubufivu td, #jiqubufivu th {
+#wbtbedzfri thead, #wbtbedzfri tbody, #wbtbedzfri tfoot, #wbtbedzfri tr, #wbtbedzfri td, #wbtbedzfri th {
   border-style: none;
 }
 
-#jiqubufivu p {
+#wbtbedzfri p {
   margin: 0;
   padding: 0;
 }
 
-#jiqubufivu .gt_table {
+#wbtbedzfri .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -550,12 +558,12 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-left-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_caption {
+#wbtbedzfri .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jiqubufivu .gt_title {
+#wbtbedzfri .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -567,7 +575,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-width: 0;
 }
 
-#jiqubufivu .gt_subtitle {
+#wbtbedzfri .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -579,7 +587,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-top-width: 0;
 }
 
-#jiqubufivu .gt_heading {
+#wbtbedzfri .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -591,13 +599,13 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_bottom_border {
+#wbtbedzfri .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_col_headings {
+#wbtbedzfri .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -612,7 +620,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_col_heading {
+#wbtbedzfri .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -632,7 +640,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   overflow-x: hidden;
 }
 
-#jiqubufivu .gt_column_spanner_outer {
+#wbtbedzfri .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -644,15 +652,15 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 4px;
 }
 
-#jiqubufivu .gt_column_spanner_outer:first-child {
+#wbtbedzfri .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jiqubufivu .gt_column_spanner_outer:last-child {
+#wbtbedzfri .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jiqubufivu .gt_column_spanner {
+#wbtbedzfri .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -664,11 +672,11 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   width: 100%;
 }
 
-#jiqubufivu .gt_spanner_row {
+#wbtbedzfri .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jiqubufivu .gt_group_heading {
+#wbtbedzfri .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -694,7 +702,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   text-align: left;
 }
 
-#jiqubufivu .gt_empty_group_heading {
+#wbtbedzfri .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -709,15 +717,15 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   vertical-align: middle;
 }
 
-#jiqubufivu .gt_from_md > :first-child {
+#wbtbedzfri .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jiqubufivu .gt_from_md > :last-child {
+#wbtbedzfri .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jiqubufivu .gt_row {
+#wbtbedzfri .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -736,7 +744,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   overflow-x: hidden;
 }
 
-#jiqubufivu .gt_stub {
+#wbtbedzfri .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -749,7 +757,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#jiqubufivu .gt_stub_row_group {
+#wbtbedzfri .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -763,15 +771,15 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   vertical-align: top;
 }
 
-#jiqubufivu .gt_row_group_first td {
+#wbtbedzfri .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jiqubufivu .gt_row_group_first th {
+#wbtbedzfri .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jiqubufivu .gt_summary_row {
+#wbtbedzfri .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -781,16 +789,16 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#jiqubufivu .gt_first_summary_row {
+#wbtbedzfri .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_first_summary_row.thick {
+#wbtbedzfri .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jiqubufivu .gt_last_summary_row {
+#wbtbedzfri .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -800,7 +808,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_grand_summary_row {
+#wbtbedzfri .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -810,7 +818,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#jiqubufivu .gt_first_grand_summary_row {
+#wbtbedzfri .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -820,7 +828,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-top-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_last_grand_summary_row_top {
+#wbtbedzfri .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -830,11 +838,11 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_striped {
+#wbtbedzfri .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jiqubufivu .gt_table_body {
+#wbtbedzfri .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -843,7 +851,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_footnotes {
+#wbtbedzfri .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -857,7 +865,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_footnote {
+#wbtbedzfri .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -866,7 +874,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#jiqubufivu .gt_sourcenotes {
+#wbtbedzfri .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -880,7 +888,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#jiqubufivu .gt_sourcenote {
+#wbtbedzfri .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -888,72 +896,72 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#jiqubufivu .gt_left {
+#wbtbedzfri .gt_left {
   text-align: left;
 }
 
-#jiqubufivu .gt_center {
+#wbtbedzfri .gt_center {
   text-align: center;
 }
 
-#jiqubufivu .gt_right {
+#wbtbedzfri .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jiqubufivu .gt_font_normal {
+#wbtbedzfri .gt_font_normal {
   font-weight: normal;
 }
 
-#jiqubufivu .gt_font_bold {
+#wbtbedzfri .gt_font_bold {
   font-weight: bold;
 }
 
-#jiqubufivu .gt_font_italic {
+#wbtbedzfri .gt_font_italic {
   font-style: italic;
 }
 
-#jiqubufivu .gt_super {
+#wbtbedzfri .gt_super {
   font-size: 65%;
 }
 
-#jiqubufivu .gt_footnote_marks {
+#wbtbedzfri .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jiqubufivu .gt_asterisk {
+#wbtbedzfri .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jiqubufivu .gt_indent_1 {
+#wbtbedzfri .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jiqubufivu .gt_indent_2 {
+#wbtbedzfri .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jiqubufivu .gt_indent_3 {
+#wbtbedzfri .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jiqubufivu .gt_indent_4 {
+#wbtbedzfri .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jiqubufivu .gt_indent_5 {
+#wbtbedzfri .gt_indent_5 {
   text-indent: 25px;
 }
 
-#jiqubufivu .katex-display {
+#wbtbedzfri .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#jiqubufivu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#wbtbedzfri div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -993,23 +1001,23 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
 </div>
 </div>
 <div class="cell-output-display">
-<div id="henttxgvzk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#henttxgvzk table {
+<div id="gpnyulzgak" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gpnyulzgak table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#henttxgvzk thead, #henttxgvzk tbody, #henttxgvzk tfoot, #henttxgvzk tr, #henttxgvzk td, #henttxgvzk th {
+#gpnyulzgak thead, #gpnyulzgak tbody, #gpnyulzgak tfoot, #gpnyulzgak tr, #gpnyulzgak td, #gpnyulzgak th {
   border-style: none;
 }
 
-#henttxgvzk p {
+#gpnyulzgak p {
   margin: 0;
   padding: 0;
 }
 
-#henttxgvzk .gt_table {
+#gpnyulzgak .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1035,12 +1043,12 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-left-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_caption {
+#gpnyulzgak .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#henttxgvzk .gt_title {
+#gpnyulzgak .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1052,7 +1060,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-width: 0;
 }
 
-#henttxgvzk .gt_subtitle {
+#gpnyulzgak .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1064,7 +1072,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-top-width: 0;
 }
 
-#henttxgvzk .gt_heading {
+#gpnyulzgak .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1076,13 +1084,13 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_bottom_border {
+#gpnyulzgak .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_col_headings {
+#gpnyulzgak .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1097,7 +1105,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_col_heading {
+#gpnyulzgak .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1117,7 +1125,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   overflow-x: hidden;
 }
 
-#henttxgvzk .gt_column_spanner_outer {
+#gpnyulzgak .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1129,15 +1137,15 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 4px;
 }
 
-#henttxgvzk .gt_column_spanner_outer:first-child {
+#gpnyulzgak .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#henttxgvzk .gt_column_spanner_outer:last-child {
+#gpnyulzgak .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#henttxgvzk .gt_column_spanner {
+#gpnyulzgak .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1149,11 +1157,11 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   width: 100%;
 }
 
-#henttxgvzk .gt_spanner_row {
+#gpnyulzgak .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#henttxgvzk .gt_group_heading {
+#gpnyulzgak .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1179,7 +1187,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   text-align: left;
 }
 
-#henttxgvzk .gt_empty_group_heading {
+#gpnyulzgak .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1194,15 +1202,15 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   vertical-align: middle;
 }
 
-#henttxgvzk .gt_from_md > :first-child {
+#gpnyulzgak .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#henttxgvzk .gt_from_md > :last-child {
+#gpnyulzgak .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#henttxgvzk .gt_row {
+#gpnyulzgak .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1221,7 +1229,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   overflow-x: hidden;
 }
 
-#henttxgvzk .gt_stub {
+#gpnyulzgak .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1234,7 +1242,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#henttxgvzk .gt_stub_row_group {
+#gpnyulzgak .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1248,15 +1256,15 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   vertical-align: top;
 }
 
-#henttxgvzk .gt_row_group_first td {
+#gpnyulzgak .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#henttxgvzk .gt_row_group_first th {
+#gpnyulzgak .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#henttxgvzk .gt_summary_row {
+#gpnyulzgak .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1266,16 +1274,16 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#henttxgvzk .gt_first_summary_row {
+#gpnyulzgak .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_first_summary_row.thick {
+#gpnyulzgak .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#henttxgvzk .gt_last_summary_row {
+#gpnyulzgak .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1285,7 +1293,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_grand_summary_row {
+#gpnyulzgak .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1295,7 +1303,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#henttxgvzk .gt_first_grand_summary_row {
+#gpnyulzgak .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1305,7 +1313,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-top-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_last_grand_summary_row_top {
+#gpnyulzgak .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1315,11 +1323,11 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_striped {
+#gpnyulzgak .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#henttxgvzk .gt_table_body {
+#gpnyulzgak .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1328,7 +1336,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-bottom-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_footnotes {
+#gpnyulzgak .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1342,7 +1350,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_footnote {
+#gpnyulzgak .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1351,7 +1359,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#henttxgvzk .gt_sourcenotes {
+#gpnyulzgak .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1365,7 +1373,7 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   border-right-color: #D3D3D3;
 }
 
-#henttxgvzk .gt_sourcenote {
+#gpnyulzgak .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1373,72 +1381,72 @@ Table&nbsp;13.1: Fisher精确检验结果汇总表(rstatix, detailed=TRUE)
   padding-right: 5px;
 }
 
-#henttxgvzk .gt_left {
+#gpnyulzgak .gt_left {
   text-align: left;
 }
 
-#henttxgvzk .gt_center {
+#gpnyulzgak .gt_center {
   text-align: center;
 }
 
-#henttxgvzk .gt_right {
+#gpnyulzgak .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#henttxgvzk .gt_font_normal {
+#gpnyulzgak .gt_font_normal {
   font-weight: normal;
 }
 
-#henttxgvzk .gt_font_bold {
+#gpnyulzgak .gt_font_bold {
   font-weight: bold;
 }
 
-#henttxgvzk .gt_font_italic {
+#gpnyulzgak .gt_font_italic {
   font-style: italic;
 }
 
-#henttxgvzk .gt_super {
+#gpnyulzgak .gt_super {
   font-size: 65%;
 }
 
-#henttxgvzk .gt_footnote_marks {
+#gpnyulzgak .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#henttxgvzk .gt_asterisk {
+#gpnyulzgak .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#henttxgvzk .gt_indent_1 {
+#gpnyulzgak .gt_indent_1 {
   text-indent: 5px;
 }
 
-#henttxgvzk .gt_indent_2 {
+#gpnyulzgak .gt_indent_2 {
   text-indent: 10px;
 }
 
-#henttxgvzk .gt_indent_3 {
+#gpnyulzgak .gt_indent_3 {
   text-indent: 15px;
 }
 
-#henttxgvzk .gt_indent_4 {
+#gpnyulzgak .gt_indent_4 {
   text-indent: 20px;
 }
 
-#henttxgvzk .gt_indent_5 {
+#gpnyulzgak .gt_indent_5 {
   text-indent: 25px;
 }
 
-#henttxgvzk .katex-display {
+#gpnyulzgak .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#henttxgvzk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#gpnyulzgak div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2804,11 +2812,46 @@ Figure&nbsp;13.5: 完整流程: 前提检验通过后再进行t检验并画图
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="其他问题" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="其他问题"><span class="header-section-number">13.4</span> 其他问题</h2>
+<div class="callout callout-style-default callout-tip callout-titled" title="什么是压缩感知">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+什么是压缩感知
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>压缩感知</strong>（Compressed Sensing, CS）： 是现代信号处理和数学领域的一个核心理论。它打破了传统<strong>奈奎斯特采样定理</strong>（Nyquist-Shannon sampling theorem）的束缚——传统理论要求采样频率必须大于信号最高频率的两倍；而压缩感知指出：如果信号具有稀疏性，我们就可以用远低于传统采样率的观测次数来精确或高概率地重建信号。</p>
+<p>压缩感知的核心在于设计特殊的随机测量矩阵 <span class="math inline">\(\Phi\)</span> 去主动采集少量混合数据（<span class="math inline">\(y = \Phi x\)</span>）</p>
+<p>压缩感知成立的两大核心条件:</p>
+<ul>
+<li>信号的稀疏性（Sparsity）</li>
+<li>测量矩阵的非相干性（Incoherence）与 RIP（Restricted Isometry Property，受限等距性质）</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="什么是矩阵补全">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+什么是矩阵补全
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>矩阵补全</strong>（Matrix Completion）的核心则在于观测矩阵中未知的、随机丢失的元素（如推荐系统中的评分矩阵、或某些缺失数据的恢复），通常依赖矩阵的秩极小化（Nuclear Norm Minimization）来完成。</p>
+</div>
+</div>
 
 
 <!-- -->
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -3434,6 +3477,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../chapters/examples/methylation_smoothing_comparison.html" class="pagination-link" aria-label="Methylation Smoothing Comparison: Raw vs. BSmooth">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Methylation Smoothing Comparison: Raw vs.&nbsp;BSmooth</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 基础内容</span></span>
@@ -3815,6 +3861,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb19-391"><a href="#cb19-391" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span>
 <span id="cb19-392"><a href="#cb19-392" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-393"><a href="#cb19-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a><span class="fu">## 其他问题</span></span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-397"><a href="#cb19-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-398"><a href="#cb19-398" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="什么是压缩感知"}</span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a>**压缩感知**（Compressed Sensing, CS）： 是现代信号处理和数学领域的一个核心理论。它打破了传统**奈奎斯特采样定理**（Nyquist-Shannon sampling theorem）的束缚——传统理论要求采样频率必须大于信号最高频率的两倍；而压缩感知指出：如果信号具有稀疏性，我们就可以用远低于传统采样率的观测次数来精确或高概率地重建信号。</span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a>压缩感知的核心在于设计特殊的随机测量矩阵 $\Phi$ 去主动采集少量混合数据（$y = \Phi x$）</span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-404"><a href="#cb19-404" aria-hidden="true" tabindex="-1"></a>压缩感知成立的两大核心条件:</span>
+<span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>信号的稀疏性（Sparsity）</span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>测量矩阵的非相干性（Incoherence）与 RIP（Restricted Isometry Property，受限等距性质）</span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a>:::{.callout-tip title="什么是矩阵补全"}</span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a>**矩阵补全**（Matrix Completion）的核心则在于观测矩阵中未知的、随机丢失的元素（如推荐系统中的评分矩阵、或某些缺失数据的恢复），通常依赖矩阵的秩极小化（Nuclear Norm Minimization）来完成。</span>
+<span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
