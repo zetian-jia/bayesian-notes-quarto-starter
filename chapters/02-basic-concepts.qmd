@@ -462,7 +462,9 @@ $$
 
 ---
 
-### 常用分布及其参数的共轭先验分布
+### 常用分布
+
+常用分布及其参数的共轭先验分布
 
 #### (1) Bernoulli 分布（Bernoulli distribution）
 
@@ -1336,7 +1338,7 @@ ggplot(df, aes(x = x)) +
   theme_minimal(base_size = 11)
 ```
 
-### 指数 先 验分布 族 的一些结果
+### 指数先验分布
 
 
 ## 概念汇总

@@ -1,5 +1,7 @@
 
-# Methylation Smoothing Comparison: Raw vs. BSmooth
+# DNA 甲基化平滑
+
+Methylation Smoothing Comparison: Raw vs. BSmooth
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -13,7 +15,7 @@ knitr::opts_chunk$set(
 
 ## 目的
 
-比较 BSmooth 平滑前（raw）与平滑后（smoothed）的单个 CpG 位点甲基化 profile，直观展示局部似然平滑对甲基化曲线的影响。
+对比 `BSmooth` 算法, 平滑前（raw）与平滑后（smoothed）的 CpG 位点甲基化情况，直观展示局部似然平滑对甲基化曲线的影响。
 
 ## 加载依赖包
 
@@ -43,6 +45,7 @@ BSobj <- makeBSseqData(
   c("C1", "C2", "N1", "N2")
 )[1:1000, ]
 
+cat("bsseq 对象")
 BSobj
 ```
 
@@ -54,15 +57,22 @@ BSobj.smoothed <- BSmooth(BSobj, verbose = TRUE)
 meth_raw      <- getMeth(BSobj.smoothed, type = "raw")
 meth_smoothed <- getMeth(BSobj.smoothed, type = "smooth")
 
+cat("平滑前: 甲基化信号")
 head(meth_raw)
+
+cat("平滑后: 甲基化信号")
 head(meth_smoothed)
 ```
 
 ## 可视化：Raw vs. Smoothed
 
-统一配色（瑞士风格配色方案），并列展示平滑前后的甲基化曲线对比。
+并列展示平滑前后的甲基化曲线对比。
 
-```{r plot-setup}
+```{r}
+#| label: fig-meth-smooth-vs-raw
+#| fig-cap: "左：平滑前（raw）；右：平滑后（BSmooth）"
+#| column: page
+
 sample_colors <- c(
   "C1" = "#B5432B",
   "C2" = "#E07A5F",
@@ -97,9 +107,7 @@ plot_meth <- function(mat, title, n_points = 150) {
       plot.title = element_text(face = "bold")
     )
 }
-```
 
-```{r plot-combined, fig.cap="左：平滑前（raw）；右：平滑后（BSmooth）"}
 p_raw    <- plot_meth(meth_raw,      "Raw Methylation Profiles")
 p_smooth <- plot_meth(meth_smoothed, "Smoothed Methylation Profiles")
 

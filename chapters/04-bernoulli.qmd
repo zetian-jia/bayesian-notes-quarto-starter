@@ -1,4 +1,6 @@
-# 比例的推断：Bernoulli 试验
+# 比例的推断
+
+Bernoulli 试验
 
 考虑只有"成功"和"失败"的独立试验，如果每次成功概率为 $\theta$，则称这些试验为有参数 $\theta$ 的 Bernoulli 试验，而试验结果是"成功"还是"失败"的分布为 $\text{Bernoulli}(\theta)$ 分布。如果在 $n$ 次 Bernoulli 试验中，有 $s$ 次成功（那么一定有 $f=n-s$ 次失败），则成功的次数称为服从有参数 $(n,\theta)$ 的二项分布。Bernoulli 分布是二项分布在 $n=1$ 时的特例。人们一般希望用试验中成功个数或者比例来对参数 $\theta$ 做推断。形式上，记观测值 $\boldsymbol{x}=(x_1,x_2,\ldots,x_n)$ 为参数 $\theta$ 的 Bernoulli 试验的结果，对应于"成功"或"失败"，每个 $x_i$ 取值为 1 或 0。
 

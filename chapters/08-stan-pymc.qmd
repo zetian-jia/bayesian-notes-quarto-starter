@@ -1,4 +1,6 @@
-# 概率编程：R/Stan 与 Python/PyMC
+# 概率编程
+
+R/Stan 与 Python/PyMC
 
 
 ## 8.1 引言

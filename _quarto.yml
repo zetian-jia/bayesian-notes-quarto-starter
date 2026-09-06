@@ -18,7 +18,7 @@ book:
       chapters:
         - chapters/01-intro.qmd
         - chapters/02-basic-concepts.qmd
-    - part: "第二部分：初等贝叶斯模型"
+    - part: "第二部分：初等贝叶斯"
       chapters:
         - chapters/04-bernoulli.qmd
         - chapters/05-normal.qmd
@@ -61,3 +61,6 @@ format:
 
 execute:
   freeze: auto  # 没改动的章节不重新跑代码，加速渲染
+
+bibliography: references.bib       # 新增: 放在顶层, 和 project/book/format 同级
+# csl: chinese-gb7714-2015-numeric.csl  # 可选: 国标引文格式, 适合中文论文场景
