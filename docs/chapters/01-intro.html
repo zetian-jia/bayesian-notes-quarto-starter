@@ -331,12 +331,9 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#为什么用贝叶斯" id="toc-为什么用贝叶斯" class="nav-link active" data-scroll-target="#为什么用贝叶斯"><span class="header-section-number">1.1</span> 为什么用贝叶斯</a>
-  <ul class="collapse">
-  <li><a href="#传统数理统计的先天缺陷" id="toc-传统数理统计的先天缺陷" class="nav-link" data-scroll-target="#传统数理统计的先天缺陷"><span class="header-section-number">1.1.1</span> 传统数理统计的先天缺陷</a></li>
-  </ul></li>
-  <li><a href="#本书所强调的贝叶斯编程计算的意义" id="toc-本书所强调的贝叶斯编程计算的意义" class="nav-link" data-scroll-target="#本书所强调的贝叶斯编程计算的意义"><span class="header-section-number">1.2</span> 本书所强调的贝叶斯编程计算的意义</a></li>
-  <li><a href="#本书的构成和内容安排" id="toc-本书的构成和内容安排" class="nav-link" data-scroll-target="#本书的构成和内容安排"><span class="header-section-number">1.3</span> 本书的构成和内容安排</a></li>
+  <li><a href="#为什么用贝叶斯" id="toc-为什么用贝叶斯" class="nav-link active" data-scroll-target="#为什么用贝叶斯"><span class="header-section-number">1.1</span> 为什么用贝叶斯</a></li>
+  <li><a href="#编程计算的意义" id="toc-编程计算的意义" class="nav-link" data-scroll-target="#编程计算的意义"><span class="header-section-number">1.2</span> 编程计算的意义</a></li>
+  <li><a href="#内容安排" id="toc-内容安排" class="nav-link" data-scroll-target="#内容安排"><span class="header-section-number">1.3</span> 内容安排</a></li>
   <li><a href="#习题" id="toc-习题" class="nav-link" data-scroll-target="#习题"><span class="header-section-number">1.4</span> 习题</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/edit/main/chapters/01-intro.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://zetian-jia.github.io/bayesian-notes-quarto-starter/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -365,64 +362,77 @@ window.Quarto = {
 
 <section id="为什么用贝叶斯" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="为什么用贝叶斯"><span class="header-section-number">1.1</span> 为什么用贝叶斯</h2>
-<section id="传统数理统计的先天缺陷" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="传统数理统计的先天缺陷"><span class="header-section-number">1.1.1</span> 传统数理统计的先天缺陷</h3>
-<ol type="1">
-<li>数理统计基本上关注的是假定总体分布的某些参数——特别是均值——的大小</li>
-<li>显著性检验得不到任何有意义的决策</li>
-</ol>
+<p>传统数理统计有两个先天缺陷：</p>
+<ul>
+<li><strong>只关心总体分布的某个参数</strong>（通常是均值），把丰富的分布信息压缩成一两个数字</li>
+<li><strong>显著性检验给不出有意义的决策</strong>——拒绝或不拒绝原假设，不等于”应该怎么做”</li>
+</ul>
+<p>贝叶斯统计直接给出参数的<strong>后验分布</strong>，而不是一个通过率检验，回答的是”给定数据，参数是什么”，而不是”这个统计量在无穷次重复抽样下表现如何”。</p>
 </section>
+<section id="编程计算的意义" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="编程计算的意义"><span class="header-section-number">1.2</span> 编程计算的意义</h2>
+<p>贝叶斯统计的理论并不复杂，难点在于<strong>求后验分布时的积分</strong>——多数情况下没有解析解。这也是本书的重心：不纠结理论推导，而是用 R/Python 的概率编程工具（Stan、PyMC）把积分问题转化为可计算的采样问题。</p>
 </section>
-<section id="本书所强调的贝叶斯编程计算的意义" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="本书所强调的贝叶斯编程计算的意义"><span class="header-section-number">1.2</span> 本书所强调的贝叶斯编程计算的意义</h2>
-<p>实际上，贝叶斯统计的理论相对比较简单，而最困难的是在寻求后验分布过程中所遇到的积分困难。</p>
-</section>
-<section id="本书的构成和内容安排" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="本书的构成和内容安排"><span class="header-section-number">1.3</span> 本书的构成和内容安排</h2>
+<section id="内容安排" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="内容安排"><span class="header-section-number">1.3</span> 内容安排</h2>
+<p>本书按五个部分展开，难度递进：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>部分</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>一、基础篇</td>
+<td>贝叶斯的基本概念、与频率学派的区别</td>
+</tr>
+<tr class="even">
+<td>二、初等模型</td>
+<td>Bernoulli、正态分布下的贝叶斯推断</td>
+</tr>
+<tr class="odd">
+<td>三、算法与编程</td>
+<td>MCMC 原理，Stan/PyMC 实操</td>
+</tr>
+<tr class="even">
+<td>四、扩展模型</td>
+<td>贝叶斯线性回归、生存分析、朴素贝叶斯、贝叶斯网络、HMM</td>
+</tr>
+<tr class="odd">
+<td>五、案例</td>
+<td>完整数据分析实例</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="习题" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="习题"><span class="header-section-number">1.4</span> 习题</h2>
 <div class="callout callout-style-default callout-note callout-titled" title="思考题：如果没有均值/矩，数理统计还剩下什么？">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 思考题：如果没有均值/矩，数理统计还剩下什么？
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>回顾数理统计教材的全部内容，如果没有诸如样本均值、样本矩或者它们的函数作为统计量，数理统计教材还剩下什么内容？</p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled" title="我的回答">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-我的回答
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>字面意义上其实剩得不少：</p>
+<p>如果不用样本均值、样本矩或它们的函数作统计量，数理统计教材还剩下什么？</p>
+<p>答:</p>
+<p>剩得不少，但都逃不开同一个框架：</p>
 <ul>
-<li><strong>顺序统计量/秩统计量</strong>：中位数、分位数、Wilcoxon 符号秩检验、Mann–Whitney <span class="math inline">\(U\)</span> 检验、Kruskal–Wallis <span class="math inline">\(H\)</span> 检验——不靠均值/方差，靠排序</li>
-<li><strong>似然框架</strong>：MLE 不总是矩估计，比如 <span class="math inline">\(U(0,\theta)\)</span> 的 MLE 是样本最大值，不是任何矩的函数</li>
+<li><strong>顺序/秩统计量</strong>：中位数、分位数、Wilcoxon 符号秩检验、Mann–Whitney <span class="math inline">\(U\)</span>、Kruskal–Wallis <span class="math inline">\(H\)</span>——靠排序不靠矩</li>
+<li><strong>似然框架</strong>：MLE 不等于矩估计，比如 <span class="math inline">\(U(0,\theta)\)</span> 的 MLE 是样本最大值</li>
 <li><strong>经验分布函数</strong>：Kolmogorov–Smirnov 检验，直接比较经验 CDF 和理论 CDF</li>
-<li><strong>稳健统计</strong>：M-估计量、截尾均值、MAD——专门为了绕开均值/方差对异常值敏感而存在</li>
+<li><strong>稳健统计</strong>：M-估计量、截尾均值、MAD——专为规避均值/方差对异常值敏感而生</li>
 </ul>
-<p>但这些”幸存者”依然共享同一套底层逻辑：先构造统计量，再问它在重复抽样下的分布长什么样，然后拿这个抽样分布做检验或算区间——依然逃不出 <strong>Q5（频率学派的长期频率性质）</strong> 这个框架。</p>
-<p>这句反问真正的杀伤力不在于”找不到替代统计量”，而在于：<strong>只要还留在频率学派的哲学框架里，就永远逃不开”构造统计量 → 推导抽样分布 → 用抽样分布校准结论”这套动作</strong>。它是在为贝叶斯方法登场做铺垫——不是换一个统计量，而是换一套哲学：不问”这个统计量在无穷次重复抽样下怎么表现”，而是直接问”给定这份数据，<span class="math inline">\(\theta\)</span> 的后验分布是什么”。</p>
+<p>这些方法换了统计量，但没换哲学：依然是<strong>先构造统计量 → 推导其抽样分布 → 用抽样分布校准结论</strong>。</p>
+<p>贝叶斯换的是这套哲学本身：不问”统计量在无穷次重复抽样下怎么表现”，而是直接问”给定这份数据，<span class="math inline">\(\theta\)</span> 的后验分布是什么”。</p>
 </div>
 </div>
-</div>
-<p>下载数据: https://vincentarelbundock.github.io/Rdatasets/datasets.html</p>
+<p><strong>数据下载</strong>：<a href="https://vincentarelbundock.github.io/Rdatasets/datasets.html">Rdatasets</a></p>
 
 
 <!-- -->
@@ -1061,39 +1071,52 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 为什么用贝叶斯</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### 传统数理统计的先天缺陷</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>传统数理统计有两个先天缺陷：</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>数理统计基本上关注的是假定总体分布的某些参数——特别是均值——的大小</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>显著性检验得不到任何有意义的决策</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**只关心总体分布的某个参数**（通常是均值），把丰富的分布信息压缩成一两个数字</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**显著性检验给不出有意义的决策**——拒绝或不拒绝原假设，不等于"应该怎么做"</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## 本书所强调的贝叶斯编程计算的意义</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>贝叶斯统计直接给出参数的**后验分布**，而不是一个通过率检验，回答的是"给定数据，参数是什么"，而不是"这个统计量在无穷次重复抽样下表现如何"。</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>实际上，贝叶斯统计的理论相对比较简单，而最困难的是在寻求后验分布过程中所遇到的积分困难。</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## 编程计算的意义</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## 本书的构成和内容安排</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>贝叶斯统计的理论并不复杂，难点在于**求后验分布时的积分**——多数情况下没有解析解。这也是本书的重心：不纠结理论推导，而是用 R/Python 的概率编程工具（Stan、PyMC）把积分问题转化为可计算的采样问题。</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## 习题</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="思考题：如果没有均值/矩，数理统计还剩下什么？" collapse="false"}</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>回顾数理统计教材的全部内容，如果没有诸如样本均值、样本矩或者它们的函数作为统计量，数理统计教材还剩下什么内容？</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="我的回答" collapse="true"}</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>字面意义上其实剩得不少：</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**顺序统计量/秩统计量**：中位数、分位数、Wilcoxon 符号秩检验、Mann–Whitney $U$ 检验、Kruskal–Wallis $H$ 检验——不靠均值/方差，靠排序</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**似然框架**：MLE 不总是矩估计，比如 $U(0,\theta)$ 的 MLE 是样本最大值，不是任何矩的函数</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**经验分布函数**：Kolmogorov–Smirnov 检验，直接比较经验 CDF 和理论 CDF</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**稳健统计**：M-估计量、截尾均值、MAD——专门为了绕开均值/方差对异常值敏感而存在</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## 内容安排</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>本书按五个部分展开，难度递进：</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>| 部分 | 内容 |</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>| 一、基础篇 | 贝叶斯的基本概念、与频率学派的区别 |</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>| 二、初等模型 | Bernoulli、正态分布下的贝叶斯推断 |</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>| 三、算法与编程 | MCMC 原理，Stan/PyMC 实操 |</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>| 四、扩展模型 | 贝叶斯线性回归、生存分析、朴素贝叶斯、贝叶斯网络、HMM |</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>| 五、案例 | 完整数据分析实例 |</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## 习题</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>但这些"幸存者"依然共享同一套底层逻辑：先构造统计量，再问它在重复抽样下的分布长什么样，然后拿这个抽样分布做检验或算区间——依然逃不出 **Q5（频率学派的长期频率性质）** 这个框架。</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>这句反问真正的杀伤力不在于"找不到替代统计量"，而在于：**只要还留在频率学派的哲学框架里，就永远逃不开"构造统计量 → 推导抽样分布 → 用抽样分布校准结论"这套动作**。它是在为贝叶斯方法登场做铺垫——不是换一个统计量，而是换一套哲学：不问"这个统计量在无穷次重复抽样下怎么表现"，而是直接问"给定这份数据，$\theta$ 的后验分布是什么"。</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="思考题：如果没有均值/矩，数理统计还剩下什么？"}</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>如果不用样本均值、样本矩或它们的函数作统计量，数理统计教材还剩下什么？</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>答: </span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>下载数据: https://vincentarelbundock.github.io/Rdatasets/datasets.html</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>剩得不少，但都逃不开同一个框架：</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**顺序/秩统计量**：中位数、分位数、Wilcoxon 符号秩检验、Mann–Whitney $U$、Kruskal–Wallis $H$——靠排序不靠矩</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**似然框架**：MLE 不等于矩估计，比如 $U(0,\theta)$ 的 MLE 是样本最大值</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**经验分布函数**：Kolmogorov–Smirnov 检验，直接比较经验 CDF 和理论 CDF</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**稳健统计**：M-估计量、截尾均值、MAD——专为规避均值/方差对异常值敏感而生</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>这些方法换了统计量，但没换哲学：依然是**先构造统计量 → 推导其抽样分布 → 用抽样分布校准结论**。</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>贝叶斯换的是这套哲学本身：不问"统计量在无穷次重复抽样下怎么表现"，而是直接问"给定这份数据，$\theta$ 的后验分布是什么"。</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>**数据下载**：<span class="co">[</span><span class="ot">Rdatasets</span><span class="co">](https://vincentarelbundock.github.io/Rdatasets/datasets.html)</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
