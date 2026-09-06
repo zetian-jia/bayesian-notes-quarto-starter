@@ -43,6 +43,8 @@ book:
   sidebar:
     style: "docked"
     background: light
+    logo: "images/meth_logo_badge.png"       # 显示在左侧边栏顶部
+  cover-image: images/cover_alexas.jpg
 
 format:
   html:
